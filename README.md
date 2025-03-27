@@ -15,3 +15,5 @@ Port to 1.21.1 coming very soon..
 - [x] Add an auto complete card to the pattern provider
   - Added in Beta 1.0.2
 - [ ] Pattern converter, convert patterns from rs -> ae2
+
+*Do note that this is not abandonned, i don't have time as of now and still need to fix a weird bug with the auto complete card before the next release. Feel free to pr any changes*
