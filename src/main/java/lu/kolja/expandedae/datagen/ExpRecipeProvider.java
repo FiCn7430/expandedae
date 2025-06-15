@@ -70,6 +70,17 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_advanced_card", has(ADVANCED_CARD))
                 .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
                 .save(out, craftingId("pattern_refiller_card"));
+
+        ShapedRecipeBuilder.shaped(MISC, EXP_ENCODING_TERMINAL)
+                .pattern("TC")
+                .pattern("L ")
+                .define('T', EXP_ENCODING_TERMINAL)
+                .define('C', CALCULATION_PROCESSOR)
+                .define('L', LOGIC_PROCESSOR)
+                .unlockedBy("has_calculation_processor", has(CALCULATION_PROCESSOR))
+                .unlockedBy("has_logic_processor", has(LOGIC_PROCESSOR))
+                .save(out, craftingId("exp_encoding_terminal"));
+
     }
 
     private ResourceLocation craftingId(String name) {

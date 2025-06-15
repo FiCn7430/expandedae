@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "appliede"
+    }
+  ],
+  "type": "ae2wtlib:combine",
+  "terminalA": {
+    "item": "appliede:wireless_transmutation_terminal"
+  },
+  "terminalB": {
+    "item": "expandedae:wireless_exp_encoding_terminal"
+  },
+  "terminalAName": "transmutation",
+  "terminalBName": "exp_encoding"
+}

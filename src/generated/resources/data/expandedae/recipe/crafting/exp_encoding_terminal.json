@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "ae2:calculation_processor"
+    },
+    "L": {
+      "item": "ae2:logic_processor"
+    },
+    "T": {
+      "item": "expandedae:exp_encoding_terminal"
+    }
+  },
+  "pattern": [
+    "TC",
+    "L "
+  ],
+  "result": {
+    "count": 1,
+    "id": "expandedae:exp_encoding_terminal"
+  }
+}
