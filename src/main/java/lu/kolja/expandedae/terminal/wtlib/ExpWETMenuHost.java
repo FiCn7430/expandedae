@@ -9,10 +9,8 @@ import appeng.parts.encoding.PatternEncodingLogic;
 import de.mari_023.ae2wtlib.api.AE2wtlibComponents;
 import de.mari_023.ae2wtlib.api.terminal.ItemWT;
 import de.mari_023.ae2wtlib.api.terminal.WTMenuHost;
-import lu.kolja.expandedae.xmod.ae2wtlib.WTLibIntegration;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.function.BiConsumer;
@@ -26,11 +24,6 @@ public class ExpWETMenuHost extends WTMenuHost
         super(item, player, locator, returnToMainMenu);
         logic.readFromNBT(getItemStack().getOrDefault(AE2wtlibComponents.PATTERN_ENCODING_LOGIC, new CompoundTag()),
                 player.registryAccess());
-    }
-
-    @Override
-    public ItemStack getMainMenuIcon() {
-        return WTLibIntegration.TERMINAL.getDefaultInstance();
     }
 
     @Override

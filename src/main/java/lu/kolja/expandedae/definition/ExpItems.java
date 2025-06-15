@@ -14,11 +14,9 @@ import lu.kolja.expandedae.item.part.ExpEncodingTerminalPartItem;
 import lu.kolja.expandedae.item.part.ExpPatternProviderPartItem;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalPart;
-import lu.kolja.expandedae.xmod.ae2wtlib.DummyTerminal;
 import lu.kolja.expandedae.xmod.ae2wtlib.WTLibIntegration;
 import net.minecraft.Util;
 import net.minecraft.world.item.Item;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
@@ -74,12 +72,7 @@ public class ExpItems {
             ItemSmartBlockingCard::new
     );
 
-    public static final ItemDefinition<Item> WIRELESS_EXP_ENCODING_TERMINAL = item("Wireless Expanded Pattern Encoding Terminal", "wireless_exp_encoding_terminal", p -> {
-            return ModList.get().isLoaded("ae2wtlib")
-                    ? WTLibIntegration.TERMINAL
-                    : new DummyTerminal(new Item.Properties().stacksTo(1));
-        }
-    );
+    public static final ItemDefinition<Item> WIRELESS_EXP_ENCODING_TERMINAL = item("Wireless Expanded Pattern Encoding Terminal", "wireless_exp_encoding_terminal", p -> WTLibIntegration.TERMINAL);
 
     public static final ItemDefinition<ItemStickyCard> STICKY_CARD = item(
             "Sticky Card",

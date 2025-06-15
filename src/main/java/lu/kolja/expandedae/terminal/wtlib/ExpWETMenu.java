@@ -21,7 +21,7 @@ public class ExpWETMenu extends ExpEncodingTerminalMenu {
     private final ExpWETMenuHost wetMenuHost;
 
     public ExpWETMenu(int id, final Inventory ip, final ExpWETMenuHost gui) {
-        super(id, ip, gui);
+        super(TYPE, id, ip, gui);
         wetMenuHost = gui;
         addSlot(new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.QE_SINGULARITY,
                 wetMenuHost.getSubInventory(WTMenuHost.INV_SINGULARITY), 0), AE2wtlibSlotSemantics.SINGULARITY);

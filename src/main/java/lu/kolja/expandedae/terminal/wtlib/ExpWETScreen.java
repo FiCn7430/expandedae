@@ -39,7 +39,7 @@ public class ExpWETScreen extends PatternEncodingTermScreen<ExpWETMenu> implemen
         InitScreens.register(
                 event,
                 ExpWETMenu.TYPE,
-                PatternEncodingTermScreen<ExpWETMenu>::new,
+                ExpWETScreen::new,
                 "/screens/expandedae/wireless_exp_encoding_terminal.json"
         );
     }

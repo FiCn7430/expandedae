@@ -13,10 +13,7 @@ import appeng.menu.me.common.MEStorageMenu;
 import appeng.menu.me.items.PatternEncodingTermMenu;
 import appeng.menu.slot.RestrictedInputSlot;
 import appeng.util.ConfigInventory;
-import de.mari_023.ae2wtlib.AE2wtlibItems;
-import de.mari_023.ae2wtlib.api.registration.WTDefinition;
-import de.mari_023.ae2wtlib.api.terminal.WUTHandler;
-import de.mari_023.ae2wtlib.wet.WETScreen;
+import de.mari_023.ae2wtlib.api.terminal.IUniversalTerminalCapable;
 import lu.kolja.expandedae.definition.ExpItems;
 import lu.kolja.expandedae.helper.IPatternEncodingTerminalMenu;
 import net.minecraft.client.Minecraft;
@@ -25,7 +22,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -71,11 +67,11 @@ public abstract class MixinPatternEncodingTerminalMenu extends MEStorageMenu imp
                 }
             }
 
-            if (Minecraft.getInstance().screen instanceof WETScreen) {
-                var terminalItem = expandedae$getTerminalItem(player.get());
+            if (Minecraft.getInstance().screen instanceof IUniversalTerminalCapable wetScreen) {
+                var terminalItem = wetScreen.getHost().getItemStack();
                 if (terminalItem == null) return;
                 if (terminalItem.getItem() instanceof IUpgradeableItem item) {
-                    IUpgradeInventory inventory = item.getUpgrades(player.get().getMainHandItem());
+                    IUpgradeInventory inventory = item.getUpgrades(terminalItem);
                     if (!inventory.isInstalled(ExpItems.PATTERN_REFILLER_CARD)) return;
                 }
 
@@ -91,13 +87,6 @@ public abstract class MixinPatternEncodingTerminalMenu extends MEStorageMenu imp
                 blankPatternSlot.setChanged();
             }
         }
-    }
-    @Unique
-    @Nullable
-    private ItemStack expandedae$getTerminalItem(Player player) {
-        var locator = WUTHandler.findTerminal(player, WTDefinition.of(AE2wtlibItems.PATTERN_ENCODING_TERMINAL.getDefaultInstance()));
-        if (locator == null) return null;
-        return locator.locateItem(player);
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/inventory/MenuType;ILnet/minecraft/world/entity/player/Inventory;Lappeng/helpers/IPatternTerminalMenuHost;Z)V",

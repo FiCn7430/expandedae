@@ -10,7 +10,6 @@ import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
 import lu.kolja.expandedae.terminal.wtlib.ExpWETScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
@@ -33,8 +32,6 @@ public class ExpandedaeClient {
                 PatternEncodingTermScreen<ExpEncodingTerminalMenu>::new,
                 "/screens/terminals/exp_encoding_terminal.json"
         );
-        if (ModList.get().isLoaded("ae2wtlib")) {
-            ExpWETScreen.register(event);
-        }
+        ExpWETScreen.register(event);
     }
 }

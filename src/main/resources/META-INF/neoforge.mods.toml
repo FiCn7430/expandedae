@@ -46,9 +46,9 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.expandedae]]
-modId = "ae2wtlib"
+modId = "ae2wtlib_api"
 type = "REQUIRED"
-ordering = "AFTER"
+ordering = "BEFORE"
 side = "BOTH"
 
 [[dependencies.expandedae]]
