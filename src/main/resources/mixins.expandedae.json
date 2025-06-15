@@ -4,9 +4,9 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "lu.kolja.expandedae.mixin.MixinPlugin",
   "mixins": [
-    "misc.MixinMathExpressionParser",
+    "compat.appflux.AppFluxMixinPatternProviderLogic",
+    "compat.appflux.AppFluxMixinPatternProviderMenu",
     "misc.MixinSettings",
-    "misc.MixinSlot",
     "patternprovider.MixinPatternProviderLogic",
     "patternprovider.MixinPatternProviderLogicHost",
     "patternprovider.MixinPatternProviderMenu",
@@ -14,6 +14,7 @@
     "terminal.MixinProcessingEncodingPanel"
   ],
   "client": [
+    "compat.appflux.AppFluxMixinPatternProviderScreen",
     "misc.MixinSettingToggleButton",
     "patternprovider.MixinPatternProviderScreen"
   ],

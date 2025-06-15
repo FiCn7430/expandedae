@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.helper;
+package lu.kolja.expandedae.helper.misc;
 
 import org.jetbrains.annotations.Contract;
 

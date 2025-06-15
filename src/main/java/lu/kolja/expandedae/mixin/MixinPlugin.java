@@ -18,16 +18,32 @@ public class MixinPlugin implements IMixinConfigPlugin {
      * If mod b is loaded, don't load class A
      */
     public static final Object2ObjectMap<String, String> mixinMap = new Object2ObjectOpenHashMap<>(
-        new String[]{},
-        new String[]{}
+        new String[]{
+                "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderLogic",
+                "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderMenu",
+                "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderScreen"
+        },
+        new String[]{
+                "appflux",
+                "appflux",
+                "appflux"
+        }
     );
 
     /**
      * If mod b is loaded, do load class A
      */
     public static final Object2ObjectMap<String, String> mixinMap2 = new Object2ObjectOpenHashMap<>(
-            new String[]{},
-            new String[]{}
+            new String[]{
+                    "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderLogic",
+                    "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderMenu",
+                    "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderScreen"
+            },
+            new String[]{
+                    "appflux",
+                    "appflux",
+                    "appflux"
+            }
     );
 
     /**

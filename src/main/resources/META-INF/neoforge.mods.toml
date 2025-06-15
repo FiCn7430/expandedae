@@ -35,7 +35,7 @@ side = "BOTH"
 
 [[dependencies.expandedae]]
 modId = "extendedae"
-type = "REQUIRED"
+type = "OPTIONAL"
 ordering = "AFTER"
 side = "BOTH"
 

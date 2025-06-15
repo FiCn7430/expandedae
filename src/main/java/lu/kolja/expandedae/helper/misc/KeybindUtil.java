@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.helper;
+package lu.kolja.expandedae.helper.misc;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;

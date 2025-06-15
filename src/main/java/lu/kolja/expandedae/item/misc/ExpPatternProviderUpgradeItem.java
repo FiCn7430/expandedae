@@ -32,7 +32,7 @@ public class ExpPatternProviderUpgradeItem extends UpgradeItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("item.expandedae.upgrade.tooltip",
-                        "a Pattern Provider\n to an Expanded Pattern Provider")
+                        "a Pattern Provider to an Expanded Pattern Provider")
                 .withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltip, tooltipFlag);
     }

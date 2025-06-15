@@ -1,10 +1,12 @@
-package lu.kolja.expandedae.helper;
+package lu.kolja.expandedae.helper.pattern;
 
 import lu.kolja.expandedae.enums.BlockingMode;
 
-public interface ISmartBlocking {
+public interface IPatternProvider {
+    void expandedae$modifyPatterns(boolean rightClick);
+
     /**
-     * Resets the blocking mode to its default state, in this case, default mod
+     * Resets the blocking mode to its default state, in this case, default mode
      */
     void expandedae$resetBlocking();
 
@@ -22,7 +24,7 @@ public interface ISmartBlocking {
     /**
      * Hides the extra blocking modes button
      */
-    void expandedae$hideBlocking();
+    //void expandedae$hideBlocking();
 
     /**
      * Shows the extra blocking modes button

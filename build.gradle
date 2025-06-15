@@ -34,6 +34,14 @@ neoForge {
     }
 
     runs {
+        guide {
+            client()
+            systemProperty 'guideme.ae2.guide.sources', file('run/resourcepacks/temp/assets/expandedae/ae2guide').absolutePath
+            // This is only needed if you are developing an addon and it should be your mod id
+            systemProperty "guideme.ae2.guide.sourcesNamespace", "expandedae"
+            systemProperty('guideme.showOnStartup', 'ae2:index.md') // Start at index.md
+        }
+
         client {
             client()
             //jvmArgument("-XX:+AllowEnhancedClassRedefinition")
@@ -121,6 +129,7 @@ dependencies {
     implementation "curse.maven:ex-pattern-provider-892005:6505209"
     implementation "curse.maven:glodium-957920:5821676"
     implementation "curse.maven:guideme-1173950:6488254"
+    implementation "curse.maven:advancedae-1084104:6225993"
 
     jarJar(implementation "de.mari_023:ae2wtlib_api:$ae2wtlib_version")
     runtimeOnly "de.mari_023:ae2wtlib:$ae2wtlib_version"
@@ -132,10 +141,10 @@ dependencies {
     implementation "curse.maven:architectury-api-419699:5786327"
     implementation "curse.maven:curios-309927:6401872"
 
-    compileOnly "curse.maven:applied-flux-965012:6465706"
-    implementation "curse.maven:geckolib-388172:6304958"
+    implementation "curse.maven:applied-flux-965012:6649565"
+    runtimeOnly "curse.maven:geckolib-388172:6304958"
     implementation "curse.maven:mega-cells-622112:6517566"
-    implementation "curse.maven:cloth-config-348521:5729127"
+    runtimeOnly "curse.maven:cloth-config-348521:5729127"
 
     runtimeOnly "curse.maven:soulplied-energistics-1143614:6083831"
     runtimeOnly "curse.maven:industrial-foregoing-souls-904394:6235883"
@@ -144,8 +153,6 @@ dependencies {
     runtimeOnly "curse.maven:mekanism-268560:6486993"
 
     runtimeOnly "curse.maven:enderdrives-1226739:6482292"
-
-    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
 }
 

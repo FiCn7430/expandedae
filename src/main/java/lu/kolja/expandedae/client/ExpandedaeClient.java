@@ -1,12 +1,12 @@
 package lu.kolja.expandedae.client;
 
 import appeng.client.gui.implementations.PatternProviderScreen;
-import appeng.client.gui.me.items.PatternEncodingTermScreen;
 import appeng.init.client.InitScreens;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.definition.ExpMenus;
 import lu.kolja.expandedae.menu.ExpPatternProviderMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
+import lu.kolja.expandedae.terminal.ExpEncodingTerminalScreen;
 import lu.kolja.expandedae.terminal.wtlib.ExpWETScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -29,7 +29,7 @@ public class ExpandedaeClient {
         InitScreens.register(
                 event,
                 ExpMenus.EXP_ENCODING_TERMINAL.get(),
-                PatternEncodingTermScreen<ExpEncodingTerminalMenu>::new,
+                ExpEncodingTerminalScreen<ExpEncodingTerminalMenu>::new,
                 "/screens/terminals/exp_encoding_terminal.json"
         );
         ExpWETScreen.register(event);

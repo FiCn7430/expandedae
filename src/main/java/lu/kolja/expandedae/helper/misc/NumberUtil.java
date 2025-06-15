@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.helper;
+package lu.kolja.expandedae.helper.misc;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;

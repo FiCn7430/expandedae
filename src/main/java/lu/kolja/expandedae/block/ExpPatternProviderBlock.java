@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-public class ExpPatternProviderBlock extends AEBaseEntityBlock<ExpPatternProviderBlockEntity> implements IUpgradeableObject {
+public class ExpPatternProviderBlock extends AEBaseEntityBlock<ExpPatternProviderBlockEntity>  {
     private static final EnumProperty<PushDirection> PUSH_DIRECTION = PatternProviderBlock.PUSH_DIRECTION;
 
     public ExpPatternProviderBlock() {

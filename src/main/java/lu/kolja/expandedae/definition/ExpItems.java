@@ -32,15 +32,19 @@ public class ExpItems {
 
     private static final List<ItemDefinition<?>> ITEMS = new ArrayList<>();
 
-    public static final ItemDefinition<ExpPatternProviderPartItem> EXP_PATTERN_PROVIDER_PART = Util.make(() -> {
-        PartModels.registerModels(PartModelsHelper.createModels(ExpPatternProviderPart.class));
-        return item("Expanded Pattern Provider", "exp_pattern_provider_part", ExpPatternProviderPartItem::new);
-    });
+    public static final ItemDefinition<PartItem<ExpPatternProviderPart>> EXP_PATTERN_PROVIDER_PART = part(
+            "Expanded Pattern Provider",
+            "exp_pattern_provider_part",
+            ExpPatternProviderPart.class,
+            ExpPatternProviderPart::new
+    );
 
-    public static final ItemDefinition<ExpEncodingTerminalPartItem> EXP_ENCODING_TERMINAL = Util.make(() -> {
-        PartModels.registerModels(PartModelsHelper.createModels(ExpEncodingTerminalPart.class));
-        return item("Expanded Pattern Encoding Terminal", "exp_encoding_terminal", ExpEncodingTerminalPartItem::new);
-    });
+    public static final ItemDefinition<PartItem<ExpEncodingTerminalPart>> EXP_ENCODING_TERMINAL = part(
+            "Expanded Pattern Encoding Terminal",
+            "exp_encoding_terminal",
+            ExpEncodingTerminalPart.class,
+            ExpEncodingTerminalPart::new
+    );
 
     public static final ItemDefinition<ExpPatternProviderUpgradeItem> EXP_PATTERN_PROVIDER_UPGRADE = item(
             "Expanded Pattern Provider Upgrade",
@@ -48,18 +52,12 @@ public class ExpItems {
             ExpPatternProviderUpgradeItem::new
     );
 
-    public static final ItemDefinition<ExtPatternProviderUpgradeItem> EXT_PATTERN_PROVIDER_UPGRADE = item(
-            "Extended Pattern Provider Upgrader",
-            "ext_pattern_provider_upgrader",
-            ExtPatternProviderUpgradeItem::new
-    );
-
     public static final ItemDefinition<ItemAutoCompleteCard> AUTO_COMPLETE_CARD = item(
             "Auto Complete Card",
             "auto_complete_card",
             ItemAutoCompleteCard::new
     );
-
+    /*
     public static final ItemDefinition<ItemAdvancedBlockingCard> ADVANCED_BLOCKING_CARD = item(
             "Advanced Blocking Card",
             "advanced_blocking_card",
@@ -72,12 +70,22 @@ public class ExpItems {
             ItemSmartBlockingCard::new
     );
 
-    public static final ItemDefinition<Item> WIRELESS_EXP_ENCODING_TERMINAL = item("Wireless Expanded Pattern Encoding Terminal", "wireless_exp_encoding_terminal", p -> WTLibIntegration.TERMINAL);
-
     public static final ItemDefinition<ItemStickyCard> STICKY_CARD = item(
             "Sticky Card",
             "sticky_card",
             ItemStickyCard::new
+    );
+
+    public static final ItemDefinition<ExtPatternProviderUpgradeItem> EXT_PATTERN_PROVIDER_UPGRADE = item(
+            "Extended Pattern Provider Upgrader",
+            "ext_pattern_provider_upgrader",
+            ExtPatternProviderUpgradeItem::new
+    );
+    */
+
+    public static final ItemDefinition<Item> WIRELESS_EXP_ENCODING_TERMINAL = item("Wireless Expanded Pattern Encoding Terminal",
+            "wireless_exp_encoding_terminal",
+            p -> WTLibIntegration.TERMINAL
     );
 
     public static final ItemDefinition<ItemPatternRefillerCard> PATTERN_REFILLER_CARD = item(

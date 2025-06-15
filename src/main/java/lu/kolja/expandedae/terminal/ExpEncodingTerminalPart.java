@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class ExpEncodingTerminalPart extends PatternEncodingTerminalPart {
-
     @PartModels
     public static final ResourceLocation MODEL_OFF = Expandedae.makeId("part/exp_encoding_terminal_off");
     @PartModels

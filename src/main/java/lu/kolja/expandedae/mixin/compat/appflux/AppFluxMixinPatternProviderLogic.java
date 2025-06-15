@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.mixin.patternprovider;
+package lu.kolja.expandedae.mixin.compat.appflux;
 
 import appeng.api.config.Actionable;
 import appeng.api.config.LockCraftingMode;
@@ -33,8 +33,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -52,12 +50,13 @@ import java.util.Objects;
 import java.util.Set;
 
 @Mixin(value = PatternProviderLogic.class, remap = false)
-public abstract class MixinPatternProviderLogic implements IUpgradeableObject, IPatternProviderLogic {
-
+public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableObject, IPatternProviderLogic {
     @Unique
     private PatternProviderTargetCache[] expandedae$targetCaches;
 
-    @Shadow @Final private IActionSource actionSource;
+    @Shadow
+    @Final
+    private IActionSource actionSource;
 
     @Unique
     private IUpgradeInventory eae_$upgrades = UpgradeInventories.empty();
@@ -112,50 +111,12 @@ public abstract class MixinPatternProviderLogic implements IUpgradeableObject, I
         this.host.saveChanges();
     }
 
-    @Override
-    public IUpgradeInventory getUpgrades() {
-        return this.eae_$upgrades;
-    }
-
     @Inject(
             method = "<init>(Lappeng/api/networking/IManagedGridNode;Lappeng/helpers/patternprovider/PatternProviderLogicHost;I)V",
             at = @At("TAIL")
     )
     private void eae_$initUpgrade(IManagedGridNode mainNode, PatternProviderLogicHost host, int patternInventorySize, CallbackInfo ci) {
-        eae_$upgrades = UpgradeInventories.forMachine(host.getTerminalIcon().getItem(), 1, this::eae_$onUpgradesChanged);
         this.expandedae$targetCaches = new PatternProviderTargetCache[6];
-    }
-
-    @Inject(
-            method = "writeToNBT",
-            at = @At("TAIL")
-    )
-    private void eae_$saveUpgrade(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        this.eae_$upgrades.writeToNBT(tag, "upgrades", registries);
-    }
-
-    @Inject(
-            method = "readFromNBT",
-            at = @At("TAIL")
-    )
-    private void eae_$loadUpgrade(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        this.eae_$upgrades.readFromNBT(tag, "upgrades", registries);
-    }
-
-    @Inject(
-            method = "addDrops",
-            at = @At("TAIL")
-    )
-    private void eae_$dropUpgrade(List<ItemStack> drops, CallbackInfo ci) {
-        for (var is : this.eae_$upgrades) if (!is.isEmpty()) drops.add(is);
-    }
-
-    @Inject(
-            method = "clearContent",
-            at = @At("TAIL")
-    )
-    private void eae_$clearUpgrade(CallbackInfo ci) {
-        this.eae_$upgrades.clear();
     }
 
     @Inject(

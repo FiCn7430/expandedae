@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.helper;
+package lu.kolja.expandedae.helper.pattern;
 
 import appeng.api.AECapabilities;
 import appeng.api.behaviors.ExternalStorageStrategy;
@@ -9,57 +9,60 @@ import appeng.api.stacks.AEKeyType;
 import appeng.api.storage.MEStorage;
 import appeng.me.storage.CompositeStorage;
 import appeng.parts.automation.StackWorldBehaviors;
-import com.google.common.util.concurrent.Runnables;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public interface PatternProviderTarget {
-    @javax.annotation.Nullable
-    static PatternProviderTarget get(Level l, BlockPos pos, @Nullable BlockEntity be, Direction side, IActionSource src) {
-        MEStorage storage;
-        if (be != null) {
-            storage = l.getCapability(AECapabilities.ME_STORAGE, be.getBlockPos(), be.getBlockState(), be, side);
-        } else {
-            storage = l.getCapability(AECapabilities.ME_STORAGE, pos, side);
-        }
+public class PatternProviderTargetCache {
+    private final BlockCapabilityCache<MEStorage, Direction> cache;
+    private final IActionSource src;
+    private final Map<AEKeyType, ExternalStorageStrategy> strategies;
 
-        if (storage != null) {
-            return wrapMeStorage(storage, src);
-        } else {
-            Map<AEKeyType, ExternalStorageStrategy> strategies = StackWorldBehaviors.createExternalStorageStrategies((ServerLevel)l, pos, side);
-            IdentityHashMap<AEKeyType, MEStorage> externalStorages = new IdentityHashMap<>(2);
+    public PatternProviderTargetCache(ServerLevel l, BlockPos pos, Direction direction, IActionSource src) {
+        this.cache = BlockCapabilityCache.create(AECapabilities.ME_STORAGE, l, pos, direction);
+        this.src = src;
+        this.strategies = StackWorldBehaviors.createExternalStorageStrategies(l, pos, direction);
+    }
 
-            for(Map.Entry<AEKeyType, ExternalStorageStrategy> entry : strategies.entrySet()) {
-                MEStorage wrapper = entry.getValue().createWrapper(false, Runnables.doNothing());
+    @Nullable
+    public PatternProviderTarget find() {
+        MEStorage meStorage = this.cache.getCapability();
+        if (meStorage != null) {
+            return this.wrapMeStorage(meStorage);
+        } else {
+            IdentityHashMap<AEKeyType, MEStorage> externalStorages = new IdentityHashMap(2);
+
+            for(Map.Entry<AEKeyType, ExternalStorageStrategy> entry : this.strategies.entrySet()) {
+                MEStorage wrapper = entry.getValue().createWrapper(false, () -> {
+                });
                 if (wrapper != null) {
                     externalStorages.put(entry.getKey(), wrapper);
                 }
             }
 
             if (!externalStorages.isEmpty()) {
-                return wrapMeStorage(new CompositeStorage(externalStorages), src);
+                return this.wrapMeStorage(new CompositeStorage(externalStorages));
             } else {
                 return null;
             }
         }
     }
 
-    private static PatternProviderTarget wrapMeStorage(final MEStorage storage, final IActionSource src) {
+    private PatternProviderTarget wrapMeStorage(final MEStorage storage) {
         return new PatternProviderTarget() {
             public long insert(AEKey what, long amount, Actionable type) {
-                return storage.insert(what, amount, type, src);
+                return storage.insert(what, amount, type, PatternProviderTargetCache.this.src);
             }
 
             public boolean containsPatternInput(Set<AEKey> patternInputs) {
-                for (var stack : storage.getAvailableStacks()) {
+                for(Object2LongMap.Entry<AEKey> stack : storage.getAvailableStacks()) {
                     if (patternInputs.contains(stack.getKey().dropSecondary())) {
                         return true;
                     }
@@ -81,12 +84,4 @@ public interface PatternProviderTarget {
             }
         };
     }
-
-    long insert(AEKey var1, long var2, Actionable var4);
-
-    boolean containsPatternInput(Set<AEKey> var1);
-
-    boolean onlyHasPatternInput(Set<AEKey> var1);
-
-    MEStorage getStorage();
 }

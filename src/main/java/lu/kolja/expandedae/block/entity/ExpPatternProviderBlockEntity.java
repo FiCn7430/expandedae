@@ -18,13 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ExpPatternProviderBlockEntity extends PatternProviderBlockEntity implements IUpgradeableObject {
-
-    private IUpgradeInventory inv;
+public class ExpPatternProviderBlockEntity extends PatternProviderBlockEntity {
 
     public ExpPatternProviderBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
         super(blockEntityType, pos, blockState);
-        inv = UpgradeInventories.forMachine(ExpBlocks.EXP_PATTERN_PROVIDER, 4, this::saveChanges);
     }
 
     @Override
