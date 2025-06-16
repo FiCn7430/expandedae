@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-import static appeng.core.definitions.AEBlocks.PATTERN_PROVIDER;
 import static appeng.core.definitions.AEItems.*;
-import static lu.kolja.expandedae.definition.ExpBlocks.EXP_PATTERN_PROVIDER;
+import static appeng.core.definitions.AEParts.*;
+import static lu.kolja.expandedae.definition.ExpBlocks.*;
 import static lu.kolja.expandedae.definition.ExpItems.*;
 import static net.minecraft.data.recipes.RecipeCategory.MISC;
 
@@ -74,7 +74,7 @@ public class ExpRecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder.shaped(MISC, EXP_ENCODING_TERMINAL)
                 .pattern("TC")
                 .pattern("L ")
-                .define('T', EXP_ENCODING_TERMINAL)
+                .define('T', PATTERN_ENCODING_TERMINAL)
                 .define('C', CALCULATION_PROCESSOR)
                 .define('L', LOGIC_PROCESSOR)
                 .unlockedBy("has_calculation_processor", has(CALCULATION_PROCESSOR))
