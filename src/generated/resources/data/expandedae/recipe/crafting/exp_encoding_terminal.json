@@ -9,7 +9,7 @@
       "item": "ae2:logic_processor"
     },
     "T": {
-      "item": "expandedae:exp_encoding_terminal"
+      "item": "ae2:pattern_encoding_terminal"
     }
   },
   "pattern": [
