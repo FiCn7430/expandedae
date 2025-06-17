@@ -1,9 +1,9 @@
 ---
 navigation:
-parent: expandedae-index.md
-title: Upgrade Cards
-icon: auto_complete_card
-position: 5
+  parent: expandedae-index.md
+  title: Upgrade Cards
+  icon: auto_complete_card
+  position: 5
 categories:
   - expandedae
 item_ids:

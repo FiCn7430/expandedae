@@ -12,6 +12,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.88'
+    id 'io.freefair.lombok' version '8.13.1'
 }
 
 
@@ -145,7 +146,12 @@ dependencies {
     runtimeOnly "curse.maven:geckolib-388172:6304958"
     implementation "curse.maven:mega-cells-622112:6517566"
     runtimeOnly "curse.maven:cloth-config-348521:5729127"
+    //Cell implementations
+    //compileOnly "curse.maven:ars-energistique-905641:6203425"
+    //implementation "curse.maven:applied-experienced-1157608:6616730"
+    //implementation "curse.maven:applied-mekanistics-574300:5978711"
 
+    //play testing
     runtimeOnly "curse.maven:soulplied-energistics-1143614:6083831"
     runtimeOnly "curse.maven:industrial-foregoing-souls-904394:6235883"
     runtimeOnly "curse.maven:titanium-287342:6443608"

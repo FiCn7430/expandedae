@@ -1,9 +1,9 @@
 ---
 navigation:
-parent: expandedae-index.md
-title: QoL Features
-icon: expandedae:exp_pattern_provider
-position: 10
+  parent: expandedae-index.md
+  title: QoL Features
+  icon: expandedae:exp_pattern_provider
+  position: 10
 categories:
   - expandedae
 ---

@@ -6,7 +6,8 @@ import appeng.core.definitions.AEParts;
 import de.mari_023.ae2wtlib.AE2wtlibItems;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-import static lu.kolja.expandedae.definition.ExpItems.*;
+import static lu.kolja.expandedae.definition.ExpItems.AUTO_COMPLETE_CARD;
+import static lu.kolja.expandedae.definition.ExpItems.PATTERN_REFILLER_CARD;
 
 public class ExpUpgrades {
 

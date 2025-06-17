@@ -13,8 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 
 import static appeng.core.definitions.AEItems.*;
-import static appeng.core.definitions.AEParts.*;
-import static lu.kolja.expandedae.definition.ExpBlocks.*;
+import static appeng.core.definitions.AEParts.PATTERN_ENCODING_TERMINAL;
+import static appeng.core.definitions.AEParts.PATTERN_PROVIDER;
+import static lu.kolja.expandedae.definition.ExpBlocks.EXP_PATTERN_PROVIDER;
 import static lu.kolja.expandedae.definition.ExpItems.*;
 import static net.minecraft.data.recipes.RecipeCategory.MISC;
 

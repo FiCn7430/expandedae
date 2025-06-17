@@ -1,7 +1,6 @@
 package lu.kolja.expandedae.block;
 
 import appeng.api.networking.IManagedGridNode;
-import appeng.api.upgrades.IUpgradeableObject;
 import appeng.block.AEBaseBlock;
 import appeng.block.AEBaseEntityBlock;
 import appeng.block.crafting.PatternProviderBlock;

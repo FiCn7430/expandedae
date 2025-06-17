@@ -1,28 +1,34 @@
 package lu.kolja.expandedae;
 
 import appeng.api.AECapabilities;
-import appeng.api.implementations.items.IAEItemPowerStorage;
+import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.api.parts.RegisterPartCapabilitiesEvent;
-import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
+import appeng.api.storage.StorageCells;
+import appeng.api.storage.cells.ICellHandler;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
+import appeng.menu.me.common.MEStorageMenu;
 import com.mojang.logging.LogUtils;
-import gripe._90.megacells.definition.MEGABlockEntities;
-import gripe._90.megacells.definition.MEGAItems;
-import gripe._90.megacells.item.part.CellDockPart;
-import gripe._90.megacells.item.part.MEGAInterfacePart;
-import gripe._90.megacells.item.part.MEGAPatternProviderPart;
+import lu.kolja.expandedae.cellhandler.ArtUniverseCellDataStore;
+import lu.kolja.expandedae.cellhandler.ArtUniverseCellHandler;
 import lu.kolja.expandedae.definition.*;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
 import lu.kolja.expandedae.xmod.XMod;
 import lu.kolja.expandedae.xmod.ae2wtlib.WTLibIntegration;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -55,6 +61,7 @@ public class Expandedae {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        StorageCells.addCellHandler(ArtUniverseCellHandler.INSTANCE);
         new XMod();
         new ExpUpgrades(event);
     }

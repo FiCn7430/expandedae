@@ -1,9 +1,9 @@
 ---
 navigation:
-parent: expandedae-index.md
-title: Expanded Encoding Terminal
-icon: exp_encoding_terminal
-position: 10
+  parent: expandedae-index.md
+  title: Expanded Encoding Terminal
+  icon: exp_encoding_terminal
+  position: 7
 categories:
   - expandedae
 item_ids:
