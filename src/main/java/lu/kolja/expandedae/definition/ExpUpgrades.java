@@ -30,7 +30,7 @@ public class ExpUpgrades {
 
             Upgrades.add(STICKY_CARD, AEParts.STORAGE_BUS, 1, "group.storage_bus.name");
             */
-            Upgrades.add(PATTERN_REFILLER_CARD, AE2wtlibItems.PATTERN_ENCODING_TERMINAL, 1, "group.pattern_encoding_terminal.name");
+            Upgrades.add(PATTERN_REFILLER_CARD, ExpItems.WIRELESS_EXP_ENCODING_TERMINAL, 1, "group.wireless_exp_pattern_encoding_terminal.name");
             Upgrades.add(PATTERN_REFILLER_CARD, AE2wtlibItems.UNIVERSAL_TERMINAL, 1, "group.universal_terminal.name");
         });
     }

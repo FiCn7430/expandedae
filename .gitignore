@@ -13,3 +13,5 @@ jar
 /libs/ae2wtlib.jar
 # Temp until i fix them next update
 /src/main/resources/assets/expandedae/ae2guide/
+/scripting/
+.env
