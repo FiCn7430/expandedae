@@ -1,11 +1,11 @@
 package lu.kolja.expandedae;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber(modid = Expandedae.MODID, bus = EventBusSubscriber.Bus.MOD)
+//@EventBusSubscriber(modid = Expandedae.MODID, bus = EventBusSubscriber.Bus.MOD)
+// no config for now since the cell is unused
 public class ExpConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 

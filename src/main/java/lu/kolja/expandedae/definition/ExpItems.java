@@ -3,15 +3,12 @@ package lu.kolja.expandedae.definition;
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.PartModels;
-import appeng.api.stacks.AEKeyType;
 import appeng.core.definitions.ItemDefinition;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
-import lombok.val;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.item.cards.ItemAutoCompleteCard;
 import lu.kolja.expandedae.item.cards.ItemPatternRefillerCard;
-import lu.kolja.expandedae.item.cell.ArtUniverseCellItem;
 import lu.kolja.expandedae.item.misc.ExpPatternProviderUpgradeItem;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalPart;
@@ -94,15 +91,6 @@ public class ExpItems {
             ItemPatternRefillerCard::new
     );
 
-    public static final ItemDefinition<ArtUniverseCellItem> item = universeCell("Artificial Universe Item Cell",
-            p -> new ArtUniverseCellItem(AEKeyType.items()));
-    public static final ItemDefinition<ArtUniverseCellItem> fluid = universeCell("Artificial Universe Fluid Cell",
-            p -> new ArtUniverseCellItem(AEKeyType.fluids()));
-
-    public static <T extends Item> ItemDefinition<T> universeCell(String englishName, Function<Item.Properties, T> factory) {
-        var str = englishName.toLowerCase().replace(" ", "_");
-        return item(englishName, str, p -> factory.apply(p));
-    }
 
     public static List<ItemDefinition<?>> getItems() {
         return Collections.unmodifiableList(ITEMS);

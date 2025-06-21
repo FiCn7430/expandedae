@@ -1,10 +1,5 @@
 package lu.kolja.expandedae.xmod;
 
-import gripe._90.megacells.definition.MEGATranslations;
-import gripe._90.megacells.integration.appbot.AppBotIntegration;
-import gripe._90.megacells.integration.appex.AppExIntegration;
-import gripe._90.megacells.integration.appmek.AppMekIntegration;
-import gripe._90.megacells.integration.arseng.ArsEngIntegration;
 import lu.kolja.expandedae.xmod.advancedae.AdvancedAE;
 import lu.kolja.expandedae.xmod.appflux.AppFlux;
 import lu.kolja.expandedae.xmod.extendedae.ExtendedAE;
