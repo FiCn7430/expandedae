@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.item;
+package lu.kolja.expandedae.item.dummy;
 
 import appeng.items.AEBaseItem;
 import lu.kolja.expandedae.xmod.XMod;

@@ -4,8 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "lu.kolja.expandedae.mixin.MixinPlugin",
   "mixins": [
+    "accessor.AccessorBuiltInModelHooks",
     "compat.appflux.AppFluxMixinPatternProviderLogic",
     "compat.appflux.AppFluxMixinPatternProviderMenu",
+    "cpu.MixinCPUSelectionList",
+    "cpu.MixinCraftingCPUCluster",
     "misc.MixinSettings",
     "patternprovider.MixinPatternProviderLogic",
     "patternprovider.MixinPatternProviderLogicHost",
@@ -15,6 +18,8 @@
   ],
   "client": [
     "compat.appflux.AppFluxMixinPatternProviderScreen",
+    "cpu.MixinCraftConfirmScreen",
+    "cpu.MixinModelBakery",
     "misc.MixinSettingToggleButton",
     "patternprovider.MixinPatternProviderScreen"
   ],
