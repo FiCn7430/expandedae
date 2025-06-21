@@ -159,6 +159,8 @@ dependencies {
     runtimeOnly "curse.maven:mekanism-268560:6486993"
 
     runtimeOnly "curse.maven:enderdrives-1226739:6482292"
+
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
 }
 
@@ -207,4 +209,8 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
