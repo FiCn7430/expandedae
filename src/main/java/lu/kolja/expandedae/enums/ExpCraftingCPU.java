@@ -3,8 +3,8 @@ package lu.kolja.expandedae.enums;
 import appeng.block.crafting.ICraftingUnitType;
 import appeng.core.definitions.BlockDefinition;
 import lombok.Getter;
-import lu.kolja.expandedae.ExpConfig;
 import lu.kolja.expandedae.definition.ExpBlocks;
+import lu.kolja.expandedae.helper.misc.Maths;
 import net.minecraft.world.item.Item;
 
 import java.io.Serializable;
@@ -33,15 +33,12 @@ public enum ExpCraftingCPU implements ICraftingUnitType, Serializable {
 
     private final int threads;
 
+    public static final int maxThreads = Maths.pow(2, 20);
     @Getter
     private final String affix;
     ExpCraftingCPU(int threads, String affix) {
         this.threads = threads;
         this.affix = affix;
-    }
-
-    public boolean isEnabled() {
-        return ExpConfig.maxThreads >= threads;
     }
 
 

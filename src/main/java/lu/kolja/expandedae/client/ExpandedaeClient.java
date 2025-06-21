@@ -1,9 +1,13 @@
 package lu.kolja.expandedae.client;
 
 import appeng.client.gui.implementations.PatternProviderScreen;
+import appeng.client.render.crafting.CraftingCubeModel;
+import appeng.hooks.BuiltInModelHooks;
 import appeng.init.client.InitScreens;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.client.render.ExpCraftingUnitModelProvider;
 import lu.kolja.expandedae.definition.ExpMenus;
+import lu.kolja.expandedae.enums.ExpCraftingCPU;
 import lu.kolja.expandedae.menu.ExpPatternProviderMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalScreen;
@@ -16,7 +20,17 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 @Mod(value = Expandedae.MODID, dist = Dist.CLIENT)
 public class ExpandedaeClient {
     public ExpandedaeClient(IEventBus modEventBus) {
+        initCraftingUnitModels();
         modEventBus.addListener(ExpandedaeClient::initScreens);
+    }
+
+    private static void initCraftingUnitModels() {
+        for (var cpu : ExpCraftingCPU.values()) {
+            BuiltInModelHooks.addBuiltInModel(
+                    Expandedae.makeId("block/crafting/" + cpu.getAffix() + "_formed"),
+                    new CraftingCubeModel(new ExpCraftingUnitModelProvider(cpu))
+            );
+        }
     }
 
     private static void initScreens(RegisterMenuScreensEvent event) {

@@ -1,30 +1,29 @@
 package lu.kolja.expandedae.definition;
 
 import appeng.block.crafting.CraftingUnitBlock;
-import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.block.ExpPatternProviderBlockItem;
 import lu.kolja.expandedae.enums.ExpCraftingCPU;
-import lu.kolja.expandedae.item.dummy.DummyCPU;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 public class ExpBlocks {
     public static final DeferredRegister.Blocks DR = DeferredRegister.createBlocks(Expandedae.MODID);
-    private static final Map<ExpCraftingCPU,BlockDefinition<CraftingUnitBlock>> CPUS = new HashMap<>();
 
     public static final List<BlockDefinition<?>> BLOCKS = new ArrayList<>();
+
     public static final BlockDefinition<ExpPatternProviderBlock> EXP_PATTERN_PROVIDER = block(
             "Expanded Pattern Provider",
             "exp_pattern_provider",
@@ -136,41 +135,20 @@ public class ExpBlocks {
     public static BlockDefinition<CraftingUnitBlock> cpu(
             String englishName, String id, ExpCraftingCPU cpu
     ) {
-        var def = block(
-                englishName, id, true,
+        return block(
+                englishName, id,
                 () -> new CraftingUnitBlock(cpu),
-                (block, props) -> cpu.isEnabled()
-                        ? new ExpCPUItem(block, props)
-                        : new DummyCPU(block, props)
+                ExpCPUItem::new
         );
-        CPUS.put(cpu, def);
-        return def;
     }
 
     public static List<BlockDefinition<?>> getBlocks() {
         return Collections.unmodifiableList(BLOCKS);
     }
-    public static Map<ExpCraftingCPU,BlockDefinition<CraftingUnitBlock>> getCPUs() {
-        return Collections.unmodifiableMap(CPUS);
-    }
 
     private static <T extends Block> BlockDefinition<T> block(
             String englishName,
             String id,
-            Supplier<T> blockSupplier,
-            BiFunction<Block, Item.Properties, BlockItem> itemFactory) {
-        var block = DR.register(id, blockSupplier);
-        var item = ExpItems.DR.register(id, () -> itemFactory.apply(block.get(), new Item.Properties()));
-
-        var definition = new BlockDefinition<>(englishName, block, new ItemDefinition<>(englishName, item));
-        BLOCKS.add(definition);
-        return definition;
-    }
-
-    private static <T extends Block> BlockDefinition<T> block(
-            String englishName,
-            String id,
-            boolean addToTab,
             Supplier<T> blockSupplier,
             BiFunction<Block, Item.Properties, BlockItem> itemFactory) {
         var block = DR.register(id, blockSupplier);

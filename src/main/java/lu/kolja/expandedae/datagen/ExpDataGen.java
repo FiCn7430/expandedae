@@ -13,7 +13,7 @@ public class ExpDataGen {
         var gen = event.getGenerator();
 
         var output = gen.getPackOutput();
-        //gen.addProvider(event.includeClient(), new ExpLangProvider(output));
+        gen.addProvider(event.includeClient(), new ExpLangProvider(output));
 
         var existing = event.getExistingFileHelper();
         gen.addProvider(event.includeClient(), new ExpModelProvider(output, existing));

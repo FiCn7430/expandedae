@@ -214,3 +214,5 @@ idea {
 tasks.withType(Copy).configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
+
+tasks.runClient.dependsOn(tasks.runData)

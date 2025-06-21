@@ -2,6 +2,7 @@ package lu.kolja.expandedae.definition;
 
 import appeng.block.AEBaseEntityBlock;
 import appeng.blockentity.AEBaseBlockEntity;
+import appeng.blockentity.crafting.CraftingBlockEntity;
 import appeng.core.definitions.BlockDefinition;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.entity.ExpPatternProviderBlockEntity;
@@ -28,6 +29,32 @@ public class ExpBlockEntities {
             ExpPatternProviderBlockEntity.class,
             ExpPatternProviderBlockEntity::new,
             ExpBlocks.EXP_PATTERN_PROVIDER);
+
+    public static final Supplier<BlockEntityType<CraftingBlockEntity>> EXP_CPUS = create(
+            "exp_cpus",
+            CraftingBlockEntity.class,
+            CraftingBlockEntity::new,
+            ExpBlocks.CPU_2,
+            ExpBlocks.CPU_4,
+            ExpBlocks.CPU_8,
+            ExpBlocks.CPU_16,
+            ExpBlocks.CPU_32,
+            ExpBlocks.CPU_64,
+            ExpBlocks.CPU_128,
+            ExpBlocks.CPU_256,
+            ExpBlocks.CPU_512,
+            ExpBlocks.CPU_1K,
+            ExpBlocks.CPU_2K,
+            ExpBlocks.CPU_4K,
+            ExpBlocks.CPU_8K,
+            ExpBlocks.CPU_16K,
+            ExpBlocks.CPU_32K,
+            ExpBlocks.CPU_64K,
+            ExpBlocks.CPU_128K,
+            ExpBlocks.CPU_256K,
+            ExpBlocks.CPU_512K,
+            ExpBlocks.CPU_1M
+    );
 
     public static Map<ResourceLocation, BlockEntityType<?>> getBlockEntityTypes() {
         return Collections.unmodifiableMap(BLOCK_ENTITY_TYPES);

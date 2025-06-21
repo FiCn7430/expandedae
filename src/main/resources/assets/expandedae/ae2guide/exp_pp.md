@@ -2,7 +2,7 @@
 navigation:
   parent: expandedae-index.md
   title: Expanded Pattern Provider
-  icon: expanded_pattern_provider
+  icon: exp_pattern_provider
   position: 0
 categories:
   - expandedae
