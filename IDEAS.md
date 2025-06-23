@@ -12,6 +12,8 @@ entro-like resource
 
 power armor
 
+exporting storage bus
+
 _would be game changing if you could make the memory card
 copy the settings to every machine that were connected,
 sort of like the SFM label gun. You'd copy the settings
