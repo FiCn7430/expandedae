@@ -34,6 +34,7 @@ public class ExpBlockEntities {
             "exp_cpus",
             CraftingBlockEntity.class,
             CraftingBlockEntity::new,
+            ExpBlocks.UNIT,
             ExpBlocks.CPU_2,
             ExpBlocks.CPU_4,
             ExpBlocks.CPU_8,

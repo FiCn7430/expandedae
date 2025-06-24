@@ -1,6 +1,11 @@
 package lu.kolja.expandedae.datagen;
 
+import appeng.api.util.AEColor;
+import gripe._90.megacells.definition.MEGABlocks;
+import gripe._90.megacells.definition.MEGAItems;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.datagen.conditionals.ModNotLoadedCondition;
+import lu.kolja.expandedae.enums.ExpTiers;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -8,15 +13,21 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
+import static appeng.core.definitions.AEBlocks.CRAFTING_UNIT;
+import static appeng.core.definitions.AEBlocks.PATTERN_PROVIDER;
 import static appeng.core.definitions.AEItems.*;
 import static appeng.core.definitions.AEParts.PATTERN_ENCODING_TERMINAL;
-import static appeng.core.definitions.AEParts.PATTERN_PROVIDER;
+import static appeng.core.definitions.AEParts.SMART_DENSE_CABLE;
 import static lu.kolja.expandedae.definition.ExpBlocks.EXP_PATTERN_PROVIDER;
+import static lu.kolja.expandedae.definition.ExpBlocks.UNIT;
 import static lu.kolja.expandedae.definition.ExpItems.*;
+import static lu.kolja.expandedae.enums.ExpTiers.*;
 import static net.minecraft.data.recipes.RecipeCategory.MISC;
 
 public class ExpRecipeProvider extends RecipeProvider {
@@ -82,9 +93,79 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_logic_processor", has(LOGIC_PROCESSOR))
                 .save(out, craftingId("exp_encoding_terminal"));
 
+        ShapedRecipeBuilder.shaped(MISC, UNIT)
+                .pattern("UPU")
+                .pattern("CLC")
+                .pattern("UPU")
+                .define('U', CRAFTING_UNIT)
+                .define('P', ENGINEERING_PROCESSOR)
+                .define('C', SMART_DENSE_CABLE.item(AEColor.TRANSPARENT))
+                .define('L', LOGIC_PROCESSOR)
+                .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
+                .unlockedBy("has_logic_processor", has(LOGIC_PROCESSOR))
+                .save(conditional(out, notLoaded("megacells")), craftingId("exp_crafting_unit_ae"));
+
+        ShapedRecipeBuilder.shaped(MISC, UNIT)
+                .pattern("UPU")
+                .pattern("CLC")
+                .pattern("UPU")
+                .define('U', MEGABlocks.MEGA_CRAFTING_UNIT)
+                .define('P', ENGINEERING_PROCESSOR)
+                .define('C', SMART_DENSE_CABLE.item(AEColor.TRANSPARENT))
+                .define('L', MEGAItems.ACCUMULATION_PROCESSOR)
+                .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
+                .unlockedBy("has_logic_processor", has(MEGAItems.ACCUMULATION_PROCESSOR))
+                .save(conditional(out, loaded("megacells")), craftingId("exp_crafting_unit_mega"));
+
+        ShapelessRecipeBuilder.shapeless(MISC, TIER_2.getDefinition())
+                .requires(UNIT)
+                .requires(ENGINEERING_PROCESSOR)
+                .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
+                .save(out, craftingId("exp_crafting_accelerator_2"));
+
+        upgrade(out, TIER_2, TIER_4);
+        upgrade(out, TIER_4, TIER_8);
+        upgrade(out, TIER_8, TIER_16);
+        upgrade(out, TIER_16, TIER_32);
+        upgrade(out, TIER_32, TIER_64);
+        upgrade(out, TIER_64, TIER_128);
+        upgrade(out, TIER_128, TIER_256);
+        upgrade(out, TIER_256, TIER_512);
+        upgrade(out, TIER_512, TIER_1K);
+        upgrade(out, TIER_1K, TIER_2K);
+        upgrade(out, TIER_2K, TIER_4K);
+        upgrade(out, TIER_4K, TIER_8K);
+        upgrade(out, TIER_8K, TIER_16K);
+        upgrade(out, TIER_16K, TIER_32K);
+        upgrade(out, TIER_32K, TIER_64K);
+        upgrade(out, TIER_64K, TIER_128K);
+        upgrade(out, TIER_128K, TIER_256K);
+        upgrade(out, TIER_256K, TIER_512K);
+        upgrade(out, TIER_512K, TIER_1M);
     }
 
     private ResourceLocation craftingId(String name) {
         return Expandedae.makeId("crafting/" + name);
+    }
+
+    private void upgrade(RecipeOutput out, ExpTiers previousTier, ExpTiers tier) {
+        ShapedRecipeBuilder.shaped(MISC, tier.getDefinition())
+                .pattern("PC")
+                .pattern("C ")
+                .define('P', CALCULATION_PROCESSOR)
+                .define('C', previousTier.getDefinition()) //TODO: USE OWN PROCESSOR TYPE
+                .unlockedBy("has_calculation_processor", has(CALCULATION_PROCESSOR))
+                .save(out, craftingId("exp_crafting_accelerator_upgrade_" + tier.getAffix()));
+    }
+
+    private static RecipeOutput conditional(RecipeOutput output, ICondition... condition) {
+        return output.withConditions(condition);
+    }
+
+    private static ICondition loaded(String mod) {
+        return new ModLoadedCondition(mod);
+    }
+    private static ICondition notLoaded(String mod) {
+        return new ModNotLoadedCondition(mod);
     }
 }

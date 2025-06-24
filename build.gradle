@@ -162,6 +162,7 @@ dependencies {
 
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
+    runtimeOnly "curse.maven:jade-324717:6667790"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -215,4 +216,4 @@ tasks.withType(Copy).configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-tasks.runClient.dependsOn(tasks.runData)
+//tasks.runClient.dependsOn(tasks.runData)

@@ -1,7 +1,7 @@
 package lu.kolja.expandedae.item.dummy;
 
 import appeng.items.AEBaseItem;
-import lu.kolja.expandedae.xmod.XMod;
+import lu.kolja.expandedae.enums.ADDONS;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -12,9 +12,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class DummyIntegrationItem extends AEBaseItem {
-    private final XMod.ADDONS addon;
+    private final ADDONS addon;
 
-    public DummyIntegrationItem(Item.Properties properties, XMod.ADDONS addon) {
+    public DummyIntegrationItem(Item.Properties properties, ADDONS addon) {
         super(properties);
         this.addon = addon;
     }

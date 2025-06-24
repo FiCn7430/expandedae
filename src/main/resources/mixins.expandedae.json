@@ -5,6 +5,7 @@
   "plugin": "lu.kolja.expandedae.mixin.MixinPlugin",
   "mixins": [
     "accessor.AccessorBuiltInModelHooks",
+    "accessor.AccessorPatternEncodingTermMenu",
     "compat.appflux.AppFluxMixinPatternProviderLogic",
     "compat.appflux.AppFluxMixinPatternProviderMenu",
     "cpu.MixinCPUSelectionList",
@@ -13,7 +14,6 @@
     "patternprovider.MixinPatternProviderLogic",
     "patternprovider.MixinPatternProviderLogicHost",
     "patternprovider.MixinPatternProviderMenu",
-    "terminal.MixinPatternEncodingTerminalMenu",
     "terminal.MixinProcessingEncodingPanel"
   ],
   "client": [

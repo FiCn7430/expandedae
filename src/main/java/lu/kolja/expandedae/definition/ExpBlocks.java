@@ -1,12 +1,14 @@
 package lu.kolja.expandedae.definition;
 
+import appeng.block.AEBaseBlockItem;
 import appeng.block.crafting.CraftingUnitBlock;
+import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.block.ExpPatternProviderBlockItem;
-import lu.kolja.expandedae.enums.ExpCraftingCPU;
+import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -31,114 +33,121 @@ public class ExpBlocks {
             ExpPatternProviderBlockItem::new
     );
 
+    public static BlockDefinition<CraftingUnitBlock> UNIT = block(
+            "Expanded Crafting Unit",
+            "exp_crafting_unit",
+            () -> new CraftingUnitBlock(ExpTiers.UNIT),
+            AEBaseBlockItem::new
+    );
+
     public static BlockDefinition<CraftingUnitBlock> CPU_2 = cpu(
             "2x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_2",
-            ExpCraftingCPU.THREADS_2
+            ExpTiers.TIER_2
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_4 = cpu(
             "4x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_4",
-            ExpCraftingCPU.THREADS_4
+            ExpTiers.TIER_4
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_8 = cpu(
             "8x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_8",
-            ExpCraftingCPU.THREADS_8
+            ExpTiers.TIER_8
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_16 = cpu(
             "16x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_16",
-            ExpCraftingCPU.THREADS_16
+            ExpTiers.TIER_16
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_32 = cpu(
             "32x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_32",
-            ExpCraftingCPU.THREADS_32
+            ExpTiers.TIER_32
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_64 = cpu(
             "64x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_64",
-            ExpCraftingCPU.THREADS_64
+            ExpTiers.TIER_64
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_128 = cpu(
             "128x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_128",
-            ExpCraftingCPU.THREADS_128
+            ExpTiers.TIER_128
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_256 = cpu(
             "256x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_256",
-            ExpCraftingCPU.THREADS_256
+            ExpTiers.TIER_256
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_512 = cpu(
             "512x Crafting Co-Processing Unit",
             "exp_crafting_accelerator_512",
-            ExpCraftingCPU.THREADS_512
+            ExpTiers.TIER_512
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_1K = cpu(
             "1K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_1k",
-            ExpCraftingCPU.THREADS_1K
+            ExpTiers.TIER_1K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_2K = cpu(
             "2K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_2k",
-            ExpCraftingCPU.THREADS_2K
+            ExpTiers.TIER_2K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_4K = cpu(
             "4K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_4k",
-            ExpCraftingCPU.THREADS_4K
+            ExpTiers.TIER_4K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_8K = cpu(
             "8K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_8k",
-            ExpCraftingCPU.THREADS_8K
+            ExpTiers.TIER_8K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_16K = cpu(
             "16K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_16k",
-            ExpCraftingCPU.THREADS_16K
+            ExpTiers.TIER_16K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_32K = cpu(
             "32K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_32k",
-            ExpCraftingCPU.THREADS_32K
+            ExpTiers.TIER_32K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_64K = cpu(
             "64K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_64k",
-            ExpCraftingCPU.THREADS_64K
+            ExpTiers.TIER_64K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_128K = cpu(
             "128K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_128k",
-            ExpCraftingCPU.THREADS_128K
+            ExpTiers.TIER_128K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_256K = cpu(
             "256K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_256k",
-            ExpCraftingCPU.THREADS_256K
+            ExpTiers.TIER_256K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_512K = cpu(
             "512K Crafting Co-Processing Unit",
             "exp_crafting_accelerator_512k",
-            ExpCraftingCPU.THREADS_512K
+            ExpTiers.TIER_512K
     );
     public static BlockDefinition<CraftingUnitBlock> CPU_1M = cpu(
             "1M Crafting Co-Processing Unit",
             "exp_crafting_accelerator_1m",
-            ExpCraftingCPU.THREADS_1M
+            ExpTiers.TIER_1M
     );
 
     public static BlockDefinition<CraftingUnitBlock> cpu(
-            String englishName, String id, ExpCraftingCPU cpu
+            String englishName, String id, ExpTiers cpu
     ) {
         return block(
                 englishName, id,
                 () -> new CraftingUnitBlock(cpu),
-                ExpCPUItem::new
+                (a, b) -> new ExpCPUItem(a, b, AEItems.ADVANCED_CARD) //TODO: FIX ITEM SYSTEM
         );
     }
 

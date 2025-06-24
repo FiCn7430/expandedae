@@ -5,7 +5,6 @@ import appeng.client.gui.me.items.EncodingModePanel;
 import appeng.client.gui.me.items.PatternEncodingTermScreen;
 import appeng.client.gui.me.items.ProcessingEncodingPanel;
 import lu.kolja.expandedae.client.gui.widgets.ModifyIconButton;
-import lu.kolja.expandedae.helper.pattern.IPatternEncodingTerminalMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,29 +40,29 @@ public abstract class MixinProcessingEncodingPanel extends EncodingModePanel {
 
     @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     private void init(PatternEncodingTermScreen<?> screen, WidgetContainer widgets, CallbackInfo ci) {
-        if (!(this.menu instanceof ExpEncodingTerminalMenu)) return;
+        if (!(this.menu instanceof ExpEncodingTerminalMenu expMenu)) return;
 
-        eae$x2 = new ModifyIconButton(b -> ((IPatternEncodingTerminalMenu) menu).eae$ModifyPattern(2),
+        eae$x2 = new ModifyIconButton(b -> expMenu.modifyPattern(2),
                 MULTIPLY_2,
-                    Component.translatable("gui.expandedae.buttons.pattern.mult", 2),
+                Component.translatable("gui.expandedae.buttons.pattern.mult", 2),
                 Component.translatable("gui.expandedae.buttons.tooltips.pattern.mult", 2));
-        eae$x3 = new ModifyIconButton(b -> ((IPatternEncodingTerminalMenu) menu).eae$ModifyPattern(3),
+        eae$x3 = new ModifyIconButton(b -> expMenu.modifyPattern(3),
                 MULTIPLY_3,
                 Component.translatable("gui.expandedae.buttons.pattern.mult", 3),
                 Component.translatable("gui.expandedae.buttons.tooltips.pattern.mult", 3));
-        eae$x8 = new ModifyIconButton(b -> ((IPatternEncodingTerminalMenu) menu).eae$ModifyPattern(8),
+        eae$x8 = new ModifyIconButton(b -> expMenu.modifyPattern(8),
                 MULTIPLY_8,
                 Component.translatable("gui.expandedae.buttons.pattern.mult", 8),
                 Component.translatable("gui.expandedae.buttons.tooltips.pattern.mult", 8));
-        eae$div2 = new ModifyIconButton(b -> ((IPatternEncodingTerminalMenu) menu).eae$ModifyPattern(-2),
+        eae$div2 = new ModifyIconButton(b -> expMenu.modifyPattern(-2),
                 DIVISION_2,
                 Component.translatable("gui.expandedae.buttons.pattern.div", 2),
                 Component.translatable("gui.expandedae.buttons.tooltips.pattern.div", 2));
-        eae$div3 = new ModifyIconButton(b -> ((IPatternEncodingTerminalMenu) menu).eae$ModifyPattern(-3),
+        eae$div3 = new ModifyIconButton(b -> expMenu.modifyPattern(-3),
                 DIVISION_3,
                 Component.translatable("gui.expandedae.buttons.pattern.div", 3),
                 Component.translatable("gui.expandedae.buttons.tooltips.pattern.div", 3));
-        eae$div8 = new ModifyIconButton(b -> ((IPatternEncodingTerminalMenu) menu).eae$ModifyPattern(-8),
+        eae$div8 = new ModifyIconButton(b -> expMenu.modifyPattern(-8),
                 DIVISION_8,
                 Component.translatable("gui.expandedae.buttons.pattern.div", 8),
                 Component.translatable("gui.expandedae.buttons.tooltips.pattern.div", 8));

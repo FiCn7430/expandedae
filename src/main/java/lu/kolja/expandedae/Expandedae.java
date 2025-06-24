@@ -33,6 +33,7 @@ public class Expandedae {
         ExpBlockEntities.DR.register(modEventBus);
         ExpMenus.DR.register(modEventBus);
         ExpCreativeTab.DR.register(modEventBus);
+        ExpCodecs.CONDITIONAL_CODECS.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::initCapabilities);
         modEventBus.addListener(this::initPartCapabilities);

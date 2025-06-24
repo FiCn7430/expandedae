@@ -3,7 +3,7 @@ package lu.kolja.expandedae.datagen;
 import appeng.block.crafting.AbstractCraftingUnitBlock;
 import appeng.datagen.providers.models.AE2BlockStateProvider;
 import lu.kolja.expandedae.Expandedae;
-import lu.kolja.expandedae.enums.ExpCraftingCPU;
+import lu.kolja.expandedae.enums.ExpTiers;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -24,9 +24,9 @@ public class ExpModelProvider extends AE2BlockStateProvider {
         basicItem(EXP_PATTERN_PROVIDER_UPGRADE);
         basicItem(WIRELESS_EXP_ENCODING_TERMINAL);
 
-        for (var cpu : ExpCraftingCPU.values()) {
-            var block = cpu.getDefinition().block();
-            var name = cpu.getAffix();
+        for (var tier : ExpTiers.values()) {
+            var block = tier.getDefinition().block();
+            var name = tier.isCPU() ? tier.getCpuAffix() : tier.getAffix();
             var model = models().cubeAll("block/crafting/" + name, Expandedae.makeId("block/crafting/" + name));
             getVariantBuilder(block)
                     .partialState()

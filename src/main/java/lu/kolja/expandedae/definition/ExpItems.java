@@ -91,7 +91,6 @@ public class ExpItems {
             ItemPatternRefillerCard::new
     );
 
-
     public static List<ItemDefinition<?>> getItems() {
         return Collections.unmodifiableList(ITEMS);
     }

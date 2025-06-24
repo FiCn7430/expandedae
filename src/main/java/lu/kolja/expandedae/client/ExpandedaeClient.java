@@ -7,7 +7,7 @@ import appeng.init.client.InitScreens;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.client.render.ExpCraftingUnitModelProvider;
 import lu.kolja.expandedae.definition.ExpMenus;
-import lu.kolja.expandedae.enums.ExpCraftingCPU;
+import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.menu.ExpPatternProviderMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalScreen;
@@ -25,10 +25,11 @@ public class ExpandedaeClient {
     }
 
     private static void initCraftingUnitModels() {
-        for (var cpu : ExpCraftingCPU.values()) {
+        for (var tier : ExpTiers.values()) {
+            var affix = tier.isCPU() ? tier.getCpuAffix() : tier.getAffix();
             BuiltInModelHooks.addBuiltInModel(
-                    Expandedae.makeId("block/crafting/" + cpu.getAffix() + "_formed"),
-                    new CraftingCubeModel(new ExpCraftingUnitModelProvider(cpu))
+                    Expandedae.makeId("block/crafting/" + affix + "_formed"),
+                    new CraftingCubeModel(new ExpCraftingUnitModelProvider(tier))
             );
         }
     }
