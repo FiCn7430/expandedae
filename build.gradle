@@ -159,6 +159,7 @@ dependencies {
     runtimeOnly "curse.maven:mekanism-268560:6486993"
 
     runtimeOnly "curse.maven:enderdrives-1226739:6482292"
+    implementation "curse.maven:bigger-ae2-1013772:6587078"
 
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"

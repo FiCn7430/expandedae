@@ -4,60 +4,60 @@ license = "${mod_license}"
 logoFile = "expandedae.png"
 
 [[mods]]
-modId = "expandedae"
-version = "2.0.1"
-displayName = "Expanded AE"
-authors = "Kolja"
-description = '''Only adds a bigger pattern provider, for now.'''
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
+description = "${mod_description}"
 
 [[mixins]]
-    config = "mixins.expandedae.json"
+config = "mixins.expandedae.json"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "neoforge"
 type = "REQUIRED"
 versionRange = "${neoforge_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "minecraft"
 type = "REQUIRED"
 versionRange = "[1.21.1]"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "ae2"
 type = "REQUIRED"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "extendedae"
 type = "OPTIONAL"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "megacells"
 type = "OPTIONAL"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "ae2wtlib_api"
 type = "REQUIRED"
 ordering = "BEFORE"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "architectury"
 type = "OPTIONAL"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.expandedae]]
+[[dependencies."${mod_id}"]]
 modId = "curios"
 type = "OPTIONAL"
 versionRange = "[9.0.0,)"
