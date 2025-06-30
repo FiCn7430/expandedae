@@ -5,6 +5,7 @@
   "plugin": "lu.kolja.expandedae.mixin.MixinPlugin",
   "mixins": [
     "accessor.AccessorBuiltInModelHooks",
+    "accessor.AccessorDriveBlockEntity",
     "accessor.AccessorPatternEncodingTermMenu",
     "compat.appflux.AppFluxMixinPatternProviderLogic",
     "compat.appflux.AppFluxMixinPatternProviderMenu",

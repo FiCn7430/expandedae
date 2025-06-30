@@ -6,6 +6,8 @@ import appeng.menu.AEBaseMenu;
 import appeng.menu.implementations.MenuTypeBuilder;
 import gripe._90.megacells.MEGACells;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.block.entity.ExpDriveBlockEntity;
+import lu.kolja.expandedae.menu.ExpDriveMenu;
 import lu.kolja.expandedae.menu.ExpPatternProviderMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
 import net.minecraft.core.registries.Registries;
@@ -38,6 +40,12 @@ public class ExpMenus {
             "exp_encoding_terminal",
             ExpEncodingTerminalMenu::new,
             IPatternTerminalMenuHost.class
+    );
+
+    public static final Supplier<MenuType<ExpDriveMenu>> EXP_DRIVE = create(
+            "exp_drive",
+            ExpDriveMenu::new,
+            ExpDriveBlockEntity.class
     );
     /*
     public static final Supplier<MenuType<ExpWETMenu>> EXP_WIRELESS_ENCODING_TERMINAL = create(

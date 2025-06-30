@@ -16,6 +16,7 @@ public enum ExpLang implements LocalizationEnum {
     TOOLTIP_UPGRADE("item.expandedae.upgrade.tooltip", "Upgrade %s"),
 
     GUI_EXP_PATTERN_PROVIDER("gui.expandedae.exp_pattern_provider", "Expanded Pattern Provider"),
+    GUI_EXP_DRIVE("gui.expandedae.exp_drive", "ME Expanded Drive"),
     GUI_FILTER_TERMINAL("gui.expandedae.filter_terminal", "Filter Terminal"),
     GUI_BLOCKING_MODE_ALL("gui.expandedae.blocking_mode.all", "Blocks if target contains anything"),
     GUI_BLOCKING_MODE_DEFAULT("gui.expandedae.blocking_mode.default", "Default blocking mode"),

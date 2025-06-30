@@ -6,8 +6,8 @@ import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
-import lu.kolja.expandedae.block.ExpPatternProviderBlock;
-import lu.kolja.expandedae.block.ExpPatternProviderBlockItem;
+import lu.kolja.expandedae.block.block.ExpDriveBlock;
+import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
 import net.minecraft.world.item.BlockItem;
@@ -27,10 +27,17 @@ public class ExpBlocks {
     public static final List<BlockDefinition<?>> BLOCKS = new ArrayList<>();
 
     public static final BlockDefinition<ExpPatternProviderBlock> EXP_PATTERN_PROVIDER = block(
-            "Expanded Pattern Provider",
+            "ME Expanded Pattern Provider",
             "exp_pattern_provider",
             ExpPatternProviderBlock::new,
-            ExpPatternProviderBlockItem::new
+            AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<ExpDriveBlock> EXP_DRIVE = block(
+            "ME Expanded Drive",
+            "exp_drive",
+            ExpDriveBlock::new,
+            AEBaseBlockItem::new
     );
 
     public static BlockDefinition<CraftingUnitBlock> UNIT = block(

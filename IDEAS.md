@@ -14,7 +14,6 @@ power armor
 
 maybe some form of particle acceleration to make gravastar parts or something
 
-_It would be game-changing if you could make the memory card
 exporting storage bus
 
 _would be game changing if you could make the memory card

@@ -6,7 +6,7 @@ import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.menu.ISubMenu;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuHostLocator;
-import lu.kolja.expandedae.block.ExpPatternProviderBlock;
+import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.definition.ExpBlocks;
 import lu.kolja.expandedae.definition.ExpMenus;
 import net.minecraft.core.BlockPos;

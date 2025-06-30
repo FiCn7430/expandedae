@@ -29,7 +29,6 @@ import lu.kolja.expandedae.enums.BlockingMode;
 import lu.kolja.expandedae.helper.pattern.IPatternProviderLogic;
 import lu.kolja.expandedae.helper.pattern.PatternProviderTarget;
 import lu.kolja.expandedae.helper.pattern.PatternProviderTargetCache;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,7 +50,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Mixin(value = PatternProviderLogic.class, remap = false)
+@Mixin(value = PatternProviderLogic.class, remap = true)
 public abstract class MixinPatternProviderLogic implements IUpgradeableObject, IPatternProviderLogic {
 
     @Unique
@@ -183,13 +182,15 @@ public abstract class MixinPatternProviderLogic implements IUpgradeableObject, I
                     var outputWhatId = outputs.what().getId();
                     if (whatId == outputWhatId) {
                         x.cancelJob();
+                        /*
+                        if (!Minecraft.getInstance().level.isClientSide) return;
                         var minecraft = Minecraft.getInstance();
                         if (AEConfig.instance().isNotifyForFinishedCraftingJobs()
                                 && !(minecraft.screen instanceof MEStorageScreen<?>)
                                 && minecraft.player != null && expandedae$hasNotificationEnablingItem(minecraft.player)) {
                             minecraft.getToasts().addToast(new FinishedJobToast(what, 1)); //set to 1 since the card doesn't support more
                         }
-                        return;
+                        */
                     }
                 }
             });

@@ -5,6 +5,7 @@ import appeng.blockentity.AEBaseBlockEntity;
 import appeng.blockentity.crafting.CraftingBlockEntity;
 import appeng.core.definitions.BlockDefinition;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.block.entity.ExpDriveBlockEntity;
 import lu.kolja.expandedae.block.entity.ExpPatternProviderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -28,7 +29,15 @@ public class ExpBlockEntities {
             "exp_pattern_provider",
             ExpPatternProviderBlockEntity.class,
             ExpPatternProviderBlockEntity::new,
-            ExpBlocks.EXP_PATTERN_PROVIDER);
+            ExpBlocks.EXP_PATTERN_PROVIDER
+    );
+
+    public static final Supplier<BlockEntityType<ExpDriveBlockEntity>> EXP_DRIVE = create(
+            "exp_drive",
+            ExpDriveBlockEntity.class,
+            ExpDriveBlockEntity::new,
+            ExpBlocks.EXP_DRIVE
+    );
 
     public static final Supplier<BlockEntityType<CraftingBlockEntity>> EXP_CPUS = create(
             "exp_cpus",

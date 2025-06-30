@@ -1,4 +1,4 @@
-package lu.kolja.expandedae.block;
+package lu.kolja.expandedae.block.block;
 
 import appeng.api.networking.IManagedGridNode;
 import appeng.block.AEBaseBlock;
@@ -10,6 +10,7 @@ import appeng.helpers.patternprovider.PatternProviderLogicHost;
 import appeng.menu.locator.MenuLocators;
 import appeng.util.InteractionUtil;
 import appeng.util.Platform;
+import lu.kolja.expandedae.block.ExpBlockBaseScreen;
 import lu.kolja.expandedae.block.entity.ExpPatternProviderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-public class ExpPatternProviderBlock extends AEBaseEntityBlock<ExpPatternProviderBlockEntity>  {
+public class ExpPatternProviderBlock extends ExpBlockBaseScreen<ExpPatternProviderBlockEntity> {
     private static final EnumProperty<PushDirection> PUSH_DIRECTION = PatternProviderBlock.PUSH_DIRECTION;
 
     public ExpPatternProviderBlock() {
@@ -36,6 +37,11 @@ public class ExpPatternProviderBlock extends AEBaseEntityBlock<ExpPatternProvide
 
     public static PatternProviderLogic createLogic(IManagedGridNode mainNode, PatternProviderLogicHost host) {
         return new PatternProviderLogic(mainNode, host, 72);
+    }
+
+    @Override
+    public void openScreen(ExpPatternProviderBlockEntity be, Player player) {
+        be.openMenu(player, MenuLocators.forBlockEntity(be));
     }
 
     @Override
@@ -61,18 +67,6 @@ public class ExpPatternProviderBlock extends AEBaseEntityBlock<ExpPatternProvide
             return ItemInteractionResult.sidedSuccess(level.isClientSide());
         } else {
             return super.useItemOn(heldItem, state, level, pos, player, hand, hit);
-        }
-    }
-    @Override
-    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        var be = this.getBlockEntity(level, pos);
-        if (be != null) {
-            if (!level.isClientSide()) {
-                be.openMenu(player, MenuLocators.forBlockEntity(be));
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide());
-        } else {
-            return InteractionResult.PASS;
         }
     }
 
