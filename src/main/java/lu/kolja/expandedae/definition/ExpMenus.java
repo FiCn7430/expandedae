@@ -4,7 +4,6 @@ import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
 import appeng.menu.AEBaseMenu;
 import appeng.menu.implementations.MenuTypeBuilder;
-import gripe._90.megacells.MEGACells;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.entity.ExpDriveBlockEntity;
 import lu.kolja.expandedae.menu.ExpDriveMenu;
@@ -56,11 +55,11 @@ public class ExpMenus {
     */
     private static <M extends AEBaseMenu, H> Supplier<MenuType<M>> create(
             String id, MenuTypeBuilder.MenuFactory<M, H> factory, Class<H> host) {
-        return DR.register(id, () -> MenuTypeBuilder.create(factory, host).buildUnregistered(MEGACells.makeId(id)));
+        return DR.register(id, () -> MenuTypeBuilder.create(factory, host).buildUnregistered(Expandedae.makeId(id)));
     }
 
     private static <M extends AEBaseMenu, H> Supplier<MenuType<M>> createTyped(
             String id, MenuTypeBuilder.TypedMenuFactory<M, H> factory, Class<H> host) {
-        return DR.register(id, () -> MenuTypeBuilder.create(factory, host).buildUnregistered(MEGACells.makeId(id)));
+        return DR.register(id, () -> MenuTypeBuilder.create(factory, host).buildUnregistered(Expandedae.makeId(id)));
     }
 }
