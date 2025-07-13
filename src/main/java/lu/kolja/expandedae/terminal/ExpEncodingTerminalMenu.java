@@ -11,10 +11,9 @@ import appeng.menu.me.items.PatternEncodingTermMenu;
 import appeng.util.ConfigInventory;
 import lu.kolja.expandedae.definition.ExpItems;
 import lu.kolja.expandedae.definition.ExpMenus;
+import lu.kolja.expandedae.helper.misc.KeybindUtil;
 import lu.kolja.expandedae.mixin.accessor.AccessorPatternEncodingTermMenu;
-import lu.kolja.expandedae.terminal.wtlib.ExpWETScreen;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import lu.kolja.expandedae.terminal.wtlib.ExpWETMenu;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +40,7 @@ public class ExpEncodingTerminalMenu extends PatternEncodingTermMenu {
         var blankPatternSlot = ((AccessorPatternEncodingTermMenu) this).getBlankPatternSlot();
 
         if (encodedPatternSlot.getItem() != ItemStack.EMPTY) {
-            if (AbstractContainerScreen.hasShiftDown()) {
+            if (KeybindUtil.isShiftDown()) {
                 if (player.getInventory().getFreeSlot() > 0) {
                     player.addItem(encodedPatternSlot.getItem());
                     encodedPatternSlot.set(ItemStack.EMPTY);
@@ -49,10 +48,8 @@ public class ExpEncodingTerminalMenu extends PatternEncodingTermMenu {
                 }
             }
         }
-
-        if (!(Minecraft.getInstance().screen instanceof ExpWETScreen wetScreen)) return;
-        var terminalItem = wetScreen.getHost().getItemStack();
-        if (terminalItem == null) return;
+        if (!(this instanceof ExpWETMenu wetMenu) || wetMenu.itemMenuHost == null) return;
+        var terminalItem = wetMenu.itemMenuHost.getItemStack();
 
         IUpgradeInventory inventory = ((IUpgradeableItem) terminalItem.getItem()).getUpgrades(terminalItem);
         if (!inventory.isInstalled(ExpItems.PATTERN_REFILLER_CARD)) return;
