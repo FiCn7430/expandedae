@@ -6,7 +6,6 @@ import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
-import lu.kolja.expandedae.block.block.ExpDriveBlock;
 import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
@@ -30,13 +29,6 @@ public class ExpBlocks {
             "ME Expanded Pattern Provider",
             "exp_pattern_provider",
             ExpPatternProviderBlock::new,
-            AEBaseBlockItem::new
-    );
-
-    public static final BlockDefinition<ExpDriveBlock> EXP_DRIVE = block(
-            "ME Expanded Drive",
-            "exp_drive",
-            ExpDriveBlock::new,
             AEBaseBlockItem::new
     );
 
