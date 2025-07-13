@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "expandedae:exp_crafting_accelerator_16"
+    },
+    {
+      "item": "expandedae:exp_crafting_accelerator_16"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "expandedae:exp_crafting_accelerator_32"
+  }
+}

@@ -149,13 +149,10 @@ public class ExpRecipeProvider extends RecipeProvider {
     }
 
     private void upgrade(RecipeOutput out, ExpTiers previousTier, ExpTiers tier) {
-        ShapedRecipeBuilder.shaped(MISC, tier.getDefinition())
-                .pattern("PC")
-                .pattern("C ")
-                .define('P', CALCULATION_PROCESSOR)
-                .define('C', previousTier.getDefinition()) //TODO: USE OWN PROCESSOR TYPE
+        ShapelessRecipeBuilder.shapeless(MISC, tier.getDefinition())
+                .requires(previousTier.getDefinition(), 2)
                 .unlockedBy("has_calculation_processor", has(CALCULATION_PROCESSOR))
-                .save(out, craftingId("exp_crafting_accelerator_upgrade_" + tier.getAffix()));
+                .save(out, craftingId(tier.getCpuAffix()));
     }
 
     private static RecipeOutput conditional(RecipeOutput output, ICondition... condition) {
