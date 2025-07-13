@@ -9,6 +9,7 @@ import lu.kolja.expandedae.client.render.ExpCraftingUnitModelProvider;
 import lu.kolja.expandedae.definition.ExpMenus;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.menu.ExpPatternProviderMenu;
+import lu.kolja.expandedae.screen.ExpIOPortScreen;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalMenu;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalScreen;
 import lu.kolja.expandedae.terminal.wtlib.ExpWETScreen;
@@ -46,6 +47,12 @@ public class ExpandedaeClient {
                 ExpMenus.EXP_ENCODING_TERMINAL.get(),
                 ExpEncodingTerminalScreen<ExpEncodingTerminalMenu>::new,
                 "/screens/terminals/exp_encoding_terminal.json"
+        );
+        InitScreens.register(
+                event,
+                ExpMenus.EXP_IO_PORT.get(),
+                ExpIOPortScreen::new,
+                "/screens/exp_io_port.json"
         );
         ExpWETScreen.register(event);
     }

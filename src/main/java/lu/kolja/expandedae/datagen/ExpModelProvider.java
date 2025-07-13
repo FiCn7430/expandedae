@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
+import static lu.kolja.expandedae.definition.ExpBlocks.EXP_IO_PORT;
 import static lu.kolja.expandedae.definition.ExpItems.*;
 
 public class ExpModelProvider extends AE2BlockStateProvider {
@@ -21,6 +22,7 @@ public class ExpModelProvider extends AE2BlockStateProvider {
     protected void registerStatesAndModels() {
         basicItem(PATTERN_REFILLER_CARD);
         basicItem(AUTO_COMPLETE_CARD);
+        basicItem(GREATER_ACCEL_CARD);
         basicItem(EXP_PATTERN_PROVIDER_UPGRADE);
         basicItem(WIRELESS_EXP_ENCODING_TERMINAL);
 

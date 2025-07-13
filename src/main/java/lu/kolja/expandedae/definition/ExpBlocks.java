@@ -6,6 +6,7 @@ import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.block.block.ExpIOPortBlock;
 import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
@@ -29,6 +30,13 @@ public class ExpBlocks {
             "ME Expanded Pattern Provider",
             "exp_pattern_provider",
             ExpPatternProviderBlock::new,
+            AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<ExpIOPortBlock> EXP_IO_PORT = block(
+            "ME Expanded IO Port",
+            "exp_io_port",
+            ExpIOPortBlock::new,
             AEBaseBlockItem::new
     );
 

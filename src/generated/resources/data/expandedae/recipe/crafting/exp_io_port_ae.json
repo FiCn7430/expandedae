@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "expandedae:not_loaded",
+      "modid": "extendedae"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "ae2:speed_card"
+    },
+    "I": {
+      "item": "ae2:io_port"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "AIA",
+    "AAA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "expandedae:exp_io_port"
+  }
+}

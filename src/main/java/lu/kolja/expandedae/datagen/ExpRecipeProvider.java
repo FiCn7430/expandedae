@@ -1,10 +1,13 @@
 package lu.kolja.expandedae.datagen;
 
 import appeng.api.util.AEColor;
+import appeng.core.definitions.AEBlocks;
+import com.glodblock.github.extendedae.common.EAESingletons;
 import gripe._90.megacells.definition.MEGABlocks;
 import gripe._90.megacells.definition.MEGAItems;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.datagen.conditionals.ModNotLoadedCondition;
+import lu.kolja.expandedae.definition.ExpBlocks;
 import lu.kolja.expandedae.enums.ExpTiers;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -92,6 +95,33 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_calculation_processor", has(CALCULATION_PROCESSOR))
                 .unlockedBy("has_logic_processor", has(LOGIC_PROCESSOR))
                 .save(out, craftingId("exp_encoding_terminal"));
+
+        ShapedRecipeBuilder.shaped(MISC, ExpBlocks.EXP_IO_PORT)
+                .pattern("AAA")
+                .pattern("AIA")
+                .pattern("AAA")
+                .define('A', SPEED_CARD)
+                .define('I', AEBlocks.IO_PORT)
+                .unlockedBy("has_speed_card", has(SPEED_CARD))
+                .save(conditional(out, notLoaded("extendedae")), craftingId("exp_io_port_ae"));
+
+        ShapedRecipeBuilder.shaped(MISC, ExpBlocks.EXP_IO_PORT)
+                .pattern("AAA")
+                .pattern("AIA")
+                .pattern("AAA")
+                .define('A', SPEED_CARD)
+                .define('I', EAESingletons.EX_IO_PORT)
+                .unlockedBy("has_speed_card", has(SPEED_CARD))
+                .save(conditional(out, loaded("extendedae")), craftingId("exp_io_port_ext"));
+
+        ShapedRecipeBuilder.shaped(MISC, GREATER_ACCEL_CARD)
+                .pattern("AA")
+                .pattern("AC")
+                .define('A', SPEED_CARD)
+                .define('C', CALCULATION_PROCESSOR)
+                .unlockedBy("has_speed_card", has(SPEED_CARD))
+                .unlockedBy("has_calculation_processor", has(CALCULATION_PROCESSOR))
+                .save(out, craftingId("greater_accel_card"));
 
         ShapedRecipeBuilder.shaped(MISC, UNIT)
                 .pattern("UPU")

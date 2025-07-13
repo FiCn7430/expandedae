@@ -4,16 +4,19 @@ import appeng.api.parts.IPart;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.PartModels;
 import appeng.core.definitions.ItemDefinition;
+import appeng.items.materials.UpgradeCardItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import lu.kolja.expandedae.Expandedae;
-import lu.kolja.expandedae.item.cards.ItemAutoCompleteCard;
-import lu.kolja.expandedae.item.cards.ItemPatternRefillerCard;
 import lu.kolja.expandedae.item.misc.ExpPatternProviderUpgradeItem;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalPart;
 import lu.kolja.expandedae.xmod.ae2wtlib.WTLibIntegration;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
@@ -49,46 +52,47 @@ public class ExpItems {
             ExpPatternProviderUpgradeItem::new
     );
 
-    public static final ItemDefinition<ItemAutoCompleteCard> AUTO_COMPLETE_CARD = item(
+    public static final ItemDefinition<UpgradeCardItem> AUTO_COMPLETE_CARD = item(
             "Auto Complete Card",
             "auto_complete_card",
-            ItemAutoCompleteCard::new
-    );
-    /*
-    public static final ItemDefinition<ItemAdvancedBlockingCard> ADVANCED_BLOCKING_CARD = item(
-            "Advanced Blocking Card",
-            "advanced_blocking_card",
-            ItemAdvancedBlockingCard::new
-    );
-
-    public static final ItemDefinition<ItemSmartBlockingCard> SMART_BLOCKING_CARD = item(
-            "Smart Blocking Card",
-            "smart_blocking_card",
-            ItemSmartBlockingCard::new
+            p -> new UpgradeCardItem(p) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag advancedTooltips) {
+                    tooltip.add(Component.translatable("item.expandedae.auto_complete_card.tooltip.1").withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.translatable("item.expandedae.auto_complete_card.tooltip.2").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+                    super.appendHoverText(stack, context, tooltip, advancedTooltips);
+                }
+            }
     );
 
-    public static final ItemDefinition<ItemStickyCard> STICKY_CARD = item(
-            "Sticky Card",
-            "sticky_card",
-            ItemStickyCard::new
+    public static final ItemDefinition<UpgradeCardItem> PATTERN_REFILLER_CARD = item(
+            "Pattern Refiller Card",
+            "pattern_refiller_card",
+            p -> new UpgradeCardItem(p) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag advancedTooltips) {
+                    tooltip.add(Component.translatable("item.expandedae.pattern_refiller_card.tooltip.1").withStyle(ChatFormatting.GRAY));
+                    super.appendHoverText(stack, context, tooltip, advancedTooltips);
+                }
+            }
     );
 
-    public static final ItemDefinition<ExtPatternProviderUpgradeItem> EXT_PATTERN_PROVIDER_UPGRADE = item(
-            "Extended Pattern Provider Upgrader",
-            "ext_pattern_provider_upgrader",
-            ExtPatternProviderUpgradeItem::new
+    public static final ItemDefinition<UpgradeCardItem> GREATER_ACCEL_CARD = item(
+            "Greater Acceleration Card",
+            "greater_accel_card",
+            p -> new UpgradeCardItem(p) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag advancedTooltips) {
+                    tooltip.add(Component.translatable("item.expandedae.greater_accel_card.tooltip.1").withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.translatable("item.expandedae.greater_accel_card.tooltip.2").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED));
+                    super.appendHoverText(stack, context, tooltip, advancedTooltips);
+                }
+            }
     );
-    */
 
     public static final ItemDefinition<Item> WIRELESS_EXP_ENCODING_TERMINAL = item("Wireless Expanded Pattern Encoding Terminal",
             "wireless_exp_encoding_terminal",
             p -> WTLibIntegration.TERMINAL
-    );
-
-    public static final ItemDefinition<ItemPatternRefillerCard> PATTERN_REFILLER_CARD = item(
-            "Pattern Refiller Card",
-            "pattern_refiller_card",
-            ItemPatternRefillerCard::new
     );
 
     public static List<ItemDefinition<?>> getItems() {
