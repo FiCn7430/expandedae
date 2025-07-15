@@ -3,10 +3,13 @@ package lu.kolja.expandedae.mixin.highlight;
 import appeng.api.stacks.AEKey;
 import appeng.client.gui.AEBaseScreen;
 import appeng.client.gui.me.crafting.AbstractTableRenderer;
+import appeng.client.gui.me.crafting.CraftingCPUScreen;
 import appeng.client.gui.me.crafting.CraftingStatusTableRenderer;
+import appeng.menu.me.crafting.CraftingCPUMenu;
 import appeng.menu.me.crafting.CraftingStatusEntry;
 import com.glodblock.github.extendedae.client.gui.GuiExPatternTerminal;
 import java.util.List;
+import lu.kolja.expandedae.helper.misc.ICraftingCPUMenu;
 import lu.kolja.expandedae.helper.misc.KeybindUtil;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,18 +25,19 @@ public abstract class MixinCraftingStatusTableRenderer extends AbstractTableRend
 
     @Inject(
             method = "getEntryStack(Lappeng/menu/me/crafting/CraftingStatusEntry;)Lappeng/api/stacks/AEKey;",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            cancellable = true
     )
     private void getEntryStack(CallbackInfoReturnable<AEKey> cir) {
-        GuiExPatternTerminal.PatternProviderInfo
-        var key = cir.getReturnValue().toTag();
-        key.putLong("pos", this.screen);
-        cir.setReturnValue(AEKey.fromTagGeneric(key));
+        var key = cir.getReturnValue();
+        var writtenKey = ((ICraftingCPUMenu) (((CraftingCPUScreen<? extends CraftingCPUMenu>) this.screen).getMenu())).expandedae$writeToKey(key);
+        cir.setReturnValue(writtenKey);
     }
 
     @Inject(
             method = "getEntryTooltip(Lappeng/menu/me/crafting/CraftingStatusEntry;)Ljava/util/List;",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            cancellable = true
     )
     private void getEntryTooltip(CraftingStatusEntry entry, CallbackInfoReturnable<List<Component>> cir) {
         if (!KeybindUtil.isShiftDown()) return;
