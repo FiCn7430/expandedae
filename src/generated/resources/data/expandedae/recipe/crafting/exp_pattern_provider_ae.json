@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "expandedae:not_loaded",
+      "modid": "extendedae"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {

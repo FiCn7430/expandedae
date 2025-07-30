@@ -49,7 +49,16 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .define('P', PATTERN_PROVIDER)
                 .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
                 .unlockedBy("has_pattern_provider", has(PATTERN_PROVIDER))
-                .save(out, craftingId("exp_pattern_provider"));
+                .save(conditional(out, notLoaded("extendedae")), craftingId("exp_pattern_provider_ae"));
+
+        ShapedRecipeBuilder.shaped(MISC, EXP_PATTERN_PROVIDER)
+                .pattern("EC")
+                .pattern("CE")
+                .define('E', EAESingletons.EX_PATTERN_PROVIDER)
+                .define('C', EAESingletons.CONCURRENT_PROCESSOR)
+                .unlockedBy("has_concurrent_processor", has(EAESingletons.CONCURRENT_PROCESSOR))
+                .save(conditional(out, loaded("extendedae")), craftingId("exp_pattern_provider_ext"));
+
         ShapelessRecipeBuilder.shapeless(MISC, EXP_PATTERN_PROVIDER)
                 .requires(EXP_PATTERN_PROVIDER_PART)
                 .unlockedBy("has_exp_pattern_provider_part", has(EXP_PATTERN_PROVIDER_PART))

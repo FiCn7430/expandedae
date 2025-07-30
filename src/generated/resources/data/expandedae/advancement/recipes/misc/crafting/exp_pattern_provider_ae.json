@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "expandedae:not_loaded",
+      "modid": "extendedae"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_engineering_processor": {
@@ -23,7 +29,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "expandedae:crafting/exp_pattern_provider"
+        "recipe": "expandedae:crafting/exp_pattern_provider_ae"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -37,7 +43,7 @@
   ],
   "rewards": {
     "recipes": [
-      "expandedae:crafting/exp_pattern_provider"
+      "expandedae:crafting/exp_pattern_provider_ae"
     ]
   }
 }
