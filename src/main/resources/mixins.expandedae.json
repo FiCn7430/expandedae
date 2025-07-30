@@ -9,6 +9,7 @@
     "accessor.AccessorPatternEncodingTermMenu",
     "compat.appflux.AppFluxMixinPatternProviderLogic",
     "compat.appflux.AppFluxMixinPatternProviderMenu",
+    "compat.jei.MixinJEIPlugin",
     "cpu.MixinCPUSelectionList",
     "cpu.MixinCraftingCPUCluster",
     "misc.MixinSettings",

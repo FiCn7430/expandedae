@@ -37,12 +37,14 @@ public class MixinPlugin implements IMixinConfigPlugin {
             new String[]{
                     "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderLogic",
                     "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderMenu",
-                    "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderScreen"
+                    "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderScreen",
+                    "lu.kolja.expandedae.mixin.compat.jei.MixinJEIPlugin"
             },
             new String[]{
                     "appflux",
                     "appflux",
-                    "appflux"
+                    "appflux",
+                    "ae2jeiintegration"
             }
     );
 

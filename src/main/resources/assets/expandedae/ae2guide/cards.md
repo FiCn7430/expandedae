@@ -18,4 +18,5 @@ it has pushed the pattern. _Note: Will break with crafting patterns, so be caref
 - Pattern Refiller Card: This card is an upgrade for the <ItemLink id="wireless_exp_encoding_terminal" /> 
 and the <ItemLink id="ae2wtlib:wireless_universal_terminal" /> that will automatically refill the blank pattern slot in the 
 Expanded Encoding Terminal 
+_Note: The card only tries to refill patterns each time the encode button is clicked, this was the most resource efficient solution_
 <ItemImage id="pattern_refiller_card" />
