@@ -1,21 +1,27 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "extendedae"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_capacity_card": {
+    "has_concurrent_processor": {
       "conditions": {
         "items": [
           {
-            "items": "ae2:capacity_card"
+            "items": "extendedae:concurrent_processor"
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_engineering_processor": {
+    "has_exp_pattern_provider": {
       "conditions": {
         "items": [
           {
-            "items": "ae2:engineering_processor"
+            "items": "extendedae:ex_pattern_provider"
           }
         ]
       },
@@ -23,7 +29,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "expandedae:crafting/exp_pattern_provider_upgrade"
+        "recipe": "expandedae:crafting/exp_pattern_provider_upgrade_ext"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -31,13 +37,13 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_engineering_processor",
-      "has_capacity_card"
+      "has_concurrent_processor",
+      "has_exp_pattern_provider"
     ]
   ],
   "rewards": {
     "recipes": [
-      "expandedae:crafting/exp_pattern_provider_upgrade"
+      "expandedae:crafting/exp_pattern_provider_upgrade_ext"
     ]
   }
 }

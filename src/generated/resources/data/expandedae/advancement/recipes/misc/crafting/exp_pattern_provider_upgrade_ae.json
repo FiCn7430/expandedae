@@ -7,11 +7,21 @@
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_speed_card": {
+    "has_capacity_card": {
       "conditions": {
         "items": [
           {
-            "items": "expandedae:greater_accel_card"
+            "items": "ae2:capacity_card"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_engineering_processor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ae2:engineering_processor"
           }
         ]
       },
@@ -19,7 +29,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "expandedae:crafting/exp_io_port_ae"
+        "recipe": "expandedae:crafting/exp_pattern_provider_upgrade_ae"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -27,12 +37,13 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_speed_card"
+      "has_engineering_processor",
+      "has_capacity_card"
     ]
   ],
   "rewards": {
     "recipes": [
-      "expandedae:crafting/exp_io_port_ae"
+      "expandedae:crafting/exp_pattern_provider_upgrade_ae"
     ]
   }
 }

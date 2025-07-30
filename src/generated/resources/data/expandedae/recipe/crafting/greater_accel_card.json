@@ -10,8 +10,9 @@
     }
   },
   "pattern": [
-    "AA",
-    "AC"
+    "AAA",
+    "ACA",
+    "AAA"
   ],
   "result": {
     "count": 1,

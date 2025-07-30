@@ -50,10 +50,9 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
                 .unlockedBy("has_pattern_provider", has(PATTERN_PROVIDER))
                 .save(conditional(out, notLoaded("extendedae")), craftingId("exp_pattern_provider_ae"));
-
         ShapedRecipeBuilder.shaped(MISC, EXP_PATTERN_PROVIDER)
-                .pattern("EC")
                 .pattern("CE")
+                .pattern("EC")
                 .define('E', EAESingletons.EX_PATTERN_PROVIDER)
                 .define('C', EAESingletons.CONCURRENT_PROCESSOR)
                 .unlockedBy("has_concurrent_processor", has(EAESingletons.CONCURRENT_PROCESSOR))
@@ -76,7 +75,15 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .define('E', ENGINEERING_PROCESSOR)
                 .unlockedBy("has_engineering_processor", has(ENGINEERING_PROCESSOR))
                 .unlockedBy("has_capacity_card", has(CAPACITY_CARD))
-                .save(out, craftingId("exp_pattern_provider_upgrade"));
+                .save(conditional(out, notLoaded("extendedae")), craftingId("exp_pattern_provider_upgrade_ae"));
+        ShapedRecipeBuilder.shaped(MISC, EXP_PATTERN_PROVIDER_UPGRADE)
+                .pattern("CE")
+                .pattern("E ")
+                .define('E', EAESingletons.EX_PATTERN_PROVIDER)
+                .define('C', EAESingletons.CONCURRENT_PROCESSOR)
+                .unlockedBy("has_concurrent_processor", has(EAESingletons.CONCURRENT_PROCESSOR))
+                .unlockedBy("has_exp_pattern_provider", has(EAESingletons.EX_PATTERN_PROVIDER))
+                .save(conditional(out, loaded("extendedae")), craftingId("exp_pattern_provider_upgrade_ext"));
 
         ShapelessRecipeBuilder.shapeless(MISC, AUTO_COMPLETE_CARD)
                 .requires(ADVANCED_CARD)
@@ -109,23 +116,23 @@ public class ExpRecipeProvider extends RecipeProvider {
                 .pattern("AAA")
                 .pattern("AIA")
                 .pattern("AAA")
-                .define('A', SPEED_CARD)
+                .define('A', GREATER_ACCEL_CARD)
                 .define('I', AEBlocks.IO_PORT)
-                .unlockedBy("has_speed_card", has(SPEED_CARD))
+                .unlockedBy("has_speed_card", has(GREATER_ACCEL_CARD))
                 .save(conditional(out, notLoaded("extendedae")), craftingId("exp_io_port_ae"));
-
         ShapedRecipeBuilder.shaped(MISC, ExpBlocks.EXP_IO_PORT)
                 .pattern("AAA")
                 .pattern("AIA")
                 .pattern("AAA")
-                .define('A', SPEED_CARD)
+                .define('A', GREATER_ACCEL_CARD)
                 .define('I', EAESingletons.EX_IO_PORT)
-                .unlockedBy("has_speed_card", has(SPEED_CARD))
+                .unlockedBy("has_speed_card", has(GREATER_ACCEL_CARD))
                 .save(conditional(out, loaded("extendedae")), craftingId("exp_io_port_ext"));
 
         ShapedRecipeBuilder.shaped(MISC, GREATER_ACCEL_CARD)
-                .pattern("AA")
-                .pattern("AC")
+                .pattern("AAA")
+                .pattern("ACA")
+                .pattern("AAA")
                 .define('A', SPEED_CARD)
                 .define('C', CALCULATION_PROCESSOR)
                 .unlockedBy("has_speed_card", has(SPEED_CARD))

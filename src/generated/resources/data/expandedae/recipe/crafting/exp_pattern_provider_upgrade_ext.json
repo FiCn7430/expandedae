@@ -8,20 +8,19 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "A": {
-      "item": "expandedae:greater_accel_card"
+    "C": {
+      "item": "extendedae:concurrent_processor"
     },
-    "I": {
-      "item": "extendedae:ex_io_port"
+    "E": {
+      "item": "extendedae:ex_pattern_provider"
     }
   },
   "pattern": [
-    "AAA",
-    "AIA",
-    "AAA"
+    "CE",
+    "E "
   ],
   "result": {
     "count": 1,
-    "id": "expandedae:exp_io_port"
+    "id": "expandedae:exp_pattern_provider_upgrade"
   }
 }

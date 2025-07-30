@@ -16,8 +16,8 @@
     }
   },
   "pattern": [
-    "EC",
-    "CE"
+    "CE",
+    "EC"
   ],
   "result": {
     "count": 1,
