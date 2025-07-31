@@ -3,7 +3,9 @@ package lu.kolja.expandedae;
 import appeng.api.AECapabilities;
 import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.api.parts.RegisterPartCapabilitiesEvent;
+import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import com.mojang.logging.LogUtils;
+import de.mari_023.ae2wtlib.api.terminal.ItemWT;
 import lu.kolja.expandedae.definition.*;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
 import lu.kolja.expandedae.xmod.XMod;
@@ -14,6 +16,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +64,11 @@ public class Expandedae {
                 AECapabilities.GENERIC_INTERNAL_INV,
                 ExpBlockEntities.EXP_PATTERN_PROVIDER.get(),
                 (be, context) -> be.getLogic().getReturnInv()
+        );
+        event.registerItem(
+                Capabilities.EnergyStorage.ITEM,
+                (stack, context) -> new PoweredItemCapabilities(stack, (ItemWT) ExpItems.WIRELESS_EXP_ENCODING_TERMINAL.get()),
+                ExpItems.WIRELESS_EXP_ENCODING_TERMINAL.get()
         );
     }
 
