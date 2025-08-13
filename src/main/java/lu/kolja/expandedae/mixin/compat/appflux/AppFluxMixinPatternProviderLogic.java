@@ -4,18 +4,18 @@ import appeng.api.config.Actionable;
 import appeng.api.config.LockCraftingMode;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.implementations.blockentities.ICraftingMachine;
+import appeng.api.networking.IGrid;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
-import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
-import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.IConfigManager;
 import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.util.ConfigManager;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import lu.kolja.expandedae.definition.ExpItems;
@@ -24,6 +24,8 @@ import lu.kolja.expandedae.enums.BlockingMode;
 import lu.kolja.expandedae.helper.pattern.IPatternProviderLogic;
 import lu.kolja.expandedae.helper.pattern.PatternProviderTarget;
 import lu.kolja.expandedae.helper.pattern.PatternProviderTargetCache;
+import lu.kolja.expandedae.mixin.accessor.AccessorCraftingCpuLogic;
+import lu.kolja.expandedae.mixin.accessor.AccessorExecutingCraftingJob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -38,7 +40,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Mixin(value = PatternProviderLogic.class, remap = false)
@@ -49,9 +50,6 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
     @Shadow
     @Final
     private IActionSource actionSource;
-
-    @Unique
-    private IUpgradeInventory eae_$upgrades = UpgradeInventories.empty();
 
     @Final
     @Shadow
@@ -89,6 +87,8 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
 
     @Shadow protected abstract void addToSendList(AEKey what, long amount);
 
+    @Shadow public abstract @Nullable IGrid getGrid();
+
     @Unique
     private void eae_$onUpgradesChanged() {
         /*
@@ -109,42 +109,6 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
     )
     private void eae_$initUpgrade(IManagedGridNode mainNode, PatternProviderLogicHost host, int patternInventorySize, CallbackInfo ci) {
         this.expandedae$targetCaches = new PatternProviderTargetCache[6];
-    }
-
-    @Inject(
-            method = "pushPattern",
-            at = @At("RETURN")
-    )
-    private void eae_$checkUpgrades(IPatternDetails patternDetails, KeyCounter[] inputHolder, CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValue()) return;
-        if (this.eae_$upgrades.isInstalled(ExpItems.AUTO_COMPLETE_CARD)) {
-            List<ICraftingCPU> matchedCpus = eae_$getCraftingCpus().stream()
-                    .filter(cpu -> cpu.getJobStatus() != null)
-                    .filter(cpu -> eae_$getCraftingCpus().stream()
-                            .map(ICraftingCPU::getJobStatus)
-                            .filter(Objects::nonNull)
-                            .anyMatch(
-                                    job -> cpu.getJobStatus().progress() == job.progress()
-                                            && cpu.getJobStatus().crafting().equals(job.crafting())
-                            )
-                    ).toList();
-
-            matchedCpus.forEach(x -> {
-                var what = x.getJobStatus().crafting().what();
-                var whatId = what.getId();
-                for (var outputs : patternDetails.getOutputs()) {
-                    var outputWhatId = outputs.what().getId();
-                    if (whatId == outputWhatId) {
-                        x.cancelJob();
-                    }
-                }
-            });
-        }
-    }
-
-    @Unique
-    public List<ICraftingCPU> eae_$getCraftingCpus() {
-        return mainNode.getGrid().getCraftingService().getCpus().stream().toList();
     }
 
     @Inject(method = "<init>(Lappeng/api/networking/IManagedGridNode;Lappeng/helpers/patternprovider/PatternProviderLogicHost;I)V",
@@ -264,8 +228,8 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
     @Unique
     private boolean expandedae$adapterAcceptsAll(PatternProviderTarget target, KeyCounter[] inputHolder) {
         int var4 = inputHolder.length;
-        for (int var5 = 0; var5 < var4; ++var5) {
-            for (Object2LongMap.Entry<AEKey> input : inputHolder[var5]) {
+        for (KeyCounter counter : inputHolder) {
+            for (Object2LongMap.Entry<AEKey> input : counter) {
                 long inserted = target.insert(input.getKey(), input.getLongValue(), Actionable.SIMULATE);
                 if (inserted == 0L) {
                     return false;
@@ -273,5 +237,24 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
             }
         }
         return true;
+    }
+
+    @Inject(
+            method = "pushPattern",
+            at = @At("HEAD")
+    )
+    private void expandedae$onPushPatternSuccess(IPatternDetails patternDetails, KeyCounter[] inputHolder, CallbackInfoReturnable<Boolean> cir) {
+        expandedae$tryAutoCompleteCraft(patternDetails);
+    }
+
+    @Unique
+    private void expandedae$tryAutoCompleteCraft(IPatternDetails details) {
+        if (!getUpgrades().isInstalled(ExpItems.AUTO_COMPLETE_CARD)) return;
+        getGrid().getCraftingService().getCpus().stream()
+                .filter(ICraftingCPU::isBusy)
+                .map(cpu -> (CraftingCPUCluster) cpu)
+                .filter(cluster -> ((AccessorExecutingCraftingJob) ((AccessorCraftingCpuLogic) cluster.craftingLogic).getJob()).getTasks().get(details).getValue() <= 1)
+                .findFirst()
+                .ifPresent(ICraftingCPU::cancelJob);
     }
 }

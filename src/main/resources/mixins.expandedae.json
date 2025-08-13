@@ -5,6 +5,9 @@
   "plugin": "lu.kolja.expandedae.mixin.MixinPlugin",
   "mixins": [
     "accessor.AccessorBuiltInModelHooks",
+    "accessor.AccessorCraftingCpuLogic",
+    "accessor.AccessorExecutingCraftingJob",
+    "accessor.AccessorExecutingCraftingJob$AccessorTaskProgress",
     "accessor.AccessorIOPortBlockEntity",
     "accessor.AccessorPatternEncodingTermMenu",
     "compat.appflux.AppFluxMixinPatternProviderLogic",

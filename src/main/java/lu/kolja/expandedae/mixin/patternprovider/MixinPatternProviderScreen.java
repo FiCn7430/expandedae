@@ -52,8 +52,8 @@ public abstract class MixinPatternProviderScreen<C extends PatternProviderMenu> 
                 ((AEBaseScreen<?>) Minecraft.getInstance().screen).isHandlingRightClick()
         ));
         this.addToLeftToolbar(modifyPatterns);
-        if (((IUpgradableMenu) menu).getToolbox().isPresent()) {
-            this.widgets.add("toolbox", new ToolboxPanel(style, ((IUpgradableMenu) menu).getToolbox().getName()));
+        if (((IUpgradableMenu) menu).expandedae$getToolbox().isPresent()) {
+            this.widgets.add("toolbox", new ToolboxPanel(style, ((IUpgradableMenu) menu).expandedae$getToolbox().getName()));
         }
         this.eae$blockingMode = new ServerSettingToggleButton<>(
                 ExpSettings.BLOCKING_MODE,
@@ -67,7 +67,7 @@ public abstract class MixinPatternProviderScreen<C extends PatternProviderMenu> 
         //((IPatternProvider) menu).expandedae$hideBlocking();
         var list = new ArrayList<Component>();
         list.add(GuiText.CompatibleUpgrades.text());
-        list.addAll(Upgrades.getTooltipLinesForMachine(((IUpgradableMenu) menu).getUpgrades().getUpgradableItem()));
+        list.addAll(Upgrades.getTooltipLinesForMachine(((IUpgradableMenu) menu).expandedae$getUpgrades().getUpgradableItem()));
         return list;
     }
 
