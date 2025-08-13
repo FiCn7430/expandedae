@@ -15,6 +15,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -43,6 +44,7 @@ public class Expandedae {
         if (ModList.get().isLoaded("ae2wtlib")) {
             modEventBus.addListener(WTLibIntegration::registerMenu);
         }
+        container.registerConfig(ModConfig.Type.COMMON, ExpConfig.SPEC);
     }
 
     @Contract("_ -> new")

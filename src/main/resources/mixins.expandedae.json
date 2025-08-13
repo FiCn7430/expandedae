@@ -15,6 +15,7 @@
     "compat.jei.MixinJEIPlugin",
     "cpu.MixinCPUSelectionList",
     "cpu.MixinCraftingCPUCluster",
+    "misc.MixinControllerValidator",
     "misc.MixinSettings",
     "patternprovider.MixinPatternProviderLogic",
     "patternprovider.MixinPatternProviderLogicHost",
