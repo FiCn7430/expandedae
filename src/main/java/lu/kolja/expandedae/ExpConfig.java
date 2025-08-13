@@ -14,13 +14,13 @@ public class ExpConfig {
                     "Even tho it is minimal, as you increase this value, the controller will take longer to form.",
                     "Note: Controllers surrounded by more than 3 others in one axis, will remain gray but do still function normally.",
                     "Default value: 7")
-            .defineInRange("maxControllerSize", 17, 1, Integer.MAX_VALUE);
+            .defineInRange("maxControllerSize", 7, 1, Integer.MAX_VALUE);
 
     private static final ModConfigSpec.BooleanValue IGNORE_CONTROLLER_RULES = BUILDER
             .comment("Ignore controller forming rules.",
                     "Allows you to make any shape you wish without the controller turning red.",
                     "Default value: false")
-            .define("ignoreControllerRules", true);
+            .define("ignoreControllerRules", false);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
