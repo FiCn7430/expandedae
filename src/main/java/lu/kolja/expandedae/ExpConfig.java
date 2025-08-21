@@ -12,8 +12,7 @@ public class ExpConfig {
     private static final ModConfigSpec.IntValue MAX_CONTROLLER_SIZE = BUILDER
             .comment("The maximum allowed size of an ME controller.",
                     "Even tho it is minimal, as you increase this value, the controller will take longer to form.",
-                    "Note: Controllers surrounded by more than 3 others in one axis, will remain gray but do still function normally.",
-                    "Default value: 7")
+                    "Note: Controllers surrounded by more than 3 others in one axis, will remain gray but do still function normally.")
             .defineInRange("maxControllerSize", 7, 1, Integer.MAX_VALUE);
 
     private static final ModConfigSpec.BooleanValue IGNORE_CONTROLLER_RULES = BUILDER
