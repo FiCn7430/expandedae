@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "expandedae:block/miku",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "expandedae:block/miku"
+    },
+    "facing=south": {
+      "model": "expandedae:block/miku",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "expandedae:block/miku",
+      "y": 270
+    }
+  }
+}

@@ -8,10 +8,14 @@ import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.block.ExpIOPortBlock;
 import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
+import lu.kolja.expandedae.block.block.PlushieBlock;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -38,6 +42,19 @@ public class ExpBlocks {
             "exp_io_port",
             ExpIOPortBlock::new,
             AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<PlushieBlock> MIKU = block(
+            "Miku",
+            "miku",
+            PlushieBlock::new,
+            (b, p) -> new AEBaseBlockItem(b, p) {
+                @Override
+                public void addCheckedInformation(ItemStack itemStack, TooltipContext context, List<Component> lines, TooltipFlag advancedTooltips) {
+                    lines.add(Component.literal("§bMiku!!"));
+                    super.addCheckedInformation(itemStack, context, lines, advancedTooltips);
+                }
+            }
     );
 
     public static BlockDefinition<CraftingUnitBlock> UNIT = block(
