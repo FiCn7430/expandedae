@@ -5,8 +5,10 @@ import appeng.blockentity.AEBaseBlockEntity;
 import appeng.blockentity.crafting.CraftingBlockEntity;
 import appeng.core.definitions.BlockDefinition;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.block.entity.ColorableDriveBlockEntity;
 import lu.kolja.expandedae.block.entity.ExpIOPortBlockEntity;
 import lu.kolja.expandedae.block.entity.ExpPatternProviderBlockEntity;
+import lu.kolja.expandedae.block.entity.ExpandedMatrixPatternBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +39,20 @@ public class ExpBlockEntities {
             ExpIOPortBlockEntity.class,
             ExpIOPortBlockEntity::new,
             ExpBlocks.EXP_IO_PORT
+    );
+
+    public static final Supplier<BlockEntityType<ColorableDriveBlockEntity>> COLORABLE_DRIVE = create(
+            "colorable_drive",
+            ColorableDriveBlockEntity.class,
+            ColorableDriveBlockEntity::new,
+            ExpBlocks.COLORABLE_DRIVE
+    );
+
+    public static final Supplier<BlockEntityType<ExpandedMatrixPatternBlockEntity>> EXP_MATRIX_PATTERN = create(
+            "exp_matrix_pattern",
+            ExpandedMatrixPatternBlockEntity.class,
+            ExpandedMatrixPatternBlockEntity::new,
+            ExpBlocks.EXP_MATRIX_PATTERN
     );
 
     public static final Supplier<BlockEntityType<CraftingBlockEntity>> EXP_CPUS = create(

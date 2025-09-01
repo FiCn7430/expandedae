@@ -1,0 +1,254 @@
+{
+  "variants": {
+    "facing=down,spin=0": {
+      "model": "ae2:block/drive",
+      "x": 90
+    },
+    "facing=down,spin=1": {
+      "ae2:z": 270,
+      "model": "ae2:block/drive",
+      "x": 90
+    },
+    "facing=down,spin=2": {
+      "ae2:z": 180,
+      "model": "ae2:block/drive",
+      "x": 90
+    },
+    "facing=down,spin=3": {
+      "ae2:z": 90,
+      "model": "ae2:block/drive",
+      "x": 90
+    },
+    "facing=east,spin=0": {
+      "model": "ae2:block/drive",
+      "y": 90
+    },
+    "facing=east,spin=1": {
+      "ae2:z": 270,
+      "model": "ae2:block/drive",
+      "y": 90
+    },
+    "facing=east,spin=2": {
+      "ae2:z": 180,
+      "model": "ae2:block/drive",
+      "y": 90
+    },
+    "facing=east,spin=3": {
+      "ae2:z": 90,
+      "model": "ae2:block/drive",
+      "y": 90
+    },
+    "facing=north,spin=0": {
+      "model": "ae2:block/drive"
+    },
+    "facing=north,spin=1": {
+      "ae2:z": 270,
+      "model": "ae2:block/drive"
+    },
+    "facing=north,spin=2": {
+      "ae2:z": 180,
+      "model": "ae2:block/drive"
+    },
+    "facing=north,spin=3": {
+      "ae2:z": 90,
+      "model": "ae2:block/drive"
+    },
+    "facing=south,spin=0": {
+      "model": "ae2:block/drive",
+      "y": 180
+    },
+    "facing=south,spin=1": {
+      "ae2:z": 90,
+      "model": "ae2:block/drive",
+      "y": 180
+    },
+    "facing=south,spin=2": {
+      "ae2:z": 180,
+      "model": "ae2:block/drive",
+      "y": 180
+    },
+    "facing=south,spin=3": {
+      "ae2:z": 270,
+      "model": "ae2:block/drive",
+      "y": 180
+    },
+    "facing=up,spin=0": {
+      "ae2:z": 180,
+      "model": "ae2:block/drive",
+      "x": 270
+    },
+    "facing=up,spin=1": {
+      "ae2:z": 90,
+      "model": "ae2:block/drive",
+      "x": 270
+    },
+    "facing=up,spin=2": {
+      "model": "ae2:block/drive",
+      "x": 270
+    },
+    "facing=up,spin=3": {
+      "ae2:z": 270,
+      "model": "ae2:block/drive",
+      "x": 270
+    },
+    "facing=west,spin=0": {
+      "model": "ae2:block/drive",
+      "y": 270
+    },
+    "facing=west,spin=1": {
+      "ae2:z": 270,
+      "model": "ae2:block/drive",
+      "y": 270
+    },
+    "facing=west,spin=2": {
+      "ae2:z": 180,
+      "model": "ae2:block/drive",
+      "y": 270
+    },
+    "facing=west,spin=3": {
+      "ae2:z": 90,
+      "model": "ae2:block/drive",
+      "y": 270
+    }
+  },
+  "multipart": [
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_white"
+      },
+      "when": {
+        "color": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_light_gray"
+      },
+      "when": {
+        "color": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_gray"
+      },
+      "when": {
+        "color": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_black"
+      },
+      "when": {
+        "color": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_lime"
+      },
+      "when": {
+        "color": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_yellow"
+      },
+      "when": {
+        "color": "5"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_orange"
+      },
+      "when": {
+        "color": "6"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_brown"
+      },
+      "when": {
+        "color": "7"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_red"
+      },
+      "when": {
+        "color": "8"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_pink"
+      },
+      "when": {
+        "color": "9"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_magenta"
+      },
+      "when": {
+        "color": "10"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_purple"
+      },
+      "when": {
+        
+        "color": "11"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_blue"
+      },
+      "when": {
+        
+        "color": "12"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_light_blue"
+      },
+      "when": {
+        "color": "13"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_cyan"
+      },
+      "when": {
+        "color": "14"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_green"
+      },
+      "when": {
+        "color": "15"
+      }
+    },
+    {
+      "apply": {
+        "model": "expandedae:block/colorable_drive_fluix"
+      },
+      "when": {
+        "color": "16"
+      }
+    }
+  ]
+}

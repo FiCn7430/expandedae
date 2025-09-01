@@ -6,8 +6,10 @@ import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.block.block.ColorableDriveBlock;
 import lu.kolja.expandedae.block.block.ExpIOPortBlock;
 import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
+import lu.kolja.expandedae.block.block.ExpandedMatrixPatternBlock;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
 import net.minecraft.world.item.BlockItem;
@@ -37,6 +39,20 @@ public class ExpBlocks {
             "ME Expanded IO Port",
             "exp_io_port",
             ExpIOPortBlock::new,
+            AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<ColorableDriveBlock> COLORABLE_DRIVE = block(
+            "ME Colorable Drive",
+            "colorable_drive",
+            ColorableDriveBlock::new,
+            AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<ExpandedMatrixPatternBlock> EXP_MATRIX_PATTERN = block(
+            "ME Expanded Matrix Pattern",
+            "exp_matrix_pattern",
+            ExpandedMatrixPatternBlock::new,
             AEBaseBlockItem::new
     );
 
