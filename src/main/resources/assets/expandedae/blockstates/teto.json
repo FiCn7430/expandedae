@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "expandedae:block/teto",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "expandedae:block/teto"
+    },
+    "facing=south": {
+      "model": "expandedae:block/teto",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "expandedae:block/teto",
+      "y": 270
+    }
+  }
+}

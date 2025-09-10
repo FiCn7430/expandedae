@@ -3,11 +3,16 @@ package lu.kolja.expandedae.block.block;
 import appeng.api.orientation.IOrientationStrategy;
 import appeng.api.orientation.OrientationStrategies;
 import appeng.block.AEBaseBlock;
+import appeng.block.AEBaseBlockItem;
+import java.util.List;
 import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -27,12 +32,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class PlushieBlock extends AEBaseBlock {
+    private static VoxelShape SHAPE = Shapes.create(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
 
     private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public PlushieBlock() {
         super(defaultProps(MapColor.NONE, SoundType.WOOL).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
+    }
+
+    public PlushieBlock(double height) {
+        this();
+        SHAPE = Shapes.create(0.0, 0.0, 0.0, 1.0, height, 1.0);
     }
 
     @Override
@@ -87,6 +98,20 @@ public class PlushieBlock extends AEBaseBlock {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.create(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+        return SHAPE;
+    }
+
+    public static class PlushieBlockItem extends AEBaseBlockItem {
+        private final List<Component> lines;
+        public PlushieBlockItem(Block id, Properties props, List<Component> lines) {
+            super(id, props);
+            this.lines = lines;
+        }
+
+        @Override
+        public void addCheckedInformation(ItemStack itemStack, TooltipContext context, List<Component> toolTip, TooltipFlag advancedTooltips) {
+            toolTip.addAll(lines);
+            super.addCheckedInformation(itemStack, context, toolTip, advancedTooltips);
+        }
     }
 }

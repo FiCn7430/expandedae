@@ -23,6 +23,7 @@
   "block.expandedae.exp_io_port": "ME Expanded IO Port",
   "block.expandedae.exp_pattern_provider": "ME Expanded Pattern Provider",
   "block.expandedae.miku": "Miku",
+  "block.expandedae.teto": "Teto",
   "creativetab.expandedae": "Expanded AE",
   "group.adv_pattern_provider.name": "ME Advanced Pattern Provider",
   "group.ex_interface.name": "ME Extended Interface",

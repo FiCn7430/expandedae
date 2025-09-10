@@ -11,6 +11,7 @@ import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.block.block.PlushieBlock;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -48,13 +49,14 @@ public class ExpBlocks {
             "Miku",
             "miku",
             PlushieBlock::new,
-            (b, p) -> new AEBaseBlockItem(b, p) {
-                @Override
-                public void addCheckedInformation(ItemStack itemStack, TooltipContext context, List<Component> lines, TooltipFlag advancedTooltips) {
-                    lines.add(Component.literal("§bMiku!!"));
-                    super.addCheckedInformation(itemStack, context, lines, advancedTooltips);
-                }
-            }
+            (b, p) -> new PlushieBlock.PlushieBlockItem(b, p, List.of(Component.literal("§bMiku!!")))
+    );
+
+    public static final BlockDefinition<PlushieBlock> TETO = block(
+            "Teto",
+            "teto",
+            () -> new PlushieBlock(2D),
+            (b, p) -> new PlushieBlock.PlushieBlockItem(b, p, List.of(Component.literal("§cTeto!!")))
     );
 
     public static BlockDefinition<CraftingUnitBlock> UNIT = block(
