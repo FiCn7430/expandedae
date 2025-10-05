@@ -11,7 +11,7 @@ public interface AAEAccessorExecutingCraftingJob {
     @Accessor("tasks")
     Map<IPatternDetails, AAEAccessorTaskProgress> getTasks();
 
-    @Mixin(targets = "net.pedroksl.advanced_ae.common.logic.ExecutingCraftingJob$TaskProgress")
+    @Mixin(targets = "net.pedroksl.advanced_ae.common.logic.ExecutingCraftingJob$TaskProgress", remap = false)
     interface AAEAccessorTaskProgress {
         @Accessor("value")
         long getValue();

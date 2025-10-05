@@ -11,7 +11,7 @@ public interface AccessorExecutingCraftingJob {
     @Accessor("tasks")
     Map<IPatternDetails, AccessorTaskProgress> getTasks();
 
-    @Mixin(targets = "appeng.crafting.execution.ExecutingCraftingJob$TaskProgress")
+    @Mixin(targets = "appeng.crafting.execution.ExecutingCraftingJob$TaskProgress", remap = false)
     interface AccessorTaskProgress {
         @Accessor("value")
         long getValue();
