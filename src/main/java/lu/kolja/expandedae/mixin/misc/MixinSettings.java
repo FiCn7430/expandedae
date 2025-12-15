@@ -4,6 +4,7 @@ import appeng.api.config.Setting;
 import appeng.api.config.Settings;
 import lu.kolja.expandedae.definition.ExpSettings;
 import lu.kolja.expandedae.enums.BlockingMode;
+import lu.kolja.expandedae.enums.RefreshRate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,5 +22,6 @@ public class MixinSettings {
     @Inject(method = "<clinit>", at = @At("TAIL"), remap = false)
     private static void init(CallbackInfo ci) {
         ExpSettings.BLOCKING_MODE = register("blocking_type", BlockingMode.ALL, BlockingMode.DEFAULT, BlockingMode.SMART);
+        ExpSettings.REFRESH_RATE = register("refresh_rate", RefreshRate.TICK_1, RefreshRate.TICK_10, RefreshRate.SECOND_1, RefreshRate.SECOND_10);
     }
 }
