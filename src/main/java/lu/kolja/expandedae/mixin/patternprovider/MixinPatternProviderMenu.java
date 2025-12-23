@@ -65,22 +65,24 @@ public abstract class MixinPatternProviderMenu extends AEBaseMenu implements IUp
     @Override
     public void expandedae$modifyPatterns(boolean rightClick) {
         if (this.isClientSide()) this.sendClientAction("modifyPatterns", rightClick);
-        for (var slot : this.getSlots(SlotSemantics.ENCODED_PATTERN)) {
-            var stack = slot.getItem();
-            var detail = PatternDetailsHelper.decodePattern(stack, this.getPlayer().level());
-            if (detail instanceof AEProcessingPattern processingPattern) {
-                var input = processingPattern.getSparseInputs().toArray(GenericStack[]::new);
-                var output = processingPattern.getOutputs().toArray(GenericStack[]::new);
-                if (expandedae$checkModify(input, expandedae$getScale(), rightClick) && expandedae$checkModify(output, expandedae$getScale(), rightClick)) {
-                    var mulInput = new GenericStack[input.length];
-                    var mulOutput = new GenericStack[output.length];
-                    expandedae$modifyStacks(input, mulInput, expandedae$getScale(), rightClick);
-                    expandedae$modifyStacks(output, mulOutput, expandedae$getScale(), rightClick);
-                    var newPattern = PatternDetailsHelper.encodeProcessingPattern(
-                            Arrays.stream(mulInput).toList(),
-                            Arrays.stream(mulOutput).toList()
-                    );
-                    slot.set(newPattern);
+        else {
+            for (var slot : this.getSlots(SlotSemantics.ENCODED_PATTERN)) {
+                var stack = slot.getItem();
+                var detail = PatternDetailsHelper.decodePattern(stack, this.getPlayer().level());
+                if (detail instanceof AEProcessingPattern processingPattern) {
+                    var input = processingPattern.getSparseInputs().toArray(GenericStack[]::new);
+                    var output = processingPattern.getOutputs().toArray(GenericStack[]::new);
+                    if (expandedae$checkModify(input, expandedae$getScale(), rightClick) && expandedae$checkModify(output, expandedae$getScale(), rightClick)) {
+                        var mulInput = new GenericStack[input.length];
+                        var mulOutput = new GenericStack[output.length];
+                        expandedae$modifyStacks(input, mulInput, expandedae$getScale(), rightClick);
+                        expandedae$modifyStacks(output, mulOutput, expandedae$getScale(), rightClick);
+                        var newPattern = PatternDetailsHelper.encodeProcessingPattern(
+                                Arrays.stream(mulInput).toList(),
+                                Arrays.stream(mulOutput).toList()
+                        );
+                        slot.set(newPattern);
+                    }
                 }
             }
         }
