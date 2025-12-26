@@ -30,7 +30,8 @@
     "cpu.MixinCraftConfirmScreen",
     "cpu.MixinModelBakery",
     "misc.MixinSettingToggleButton",
-    "patternprovider.MixinPatternProviderScreen"
+    "patternprovider.MixinPatternProviderScreen",
+    "terminal.MixinPatternEncodingTermScreen"
   ],
   "injectors": {
     "defaultRequire": 1

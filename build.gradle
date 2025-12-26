@@ -13,8 +13,13 @@ plugins {
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.88'
     id 'io.freefair.lombok' version '8.13.1'
+    id 'dev.vfyjxf.modaccessor' version '1.2.1'
 }
 
+modAccessor {
+    createTransformConfiguration(configurations.compileOnly)
+    accessTransformerFiles = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+}
 
 group = mod_group_id
 version = mod_version
@@ -130,6 +135,7 @@ repositories {
 
 dependencies {
     //implementation "curse.maven:applied-energistics-2-223794:6488853"
+    accessCompileOnly("org.appliedenergistics:appliedenergistics2:19.2.10")
     implementation "org.appliedenergistics:appliedenergistics2:19.2.10"
     implementation "curse.maven:ex-pattern-provider-892005:6505209"
     implementation "curse.maven:glodium-957920:5821676"

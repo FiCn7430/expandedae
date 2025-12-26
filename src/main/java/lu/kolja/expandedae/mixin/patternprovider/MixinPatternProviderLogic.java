@@ -9,6 +9,7 @@ import appeng.api.stacks.KeyCounter;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
+import appeng.api.util.IConfigManager;
 import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
 import appeng.helpers.patternprovider.PatternProviderTarget;
@@ -63,11 +64,9 @@ public abstract class MixinPatternProviderLogic implements IUpgradeableObject, I
     @Shadow
     private IManagedGridNode mainNode;
 
-    @Shadow
-    @Final
-    private ConfigManager configManager;
-
     @Shadow public abstract @Nullable IGrid getGrid();
+
+    @Shadow @Final private IConfigManager configManager;
 
     @Unique
     private void eae_$onUpgradesChanged() {
@@ -132,7 +131,7 @@ public abstract class MixinPatternProviderLogic implements IUpgradeableObject, I
             at = @At("TAIL"),
             remap = false)
     private void PatternProviderLogic(IManagedGridNode mainNode, PatternProviderLogicHost host, int patternInventorySize, CallbackInfo ci) {
-        configManager.registerSetting(ExpSettings.BLOCKING_MODE, BlockingMode.DEFAULT);
+        eae$getConfigManager().registerSetting(ExpSettings.BLOCKING_MODE, BlockingMode.DEFAULT);
     }
 
     @Override
@@ -154,7 +153,7 @@ public abstract class MixinPatternProviderLogic implements IUpgradeableObject, I
                     thisBe.getBlockPos().relative(side),
                     side.getOpposite(),
                     this.actionSource,
-                    this.configManager
+                    eae$getConfigManager()
             );
         }
         return this.expandedae$targetCaches[side.get3DDataValue()].find();
@@ -203,5 +202,10 @@ public abstract class MixinPatternProviderLogic implements IUpgradeableObject, I
             result.add(input.getPossibleInputs()[0].what());
         }
         return result;
+    }
+
+    @Unique
+    private ConfigManager eae$getConfigManager() {
+        return (ConfigManager) configManager;
     }
 }

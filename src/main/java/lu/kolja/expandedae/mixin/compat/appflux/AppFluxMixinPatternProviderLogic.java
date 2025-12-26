@@ -7,6 +7,7 @@ import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.util.IConfigManager;
 import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
 import appeng.helpers.patternprovider.PatternProviderTarget;
@@ -49,11 +50,10 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
     @Final
     @Shadow
     private IActionSource actionSource;
-    @Shadow
-    @Final
-    private ConfigManager configManager;
 
     @Shadow public abstract @Nullable IGrid getGrid();
+
+    @Shadow @Final private IConfigManager configManager;
 
     @Inject(
             method = "<init>(Lappeng/api/networking/IManagedGridNode;Lappeng/helpers/patternprovider/PatternProviderLogicHost;I)V",
@@ -67,12 +67,12 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
             at = @At("TAIL"),
             remap = false)
     private void PatternProviderLogic(IManagedGridNode mainNode, PatternProviderLogicHost host, int patternInventorySize, CallbackInfo ci) {
-        configManager.registerSetting(ExpSettings.BLOCKING_MODE, BlockingMode.DEFAULT);
+        eae$getConfigManager().registerSetting(ExpSettings.BLOCKING_MODE, BlockingMode.DEFAULT);
     }
 
     @Override
     public BlockingMode expandedae$getBlockingMode() {
-        return configManager.getSetting(ExpSettings.BLOCKING_MODE);
+        return eae$getConfigManager().getSetting(ExpSettings.BLOCKING_MODE);
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
                     thisBe.getBlockPos().relative(side),
                     side.getOpposite(),
                     this.actionSource,
-                    this.configManager
+                    eae$getConfigManager()
             );
         }
         return this.expandedae$targetCaches[side.get3DDataValue()].find();
@@ -138,5 +138,10 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
             result.add(input.getPossibleInputs()[0].what());
         }
         return result;
+    }
+
+    @Unique
+    private ConfigManager eae$getConfigManager() {
+        return (ConfigManager) configManager;
     }
 }

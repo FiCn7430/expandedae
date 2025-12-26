@@ -21,33 +21,24 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Objects;
 
 public class ExpEncodingTerminalMenu extends PatternEncodingTermMenu {
+    private static final String ACTION_MODIFY_PATTERN = "modifyPattern";
+    private static final String ACTION_MOVE_PATTERN = "movePattern";
+
     public ExpEncodingTerminalMenu(int id, Inventory ip, IPatternTerminalMenuHost host) {
         this(ExpMenus.EXP_ENCODING_TERMINAL.get(), id, ip, host);
     }
     public ExpEncodingTerminalMenu(MenuType<?> menuType, int id, Inventory ip, IPatternTerminalMenuHost host) {
         super(menuType, id, ip, host, true);
-        registerClientAction("modifyPattern", Integer.class, this::modifyPattern);
+        registerClientAction(ACTION_MODIFY_PATTERN, Integer.class, this::modifyPattern);
+        registerClientAction(ACTION_MOVE_PATTERN, Boolean.class, this::movePattern);
     }
 
     @Override
     public void encode() {
         super.encode();
         var node = this.getGridNode();
-        var source = this.getActionSource().player();
-        assert source.isPresent();
-        var player = source.get();
-        var encodedPatternSlot = ((AccessorPatternEncodingTermMenu) this).getEncodedPatternSlot();
         var blankPatternSlot = ((AccessorPatternEncodingTermMenu) this).getBlankPatternSlot();
 
-        if (encodedPatternSlot.getItem() != ItemStack.EMPTY) {
-            if (KeybindUtil.isShiftDown()) {
-                if (player.getInventory().getFreeSlot() > 0) {
-                    player.addItem(encodedPatternSlot.getItem());
-                    encodedPatternSlot.set(ItemStack.EMPTY);
-                    encodedPatternSlot.setChanged();
-                }
-            }
-        }
         if (!(this instanceof ExpWETMenu wetMenu) || wetMenu.itemMenuHost == null) return;
         var terminalItem = wetMenu.itemMenuHost.getItemStack();
 
@@ -63,12 +54,11 @@ public class ExpEncodingTerminalMenu extends PatternEncodingTermMenu {
                 this.getActionSource()
         );
         blankPatternSlot.set(new ItemStack(AEItems.BLANK_PATTERN, blankPatternSlotCount + changed));
-        blankPatternSlot.setChanged();
     }
 
     public void modifyPattern(Integer data) {
         if (isClientSide()) {
-            sendClientAction("modifyPattern", data);
+            sendClientAction(ACTION_MODIFY_PATTERN, data);
         } else {
             var encodedInputsInv = ((AccessorPatternEncodingTermMenu) this).getEncodedInputsInv();
             var encodedOutputsInv = ((AccessorPatternEncodingTermMenu) this).getEncodedOutputsInv();
@@ -118,5 +108,19 @@ public class ExpEncodingTerminalMenu extends PatternEncodingTermMenu {
             }
         }
         return result;
+    }
+
+    public void movePattern(Boolean data) {
+        if (isClientSide()) {
+            sendClientAction(ACTION_MOVE_PATTERN, data);
+        } else {
+            if (!data) return;
+            var player = this.getPlayer();
+            // Need to do this check first because #addItem ignores that there are no free slots if the player is in creative mode
+            if (player.getInventory().getFreeSlot() > 0) {
+                player.addItem(encodedPatternSlot.getItem());
+                encodedPatternSlot.setChanged();
+            }
+        }
     }
 }
