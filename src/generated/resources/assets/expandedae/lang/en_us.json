@@ -43,6 +43,7 @@
   "gui.buttons.pattern.mult": "§bx%d§f",
   "gui.buttons.tooltips.pattern.div": "Divides contents by §b%d§f",
   "gui.buttons.tooltips.pattern.mult": "Multiplies contents by §c%d§f",
+  "gui.expandedae.blocking_mode": "Blocking Mode - %s",
   "gui.expandedae.blocking_mode.all": "Blocks if target contains anything",
   "gui.expandedae.blocking_mode.default": "Default blocking mode",
   "gui.expandedae.blocking_mode.smart": "Allows same pattern to be pushed",

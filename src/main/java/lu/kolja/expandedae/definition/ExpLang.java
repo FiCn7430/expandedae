@@ -18,6 +18,7 @@ public enum ExpLang implements LocalizationEnum {
     GUI_EXP_PATTERN_PROVIDER("gui.expandedae.exp_pattern_provider", "Expanded Pattern Provider"),
     GUI_EXP_IO_PORT("gui.expandedae.exp_io_port", "Expanded IO Port"),
     GUI_FILTER_TERMINAL("gui.expandedae.filter_terminal", "Filter Terminal"),
+    GUI_BLOCKING_MODE("gui.expandedae.blocking_mode", "Blocking Mode - %s"),
     GUI_BLOCKING_MODE_ALL("gui.expandedae.blocking_mode.all", "Blocks if target contains anything"),
     GUI_BLOCKING_MODE_DEFAULT("gui.expandedae.blocking_mode.default", "Default blocking mode"),
     GUI_BLOCKING_MODE_SMART("gui.expandedae.blocking_mode.smart", "Allows same pattern to be pushed"),

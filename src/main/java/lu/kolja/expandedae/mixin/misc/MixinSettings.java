@@ -19,7 +19,7 @@ public class MixinSettings {
     }
 
     @Inject(method = "<clinit>", at = @At("TAIL"), remap = false)
-    private static void init(CallbackInfo ci) {
+    private static void eae$init(CallbackInfo ci) {
         ExpSettings.BLOCKING_MODE = register("blocking_type", BlockingMode.ALL, BlockingMode.DEFAULT, BlockingMode.SMART);
     }
 }

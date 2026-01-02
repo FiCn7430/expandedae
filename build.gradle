@@ -13,6 +13,7 @@ plugins {
     id 'idea'
     id 'net.neoforged.moddev.legacyforge' version '2.0.91'
     id 'io.freefair.lombok' version '8.13.1'
+    id 'dev.vfyjxf.modaccessor' version '1.2.1'
 }
 
 group = mod_group_id
@@ -23,7 +24,12 @@ base {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+modAccessor {
+    createTransformConfiguration(configurations.compileOnly)
+    accessTransformerFiles = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 }
 
 legacyForge {
@@ -144,6 +150,7 @@ repositories {
 
 dependencies {
     // literally AE2
+    accessCompileOnly("appeng:appliedenergistics2-forge:15.4.10") {transitive = false}
     modImplementation("appeng:appliedenergistics2-forge:15.4.10") {transitive = false}
     modImplementation "curse.maven:guideme-1173950:6489464"
 

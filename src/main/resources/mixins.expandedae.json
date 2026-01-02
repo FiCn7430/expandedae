@@ -43,6 +43,7 @@
     "crafting.MixinCraftingStatusScreen",
     "misc.MixinModelBakery",
     "misc.MixinSettingToggleButton",
+    "misc.MixinSettingToggleButton$ButtonAppearanceMixin",
     "patternprovider.MixinPatternProviderScreen",
     "terminal.MixinPatternEncodingTermScreen"
   ],
