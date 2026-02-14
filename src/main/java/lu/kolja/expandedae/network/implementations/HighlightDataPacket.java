@@ -18,7 +18,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-@PacketInfo(id = 0, direction = NetworkDirection.PLAY_TO_CLIENT)
+@PacketInfo(NetworkDirection.PLAY_TO_CLIENT)
 public record HighlightDataPacket(BlockPos pos, ResourceKey<Level> level, long time) implements ExpPacket<HighlightDataPacket> {
     public HighlightDataPacket() {
         this(null, null, 0);
@@ -51,7 +51,7 @@ public record HighlightDataPacket(BlockPos pos, ResourceKey<Level> level, long t
         ctx.setPacketHandled(true);
     }
 
-    @PacketInfo(id = 1, direction = NetworkDirection.PLAY_TO_SERVER)
+    @PacketInfo(NetworkDirection.PLAY_TO_SERVER)
     public record HighlightWhat(AEKey key) implements ExpPacket<HighlightWhat> {
         public HighlightWhat() {
             this(null);

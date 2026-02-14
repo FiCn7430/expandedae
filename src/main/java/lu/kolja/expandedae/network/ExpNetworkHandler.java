@@ -2,6 +2,7 @@ package lu.kolja.expandedae.network;
 
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.network.implementations.HighlightDataPacket;
+import lu.kolja.expandedae.network.implementations.SetMaxAmountPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -12,9 +13,10 @@ import java.util.function.Supplier;
 
 public class ExpNetworkHandler {
     private static final String PROTOCOL_VERSION = "1";
+    private static int PACKET_ID_START = 0;
 
-    public static final ExpNetworkHandler HANDLER = new ExpNetworkHandler();
-    private static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+    public static final ExpNetworkHandler INSTANCE = new ExpNetworkHandler();
+    private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             Expandedae.makeId("main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
@@ -22,11 +24,11 @@ public class ExpNetworkHandler {
     );
 
     public <MSG> void sendToClient(MSG message, ServerPlayer player) {
-        INSTANCE.sendTo(message, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        CHANNEL.sendTo(message, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public <MSG> void sendToServer(MSG message) {
-        INSTANCE.sendToServer(message);
+        CHANNEL.sendToServer(message);
     }
 
     /**
@@ -35,6 +37,7 @@ public class ExpNetworkHandler {
     public static void registerPackets() {
         register(HighlightDataPacket.class, HighlightDataPacket::new);
         register(HighlightDataPacket.HighlightWhat.class, HighlightDataPacket.HighlightWhat::new);
+        register(SetMaxAmountPacket.class, SetMaxAmountPacket::new);
     }
 
     private static <T extends ExpPacket<T>> void register(Class<T> clazz, Supplier<T> factory) {
@@ -46,14 +49,16 @@ public class ExpNetworkHandler {
         try {
             T instance = factory.get();
 
-            INSTANCE.registerMessage(
-                    info.id(),
+            CHANNEL.registerMessage(
+                    PACKET_ID_START,
                     clazz,
                     instance::encode,
                     instance::decode,
                     instance::handle,
-                    Optional.of(info.direction())
+                    Optional.of(info.value())
             );
+
+            PACKET_ID_START++;
         } catch (Exception e) {
             throw new RuntimeException("Failed to register packet: " + clazz.getName(), e);
         }

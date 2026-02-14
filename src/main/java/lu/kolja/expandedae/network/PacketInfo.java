@@ -10,13 +10,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface PacketInfo {
-    /**
-     * The packet ID
-     */
-    int id();
 
     /**
      * The direction the packet should be sent in
      */
-    NetworkDirection direction();
+    NetworkDirection value();
 }
