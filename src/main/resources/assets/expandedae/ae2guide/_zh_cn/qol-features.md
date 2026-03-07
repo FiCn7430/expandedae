@@ -10,7 +10,7 @@ categories:
 
 # 本模组添加了以下所有改善游戏体验的功能
 ## 样板供应器中的样板倍增：在样板供应器中添加了一个按钮，允许你倍增或倍减所有容纳的样板 
-__The multipliers do stack!__
+__倍增系数可叠加！__
 
 ![modify_patterns.png](assets/modify_patterns.png)
 ## 额外的阻挡模式：为所有样板供应器添加了两种额外的阻挡模式
