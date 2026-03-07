@@ -1,7 +1,7 @@
 ---
 navigation:
   parent: expandedae-index.md
-  title: 拓展样板供应器
+  title: Expanded Pattern Provider
   icon: exp_pattern_provider
   position: 0
 categories:
@@ -11,18 +11,18 @@ item_ids:
   - expandedae:exp_pattern_provider_part
 ---
 
-# 拓展样板供应器
+# Expanded Pattern Providers
 
 <GameScene zoom="4" background="transparent">
   <ImportStructure src="structures/exp_pp.snbt" />
   <IsometricCamera yaw="195" pitch="30" />
 </GameScene>
 
-### 拓展样板供应器就是更大的样板供应器，有完整方块和部件两种形态，
-### 可容纳最多72个样板。  
+### The Expanded Pattern Provider is a bigger Pattern Provider that comes in both full block and part versions,
+### it can contain up to 72 Patterns.  
 ![exp_pp_screen.png](assets/exp_pp_screen.png)
 
-## 所有配方
+## All recipes
 
 <Row>
   <RecipesFor id="exp_pattern_provider" />

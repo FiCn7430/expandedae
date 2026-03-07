@@ -1,27 +1,27 @@
 ---
 navigation:
   parent: expandedae-index.md
-  title: 改善游戏体验的功能
+  title: QoL Features
   icon: expandedae:exp_pattern_provider
   position: 10
 categories:
   - expandedae
 ---
 
-# 本模组添加了以下所有改善游戏体验的功能
-## 样板供应器中的样板倍增：在样板供应器中添加了一个按钮，允许你倍增或倍减所有容纳的样板 
+# The mod adds all the QoL features listed below
+## Pattern Multiplication in Pattern Providers: This adds a button to the Pattern Provider which allows you to either multiply or divide all the contained Patterns 
 __The multipliers do stack!__
 
 ![modify_patterns.png](assets/modify_patterns.png)
-## 额外的阻挡模式：为所有样板供应器添加了两种额外的阻挡模式
-### 默认：AE2的默认阻挡模式，如果连接的存储设备中不包含该样板供应器中的任何样板输入，它将推送样板；如果存储设备包含任何非样板输入的内容，阻挡模式将忽略这些内容并继续推送样板。
+## Extra Blocking modes: This adds two extra blocking modes to all Pattern Providers
+### Default: This is the default blocking mode by ae2, it will push the pattern  if the connected storage does not contain any of the pattern inputs in this Pattern Provider, if the storage contains  anything that is not a pattern input, the blocking mode will skip it and still push the pattern. 
     
 ![blocking_1.png](assets/blocking/blocking_1.png)
 
-### 完全：该阻挡模式下，如果连接的存储设备中包含任何内容，则不会推送样板。
+### Full: This blocking mode will not push the pattern if the connected storage contains anything. 
     
 ![blocking_2.png](assets/blocking/blocking_2.png)
 
-### 智能：允许样板供应器在目标存储设备中仅包含该特定样板的输入时，推送相同的样板。
+### Smart: Allows the Pattern Provider to push the same pattern if the target storage only contains the inputs from this specific pattern 
 
 ![blocking_3.png](assets/blocking/blocking_3.png)

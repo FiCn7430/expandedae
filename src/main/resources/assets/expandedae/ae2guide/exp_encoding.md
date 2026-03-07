@@ -1,7 +1,7 @@
 ---
 navigation:
   parent: expandedae-index.md
-  title: 拓展编码终端
+  title: Expanded Encoding Terminal
   icon: exp_encoding_terminal
   position: 7
 categories:
@@ -16,8 +16,8 @@ item_ids:
   <IsometricCamera yaw="195" pitch="30" />
 </GameScene>
 
-## 拓展编码终端是原有终端的升级版，增加了以下功能
- - 编码样板时，按住Shift点击可将样板转移至玩家物品栏
- - 终端内集成的倍增按钮
+## The Expanded Pattern Encoding Terminal is an upgrade to the original terminal adding the following features
+ - Shift clicking when encoding a pattern moves it to your inventory
+ - In-terminal multiplication buttons 
 
 ![pattern_mult_screen.png](assets/pattern_mult_screen.png)
