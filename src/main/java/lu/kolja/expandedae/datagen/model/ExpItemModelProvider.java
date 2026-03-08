@@ -1,7 +1,9 @@
 package lu.kolja.expandedae.datagen.model;
 
 import appeng.core.AppEng;
+import appeng.core.definitions.AEItems;
 import appeng.core.definitions.ItemDefinition;
+import appeng.init.client.InitItemModelsProperties;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.client.ExpCellModels;
 import lu.kolja.expandedae.definition.ExpItems;
@@ -40,7 +42,20 @@ public class ExpItemModelProvider extends ItemModelProvider {
         basicItem(ExpItems.DUAL_CELL_HOUSING.asItem());
         basicItem(MegaCells.DUAL_CELL_MEGA_HOUSING.asItem());
         basicItem(ExpItems.PRIORITY_CARD.asItem());
-        basicItem(ExpItems.LINKED_TERMINAL.asItem());
+
+        var colorApplicator = withExistingParent(INFINITY_COLOR_APPLICATOR.id().getPath() + "_colored", "item/generated")
+                .texture("layer0", AppEng.makeId("item/color_applicator"))
+                .texture("layer1", AppEng.makeId("item/color_applicator_tip_dark"))
+                .texture("layer2", AppEng.makeId("item/color_applicator_tip_medium"))
+                .texture("layer3", AppEng.makeId("item/color_applicator_tip_bright"));
+
+        withExistingParent(INFINITY_COLOR_APPLICATOR.id().getPath(), "item/generated")
+                .texture("layer0", AppEng.makeId("item/color_applicator"))
+                // Use different model when colored
+                .override()
+                .predicate(InitItemModelsProperties.COLORED_PREDICATE_ID, 1)
+                .model(colorApplicator)
+                .end();
     }
 
     private void storageCell(ItemDefinition<?> item, String background) {

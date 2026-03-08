@@ -35,6 +35,10 @@ public class ExpUpgrades {
             
             add(PATTERN_REFILLER_CARD, AE2wtlib.PATTERN_ENCODING_TERMINAL, 1, "group.pattern_encoding_terminal.name");
             add(PATTERN_REFILLER_CARD, AE2wtlib.UNIVERSAL_TERMINAL, 1, "group.universal_terminal.name");
+
+            add(AEItems.ENERGY_CARD, ExpItems.INFINITY_COLOR_APPLICATOR, 2);
+            add(AEItems.EQUAL_DISTRIBUTION_CARD, ExpItems.INFINITY_COLOR_APPLICATOR, 1);
+            add(AEItems.VOID_CARD, ExpItems.INFINITY_COLOR_APPLICATOR, 1);
         });
     }
 }

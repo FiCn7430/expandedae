@@ -3,18 +3,26 @@ package lu.kolja.expandedae;
 import appeng.api.client.StorageCellModels;
 import appeng.api.features.GridLinkables;
 import appeng.api.storage.StorageCells;
+import appeng.init.client.InitBlockEntityRenderers;
+import appeng.init.client.InitItemModelsProperties;
 import com.mojang.logging.LogUtils;
 import lu.kolja.expandedae.cell.art.ArtUniverseCellHandler;
 import lu.kolja.expandedae.cell.dual.DualCellHandler;
 import lu.kolja.expandedae.client.ExpCellModels;
 import lu.kolja.expandedae.client.ExpandedaeClient;
+import lu.kolja.expandedae.client.render.ExpBuiltinModels;
+import lu.kolja.expandedae.client.render.ExpItemModelProperties;
 import lu.kolja.expandedae.datagen.conditionals.ModNotLoadedCondition;
 import lu.kolja.expandedae.definition.*;
-import lu.kolja.expandedae.item.linked.LinkedTerminalItem;
+import lu.kolja.expandedae.item.misc.InfinityColorApplicatorItem;
 import lu.kolja.expandedae.network.ExpNetworkHandler;
 import lu.kolja.expandedae.xmod.XMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -68,6 +76,9 @@ public class Expandedae {
         });
         if (FMLEnvironment.dist.isClient()) {
             modEventBus.register(ExpandedaeClient.INSTANCE);
+            modEventBus.addListener(this::registerItemColors);
+            modEventBus.addListener(this::modelRegistryEvent);
+            ExpBuiltinModels.init();
         }
         context.registerConfig(ModConfig.Type.COMMON, ExpConfig.SPEC);
     }
@@ -77,12 +88,32 @@ public class Expandedae {
         new ExpUpgrades(event);
         event.enqueueWork(() -> {
             ExpNetworkHandler.registerPackets();
-            GridLinkables.register(ExpItems.LINKED_TERMINAL, LinkedTerminalItem.handler);
             StorageCells.addCellHandler(DualCellHandler.INSTANCE);
             StorageCells.addCellHandler(ArtUniverseCellHandler.INSTANCE);
             for (var cellModel : ExpCellModels.cellModels.object2ObjectEntrySet()) {
                 StorageCellModels.registerModel(cellModel.getKey(), cellModel.getValue());
             }
         });
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register(
+                (stack, tintIndex) -> {
+                    if (tintIndex == 0) return -1;
+                    var color = ((InfinityColorApplicatorItem) (stack.getItem())).getActiveColor(stack);
+                    return switch (tintIndex) {
+                        case 1 -> color.blackVariant;
+                        case 2 -> color.mediumVariant;
+                        case 3 -> color.whiteVariant;
+                        default -> -1;
+                    };
+                }
+        );
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void modelRegistryEvent(ModelEvent.RegisterGeometryLoaders event) {
+        ExpItemModelProperties.init();
     }
 }

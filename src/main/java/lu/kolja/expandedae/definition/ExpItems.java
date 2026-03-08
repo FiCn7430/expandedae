@@ -18,7 +18,7 @@ import lu.kolja.expandedae.cell.dual.AEKeyTypes;
 import lu.kolja.expandedae.cell.dual.DualStorageCell;
 import lu.kolja.expandedae.enums.Addons;
 import lu.kolja.expandedae.item.misc.ExpPatternProviderUpgradeItem;
-import lu.kolja.expandedae.item.linked.LinkedTerminalItem;
+import lu.kolja.expandedae.item.misc.InfinityColorApplicatorItem;
 import lu.kolja.expandedae.item.misc.PriorityCardItem;
 import lu.kolja.expandedae.item.part.ExpPatternProviderPartItem;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
@@ -93,10 +93,10 @@ public class ExpItems {
             }
     );
 
-    public static final ItemDefinition<LinkedTerminalItem> LINKED_TERMINAL = item(
-            "Linked Terminal",
-            "linked_terminal",
-            p -> new LinkedTerminalItem(p.stacksTo(1).rarity(Rarity.RARE))
+    public static final ItemDefinition<InfinityColorApplicatorItem> INFINITY_COLOR_APPLICATOR = item(
+            "Infinity Color Applicator",
+            "infinity_color_applicator",
+            InfinityColorApplicatorItem::new
     );
 
     public static final ItemDefinition<ArtUniverseStorageCell> ART_UNIVERSE_ITEM = item(
