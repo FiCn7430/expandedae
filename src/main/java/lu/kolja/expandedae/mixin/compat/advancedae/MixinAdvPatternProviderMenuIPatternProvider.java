@@ -8,9 +8,6 @@ import appeng.crafting.pattern.AEProcessingPattern;
 import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.ToolboxMenu;
-import appeng.menu.guisync.GuiSync;
-import lu.kolja.expandedae.definition.ExpSettings;
-import lu.kolja.expandedae.enums.BlockingMode;
 import lu.kolja.expandedae.helper.misc.KeybindUtil;
 import lu.kolja.expandedae.helper.pattern.IPatternProvider;
 import lu.kolja.expandedae.helper.pattern.IUpgradableMenu;
@@ -31,7 +28,9 @@ import java.util.Arrays;
 
 /**
  * 为 AdvancedAE 的样板供应器菜单添加 IPatternProvider 接口支持
- * 提供修改样板和阻塞模式功能
+ * 提供修改样板功能
+ * 
+ * 注意：阻塞模式功能已移除，保留 AE2 原版的阻塞行为
  */
 @Mixin(value = AdvPatternProviderMenu.class, remap = false)
 public abstract class MixinAdvPatternProviderMenuIPatternProvider extends AEBaseMenu implements IUpgradableMenu, IPatternProvider {
@@ -45,10 +44,6 @@ public abstract class MixinAdvPatternProviderMenuIPatternProvider extends AEBase
 
     @Unique
     private ToolboxMenu expandedae$toolbox;
-
-    @Unique
-    @GuiSync(100)
-    public BlockingMode expandedae$blockingMode = BlockingMode.DEFAULT;
 
     public MixinAdvPatternProviderMenuIPatternProvider(MenuType<?> menuType, int id, Inventory playerInventory, Object host) {
         super(menuType, id, playerInventory, host);
@@ -168,36 +163,5 @@ public abstract class MixinAdvPatternProviderMenuIPatternProvider extends AEBase
     @Unique
     public void expandedae$tickToolbox(CallbackInfo ci) {
         this.expandedae$toolbox.tick();
-    }
-
-    /**
-     * 同步阻塞模式设置
-     */
-    @Inject(
-            method = "broadcastChanges",
-            at = @At("TAIL"),
-            remap = true)
-    private void expandedae$broadcastChanges(CallbackInfo ci) {
-        expandedae$blockingMode = logic.getConfigManager().getSetting(ExpSettings.BLOCKING_MODE);
-    }
-
-    @Override
-    public BlockingMode expandedae$getBlockingMode() {
-        return expandedae$blockingMode;
-    }
-
-    @Override
-    public void expandedae$resetBlocking() {
-        expandedae$blockingMode = BlockingMode.DEFAULT;
-    }
-
-    @Override
-    public void expandedae$setBlocking(BlockingMode blockingMode) {
-        expandedae$blockingMode = blockingMode;
-    }
-
-    @Override
-    public void expandedae$showBlocking() {
-        // 按钮可见性由屏幕 Mixin 控制
     }
 }

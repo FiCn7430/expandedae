@@ -2,15 +2,11 @@ package lu.kolja.expandedae.mixin.compat.advancedae;
 
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGrid;
-import appeng.api.networking.IManagedGridNode;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
-import appeng.util.ConfigManager;
 import lu.kolja.expandedae.definition.ExpItems;
-import lu.kolja.expandedae.definition.ExpSettings;
-import lu.kolja.expandedae.enums.BlockingMode;
 import lu.kolja.expandedae.mixin.accessor.AccessorCraftingCpuLogic;
 import lu.kolja.expandedae.mixin.accessor.AccessorExecutingCraftingJob;
 import lu.kolja.expandedae.xmod.advancedae.AdvancedAE;
@@ -20,52 +16,25 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * 为 AdvancedAE 的样板供应器添加自动合成卡支持和阻塞模式设置
+ * 为 AdvancedAE 的样板供应器添加自动合成卡支持
  *
  * 注意：当 AppFlux 加载时，AdvancedAE 自身会通过 Mixin 为 AdvPatternProviderLogic
  * 添加 IUpgradeableObject 接口和升级槽。
  *
  * 这个 Mixin 负责：
- * 1. 注册阻塞模式设置 (ExpSettings.BLOCKING_MODE)
- * 2. 检测自动合成卡是否安装
- * 3. 在 pushPattern 成功后触发自动合成逻辑
+ * 1. 检测自动合成卡是否安装
+ * 2. 在 pushPattern 成功后触发自动合成逻辑
  *
- * 当没有 AppFlux 时，这个 Mixin 仍然可以工作，因为我们会通过 getUpgrades()
- * 访问升级槽，无论升级槽是由谁提供的。
+ * 阻塞模式功能已移除，保留 AE2 原版的阻塞行为
  */
 @Mixin(value = AdvPatternProviderLogic.class, remap = false)
 public abstract class MixinAdvPatternProviderLogic {
 
     @Shadow
     public abstract IGrid getGrid();
-
-    @Shadow
-    public abstract appeng.api.util.IConfigManager getConfigManager();
-
-    /**
-     * 获取 ConfigManager 实例
-     */
-    @Unique
-    private ConfigManager expandedae$getConfigManager() {
-        return (ConfigManager) getConfigManager();
-    }
-
-    /**
-     * 初始化时注册阻塞模式设置
-     */
-    @Inject(
-            method = "<init>(Lappeng/api/networking/IManagedGridNode;Lnet/pedroksl/advanced_ae/common/logic/AdvPatternProviderLogicHost;I)V",
-            at = @At("TAIL"),
-            remap = false)
-    private void expandedae$initSettings(IManagedGridNode mainNode,
-                                          net.pedroksl.advanced_ae.common.logic.AdvPatternProviderLogicHost host,
-                                          int patternInventorySize, CallbackInfo ci) {
-        expandedae$getConfigManager().registerSetting(ExpSettings.BLOCKING_MODE, BlockingMode.DEFAULT);
-    }
 
     /**
      * 在 pushPattern 成功后检查自动合成卡
