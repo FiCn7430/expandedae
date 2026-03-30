@@ -46,14 +46,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
                     "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorExecutingCraftingJob.AAEAccessorTaskProgress",
                     "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderLogic",
                     "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderMenu",
-                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderScreen",
                     "lu.kolja.expandedae.mixin.compat.jei.MixinJEIPlugin"
             },
             new String[]{
                     "appflux",
                     "appflux",
                     "appflux",
-                    "advanced_ae",
                     "advanced_ae",
                     "advanced_ae",
                     "advanced_ae",

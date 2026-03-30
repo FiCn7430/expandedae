@@ -29,7 +29,6 @@
     "terminal.MixinProcessingEncodingPanel"
   ],
   "client": [
-    "compat.advancedae.MixinAdvPatternProviderScreen",
     "compat.appflux.AppFluxMixinPatternProviderScreen",
     "cpu.MixinCraftConfirmScreen",
     "cpu.MixinModelBakery",
