@@ -54,6 +54,9 @@ public abstract class MixinAdvPatternProviderLogic {
     /**
      * 尝试自动完成合成任务
      * 当检测到自动合成卡已安装且合成任务剩余数量为1时，自动取消任务
+     * 
+     * 逻辑：在任务只剩最后一个且有样板产物正在返回途中时取消
+     * 这样可以让最后一个样板正常推出，然后自动完成任务
      */
     @Unique
     private void expandedae$tryAutoCompleteCraft(IPatternDetails details) {
@@ -84,13 +87,31 @@ public abstract class MixinAdvPatternProviderLogic {
 
             // 处理原版 CPU
             if (cpu instanceof CraftingCPUCluster cluster) {
-                var job = ((AccessorCraftingCpuLogic) cluster.craftingLogic).getJob();
-                if (job != null) {
-                    var task = ((AccessorExecutingCraftingJob) job).getTasks().get(details);
-                    if (task != null && task.getValue() <= 1) {
-                        cluster.cancelJob();
-                        return;
+                var cpuLogic = (AccessorCraftingCpuLogic) cluster.craftingLogic;
+                var job = cpuLogic.getJob();
+                if (job == null) continue;
+                
+                var task = ((AccessorExecutingCraftingJob) job).getTasks().get(details);
+                if (task == null) continue;
+                
+                // 检查任务是否只剩最后一个
+                if (task.getValue() > 1) continue;
+                
+                // 检查是否有产物正在返回途中（waitingFor）
+                // 当任务只剩最后一个且有产物正在返回时，取消任务
+                // 这样可以让最后一个样板正常推出，然后自动完成任务
+                boolean hasItemsWaiting = false;
+                for (var output : details.getOutputs()) {
+                    if (cpuLogic.invokeGetWaitingFor(output.what()) > 0) {
+                        hasItemsWaiting = true;
+                        break;
                     }
+                }
+                
+                // 只有当有产物正在返回且任务只剩最后一个时才取消
+                if (hasItemsWaiting) {
+                    cluster.cancelJob();
+                    return;
                 }
                 continue;
             }
