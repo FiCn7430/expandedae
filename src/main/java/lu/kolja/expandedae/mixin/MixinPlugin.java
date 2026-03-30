@@ -47,9 +47,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
                     "appflux",
                     "appflux",
                     "appflux",
-                    "advancedae",
-                    "advancedae",
-                    "advancedae",
+                    "advanced_ae",
+                    "advanced_ae",
+                    "advanced_ae",
                     "ae2jeiintegration"
             }
     );
