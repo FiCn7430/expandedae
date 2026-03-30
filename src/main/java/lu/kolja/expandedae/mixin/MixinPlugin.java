@@ -21,12 +21,15 @@ public class MixinPlugin implements IMixinConfigPlugin {
         new String[]{
                 "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderLogic",
                 "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderMenu",
-                "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderScreen"
+                "lu.kolja.expandedae.mixin.patternprovider.MixinPatternProviderScreen",
+                // 当 AppFlux 加载时，AdvancedAE 自身会添加升级槽支持，所以我们不需要重复添加
+                "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderLogicUpgrades"
         },
         new String[]{
                 "appflux",
                 "appflux",
-                "appflux"
+                "appflux",
+                "appflux"  // 当 AppFlux 加载时，禁用我们的升级槽 Mixin
         }
     );
 
@@ -41,12 +44,18 @@ public class MixinPlugin implements IMixinConfigPlugin {
                     "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorAdvCraftingCPULogic",
                     "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorExecutingCraftingJob",
                     "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorExecutingCraftingJob.AAEAccessorTaskProgress",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderLogic",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderMenu",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvPatternProviderScreen",
                     "lu.kolja.expandedae.mixin.compat.jei.MixinJEIPlugin"
             },
             new String[]{
                     "appflux",
                     "appflux",
                     "appflux",
+                    "advanced_ae",
+                    "advanced_ae",
+                    "advanced_ae",
                     "advanced_ae",
                     "advanced_ae",
                     "advanced_ae",

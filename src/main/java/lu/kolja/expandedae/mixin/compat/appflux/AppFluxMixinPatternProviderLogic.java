@@ -6,7 +6,9 @@ import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
+import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.IConfigManager;
 import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
@@ -24,7 +26,10 @@ import lu.kolja.expandedae.mixin.accessor.AccessorCraftingCpuLogic;
 import lu.kolja.expandedae.mixin.accessor.AccessorExecutingCraftingJob;
 import lu.kolja.expandedae.xmod.advancedae.AdvancedAE;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
@@ -35,8 +40,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+/**
+ * AppFlux 兼容模式下的 PatternProviderLogic Mixin
+ * 注意：当 AppFlux 加载时，它会为 PatternProviderLogic 添加升级槽
+ * 这个 Mixin 只添加自动合成卡检测逻辑和其他功能
+ */
 @Mixin(value = PatternProviderLogic.class, remap = false)
 public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableObject, IPatternProviderLogic {
     @Unique
@@ -105,7 +116,10 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
 
     @Unique
     private void expandedae$tryAutoCompleteCraft(IPatternDetails details) {
-        if (!getUpgrades().isInstalled(ExpItems.AUTO_COMPLETE_CARD)) return;
+        // 当 AppFlux 加载时，它提供了升级槽，我们直接调用 getUpgrades()
+        IUpgradeInventory upgrades = getUpgrades();
+        if (upgrades == null || !upgrades.isInstalled(ExpItems.AUTO_COMPLETE_CARD)) return;
+        
         var cpus = getGrid().getCraftingService().getCpus();
         for (var cpu : cpus) {
             if (!cpu.isBusy()) continue;

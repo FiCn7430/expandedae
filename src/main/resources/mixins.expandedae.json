@@ -13,6 +13,9 @@
     "compat.advancedae.AAEAccessorAdvCraftingCPULogic",
     "compat.advancedae.AAEAccessorExecutingCraftingJob",
     "compat.advancedae.AAEAccessorExecutingCraftingJob$AAEAccessorTaskProgress",
+    "compat.advancedae.MixinAdvPatternProviderLogic",
+    "compat.advancedae.MixinAdvPatternProviderLogicUpgrades",
+    "compat.advancedae.MixinAdvPatternProviderMenu",
     "compat.appflux.AppFluxMixinPatternProviderLogic",
     "compat.appflux.AppFluxMixinPatternProviderMenu",
     "compat.jei.MixinJEIPlugin",
@@ -26,6 +29,7 @@
     "terminal.MixinProcessingEncodingPanel"
   ],
   "client": [
+    "compat.advancedae.MixinAdvPatternProviderScreen",
     "compat.appflux.AppFluxMixinPatternProviderScreen",
     "cpu.MixinCraftConfirmScreen",
     "cpu.MixinModelBakery",

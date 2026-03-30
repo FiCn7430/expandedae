@@ -79,7 +79,6 @@ public class ExpPatternProviderUpgradeItem extends UpgradeItem {
                         && (part.getClass() == PatternProviderPart.class)) {
                     var side = basePart.getSide();
                     var contents = new CompoundTag();
-
                     var partItem = ExpItems.EXP_PATTERN_PROVIDER_PART.asItem();
 
                     part.writeToNBT(contents, world.registryAccess());
