@@ -11,18 +11,14 @@ import appeng.api.util.IConfigManager;
 import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
 import appeng.helpers.patternprovider.PatternProviderTarget;
-import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.util.ConfigManager;
 import com.llamalad7.mixinextras.sugar.Local;
 import lu.kolja.expandedae.definition.ExpItems;
 import lu.kolja.expandedae.definition.ExpSettings;
-import lu.kolja.expandedae.enums.ADDONS;
 import lu.kolja.expandedae.enums.BlockingMode;
+import lu.kolja.expandedae.helper.pattern.IAutoCompletableCPU;
 import lu.kolja.expandedae.helper.pattern.IPatternProviderLogic;
 import lu.kolja.expandedae.helper.pattern.PatternProviderTargetCache;
-import lu.kolja.expandedae.mixin.accessor.AccessorCraftingCpuLogic;
-import lu.kolja.expandedae.mixin.accessor.AccessorExecutingCraftingJob;
-import lu.kolja.expandedae.xmod.advancedae.AdvancedAE;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,8 +35,6 @@ import java.util.Set;
 
 @Mixin(value = PatternProviderLogic.class, remap = false)
 public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableObject, IPatternProviderLogic {
-    @Unique
-    private static final boolean AAE_LOADED = ADDONS.ADV.isLoaded();
 
     @Unique
     private PatternProviderTargetCache[] expandedae$targetCaches;
@@ -109,16 +103,13 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
         var cpus = getGrid().getCraftingService().getCpus();
         for (var cpu : cpus) {
             if (!cpu.isBusy()) continue;
-            if (cpu instanceof CraftingCPUCluster cluster) {
-                var task = ((AccessorExecutingCraftingJob) ((AccessorCraftingCpuLogic) cluster.craftingLogic).getJob()).getTasks().get(details);
-                if (task != null && task.getValue() <= 1) {
-                    cluster.cancelJob();
+            // 统一使用 IAutoCompletableCPU 接口处理所有类型的 CPU
+            if (cpu instanceof IAutoCompletableCPU autoCpu) {
+                if (autoCpu.expandedae$shouldAutoComplete(details)) {
+                    cpu.cancelJob();
                     return;
                 }
-                continue;
             }
-            if (!AAE_LOADED) continue;
-            AdvancedAE.handleCpu(cpu, details);
         }
     }
 

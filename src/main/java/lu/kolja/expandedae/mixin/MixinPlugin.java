@@ -38,18 +38,20 @@ public class MixinPlugin implements IMixinConfigPlugin {
                     "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderLogic",
                     "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderMenu",
                     "lu.kolja.expandedae.mixin.compat.appflux.AppFluxMixinPatternProviderScreen",
-                    "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorAdvCraftingCPULogic",
-                    "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorExecutingCraftingJob",
-                    "lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorExecutingCraftingJob.AAEAccessorTaskProgress",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvCraftingCPU",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvCraftingCPU$AdvCraftingCPULogicAccessor",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvCraftingCPU$ExecutingCraftingJobAccessor",
+                    "lu.kolja.expandedae.mixin.compat.advancedae.MixinAdvCraftingCPU$TaskProgressAccessor",
                     "lu.kolja.expandedae.mixin.compat.jei.MixinJEIPlugin"
             },
             new String[]{
                     "appflux",
                     "appflux",
                     "appflux",
-                    "advancedae",
-                    "advancedae",
-                    "advancedae",
+                    "advanced_ae",
+                    "advanced_ae",
+                    "advanced_ae",
+                    "advanced_ae",
                     "ae2jeiintegration"
             }
     );
