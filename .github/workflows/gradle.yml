@@ -8,11 +8,8 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "neo/1.21.1" ]
-  pull_request:
-    branches: [ "neo/1.21.1" ]
-
+  workflow_dispatch:
+  
 jobs:
   build:
 
