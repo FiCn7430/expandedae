@@ -23,7 +23,6 @@ import lu.kolja.expandedae.enums.BlockingMode;
 import lu.kolja.expandedae.helper.pattern.IPatternProviderLogic;
 import lu.kolja.expandedae.helper.pattern.PatternProviderTargetCache;
 import lu.kolja.expandedae.mixin.accessor.AccessorCraftingCpuLogic;
-import lu.kolja.expandedae.mixin.accessor.AccessorExecutingCraftingJob;
 import lu.kolja.expandedae.xmod.advancedae.AdvancedAE;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -108,28 +107,43 @@ public abstract class AppFluxMixinPatternProviderLogic implements IUpgradeableOb
 
     @Inject(
             method = "pushPattern",
-            at = @At("HEAD")
+            at = @At("RETURN")
     )
     private void expandedae$onPushPatternSuccess(IPatternDetails patternDetails, KeyCounter[] inputHolder, CallbackInfoReturnable<Boolean> cir) {
-        expandedae$tryAutoCompleteCraft(patternDetails);
+        // 只有推送成功时才检查自动合成卡
+        if (Boolean.TRUE.equals(cir.getReturnValue())) {
+            expandedae$tryAutoCompleteCraft(patternDetails);
+        }
     }
 
+    /**
+     * 尝试自动完成合成任务
+     * 当检测到自动合成卡已安装且 CPU 库存为空时，自动取消任务
+     */
     @Unique
     private void expandedae$tryAutoCompleteCraft(IPatternDetails details) {
         // 当 AppFlux 加载时，它提供了升级槽，我们直接调用 getUpgrades()
         IUpgradeInventory upgrades = getUpgrades();
         if (upgrades == null || !upgrades.isInstalled(ExpItems.AUTO_COMPLETE_CARD)) return;
-        
+
         var cpus = getGrid().getCraftingService().getCpus();
         for (var cpu : cpus) {
             if (!cpu.isBusy()) continue;
             if (cpu instanceof CraftingCPUCluster cluster) {
-                var task = ((AccessorExecutingCraftingJob) ((AccessorCraftingCpuLogic) cluster.craftingLogic).getJob()).getTasks().get(details);
-                if (task != null && task.getValue() <= 1) {
-                    cluster.cancelJob();
-                    return;
+                var cpuLogic = (AccessorCraftingCpuLogic) cluster.craftingLogic;
+                var job = cpuLogic.getJob();
+                if (job == null) continue;
+
+                var inventory = cpuLogic.getInventory();
+
+                // 检测 CPU 库存是否为空
+                if (!inventory.list.isEmpty()) {
+                    continue;
                 }
-                continue;
+
+                // 库存为空，取消任务
+                cluster.cancelJob();
+                return;
             }
             if (!AAE_LOADED) continue;
             AdvancedAE.handleCpu(cpu, details);

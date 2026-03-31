@@ -4,7 +4,6 @@ import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.upgrades.Upgrades;
 import lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorAdvCraftingCPULogic;
-import lu.kolja.expandedae.mixin.compat.advancedae.AAEAccessorExecutingCraftingJob;
 import net.pedroksl.advanced_ae.common.cluster.AdvCraftingCPU;
 import net.pedroksl.advanced_ae.common.definitions.AAEBlocks;
 import net.pedroksl.advanced_ae.common.definitions.AAEItems;
@@ -22,10 +21,22 @@ public class AdvancedAE {
 
     public static void handleCpu(ICraftingCPU cpu, IPatternDetails details) {
         if (cpu instanceof AdvCraftingCPU advCpu) {
-            var task = ((AAEAccessorExecutingCraftingJob) ((AAEAccessorAdvCraftingCPULogic) advCpu.craftingLogic).getJob()).getTasks().get(details);
-            if (task != null && task.getValue() <= 1) {
-                advCpu.cancelJob();
+            var craftingLogic = advCpu.craftingLogic;
+            var job = ((AAEAccessorAdvCraftingCPULogic) craftingLogic).getJob();
+
+            // 没有任务，直接返回
+            if (job == null) return;
+
+            // 获取 AAE 的 inventory
+            var inventory = craftingLogic.getInventory();
+
+            // 检测库存是否为空
+            if (!inventory.list.isEmpty()) {
+                return;
             }
+
+            // 库存为空，取消任务
+            advCpu.cancelJob();
         }
     }
 }

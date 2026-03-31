@@ -8,7 +8,6 @@ import appeng.api.upgrades.IUpgradeableObject;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import lu.kolja.expandedae.definition.ExpItems;
 import lu.kolja.expandedae.mixin.accessor.AccessorCraftingCpuLogic;
-import lu.kolja.expandedae.mixin.accessor.AccessorExecutingCraftingJob;
 import lu.kolja.expandedae.xmod.advancedae.AdvancedAE;
 import net.pedroksl.advanced_ae.common.logic.AdvPatternProviderLogic;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,10 +52,7 @@ public abstract class MixinAdvPatternProviderLogic {
 
     /**
      * 尝试自动完成合成任务
-     * 当检测到自动合成卡已安装且合成任务剩余数量为1时，自动取消任务
-     * 
-     * 逻辑：在任务只剩最后一个且有样板产物正在返回途中时取消
-     * 这样可以让最后一个样板正常推出，然后自动完成任务
+     * 当检测到自动合成卡已安装且 CPU 库存为空时，自动取消任务
      */
     @Unique
     private void expandedae$tryAutoCompleteCraft(IPatternDetails details) {
@@ -90,30 +86,17 @@ public abstract class MixinAdvPatternProviderLogic {
                 var cpuLogic = (AccessorCraftingCpuLogic) cluster.craftingLogic;
                 var job = cpuLogic.getJob();
                 if (job == null) continue;
-                
-                var task = ((AccessorExecutingCraftingJob) job).getTasks().get(details);
-                if (task == null) continue;
-                
-                // 检查任务是否只剩最后一个
-                if (task.getValue() > 1) continue;
-                
-                // 检查是否有产物正在返回途中（waitingFor）
-                // 当任务只剩最后一个且有产物正在返回时，取消任务
-                // 这样可以让最后一个样板正常推出，然后自动完成任务
-                boolean hasItemsWaiting = false;
-                for (var output : details.getOutputs()) {
-                    if (cpuLogic.invokeGetWaitingFor(output.what()) > 0) {
-                        hasItemsWaiting = true;
-                        break;
-                    }
+
+                var inventory = cpuLogic.getInventory();
+
+                // 检测 CPU 库存是否为空
+                if (!inventory.list.isEmpty()) {
+                    continue;
                 }
-                
-                // 只有当有产物正在返回且任务只剩最后一个时才取消
-                if (hasItemsWaiting) {
-                    cluster.cancelJob();
-                    return;
-                }
-                continue;
+
+                // 库存为空，取消任务
+                cluster.cancelJob();
+                return;
             }
 
             // 处理 AdvancedAE 的 CPU
