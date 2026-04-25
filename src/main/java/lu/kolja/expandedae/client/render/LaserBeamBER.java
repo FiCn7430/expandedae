@@ -49,19 +49,25 @@ public class LaserBeamBER implements BlockEntityRenderer<LaserBeamBlockEntity> {
         int checkLen = len > 0 ? len : 1;
         if (!isPathClearForRender(level, pos, dir, checkLen)) return;
 
+        // 获取源端颜色：从激光线缆后方的AE线缆获取
         float[] sourceColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, pos);
-        float[] targetColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, pos.relative(dir, len));
-        float[] beamColor = LaserBeamRenderHelper.blendEndpointColors(sourceColor, targetColor);
+        // 获取目标端颜色：从目标激光线缆后方的AE线缆获取
+        BlockPos targetPos = pos.relative(dir, len);
+        float[] targetColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, targetPos);
 
         float thickness = 0.28f;
-        LaserBeamRenderHelper.renderColoredBeam(
+        // 使用渐变渲染，从源端颜色渐变到目标端颜色
+        LaserBeamRenderHelper.renderGradientBeam(
                 poseStack,
                 buffers,
                 dir,
                 visibleLen,
-                beamColor[0],
-                beamColor[1],
-                beamColor[2],
+                sourceColor != null ? sourceColor[0] : 1.0f,
+                sourceColor != null ? sourceColor[1] : 1.0f,
+                sourceColor != null ? sourceColor[2] : 1.0f,
+                targetColor != null ? targetColor[0] : 1.0f,
+                targetColor != null ? targetColor[1] : 1.0f,
+                targetColor != null ? targetColor[2] : 1.0f,
                 packedLight,
                 packedOverlay,
                 thickness);

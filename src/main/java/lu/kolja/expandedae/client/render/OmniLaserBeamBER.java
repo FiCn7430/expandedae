@@ -66,12 +66,12 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
         if (level == null) return;
 
         BlockPos pos = be.getBlockPos();
+        Direction facing = state.getValue(OmniLaserBeamBlock.FACING);
         float[] sourceColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, pos);
 
         var targets = be.getClientActiveTargets();
         if (targets == null || targets.isEmpty()) return;
         
-        Direction facing = state.getValue(OmniLaserBeamBlock.FACING);
         Vec3 sourceAnchor = getOmniBeamAnchor(pos, facing);
         
         float thickness = 0.08f;
@@ -86,8 +86,8 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
             Vec3 normalized = beamVector.scale(1.0d / vectorLength);
             Vec3 renderOrigin = sourceAnchor.add(normalized.scale(VECTOR_RENDER_SHIFT_COMPENSATION));
 
+            // 获取目标的颜色
             float[] targetColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, t);
-            float[] beamColor = LaserBeamRenderHelper.blendEndpointColors(sourceColor, targetColor);
             
             poseStack.pushPose();
             
@@ -97,15 +97,19 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
                 renderOrigin.z - (pos.getZ() + 0.5d)
             );
             
-            LaserBeamRenderHelper.renderColoredBeamVector(
+            // 使用渐变渲染，从源端颜色渐变到目标端颜色
+            LaserBeamRenderHelper.renderGradientBeamVector(
                     poseStack,
                     buffers,
                     (float) beamVector.x,
                     (float) beamVector.y,
                     (float) beamVector.z,
-                    beamColor[0],
-                    beamColor[1],
-                    beamColor[2],
+                    sourceColor != null ? sourceColor[0] : 1.0f,
+                    sourceColor != null ? sourceColor[1] : 1.0f,
+                    sourceColor != null ? sourceColor[2] : 1.0f,
+                    targetColor != null ? targetColor[0] : 1.0f,
+                    targetColor != null ? targetColor[1] : 1.0f,
+                    targetColor != null ? targetColor[2] : 1.0f,
                     packedLight,
                     packedOverlay,
                     thickness);
@@ -161,4 +165,5 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
                 pos.getZ() + 0.5d + direction.getStepZ() * offset
         );
     }
+
 }

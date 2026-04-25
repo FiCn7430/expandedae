@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -120,13 +121,20 @@ public final class LaserBeamRenderHelper {
     /**
      * 解析方块端点颜色
      * 
+     * 注意：激光线缆本身没有颜色，颜色来自连接的AE线缆（在反方向相邻位置）
+     * 
      * @param level 世界
-     * @param endpointPos 端点位置
+     * @param endpointPos 端点位置（激光线缆位置）
      * @return RGB数组，如果无法解析则返回null
      */
     @Nullable
     public static float[] resolveBlockEndpointColor(Level level, BlockPos endpointPos) {
-        return getColorableBlockEntityColor(level.getBlockEntity(endpointPos));
+        BlockState state = level.getBlockState(endpointPos);
+        Direction backDirection = getEndpointBackDirection(state);
+        if (backDirection == null) {
+            return null;
+        }
+        return getColorableBlockEntityColor(level.getBlockEntity(endpointPos.relative(backDirection)));
     }
 
     /**
@@ -237,6 +245,72 @@ public final class LaserBeamRenderHelper {
     }
 
     /**
+     * 渲染渐变彩色光束（方块版本，带粗细）
+     * 
+     * 从源端颜色渐变到目标端颜色
+     * 
+     * @param poseStack 姿势栈
+     * @param buffers 缓冲源
+     * @param dir 方向
+     * @param length 长度
+     * @param sourceR 源端红色
+     * @param sourceG 源端绿色
+     * @param sourceB 源端蓝色
+     * @param targetR 目标端红色
+     * @param targetG 目标端绿色
+     * @param targetB 目标端蓝色
+     * @param light 光照
+     * @param overlay 覆盖层
+     * @param thickness 粗细
+     */
+    public static void renderGradientBeam(
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            Direction dir,
+            double length,
+            float sourceR,
+            float sourceG,
+            float sourceB,
+            float targetR,
+            float targetG,
+            float targetB,
+            int light,
+            int overlay,
+            float thickness
+    ) {
+        if (length <= 1.0E-6d) {
+            return;
+        }
+
+        poseStack.pushPose();
+        poseStack.translate(0.5d, 0.5d, 0.5d);
+        poseStack.translate(
+                dir.getStepX() * BLOCK_BEAM_SHIFT,
+                dir.getStepY() * BLOCK_BEAM_SHIFT,
+                dir.getStepZ() * BLOCK_BEAM_SHIFT
+        );
+
+        renderGradientBeamPrism(
+                poseStack,
+                buffers,
+                dir.getStepX() * length,
+                dir.getStepY() * length,
+                dir.getStepZ() * length,
+                sourceR,
+                sourceG,
+                sourceB,
+                targetR,
+                targetG,
+                targetB,
+                light,
+                overlay,
+                thickness
+        );
+
+        poseStack.popPose();
+    }
+
+    /**
      * 渲染彩色光束（零件版本）
      * 
      * @param poseStack 姿势栈
@@ -295,6 +369,75 @@ public final class LaserBeamRenderHelper {
     }
 
     /**
+     * 渲染渐变彩色光束（零件版本）
+     * 
+     * 从源端颜色渐变到目标端颜色
+     * 
+     * @param poseStack 姿势栈
+     * @param buffers 缓冲源
+     * @param dir 方向
+     * @param length 长度
+     * @param sourceR 源端红色
+     * @param sourceG 源端绿色
+     * @param sourceB 源端蓝色
+     * @param targetR 目标端红色
+     * @param targetG 目标端绿色
+     * @param targetB 目标端蓝色
+     * @param light 光照
+     * @param overlay 覆盖层
+     */
+    public static void renderGradientBeamForPart(
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            Direction dir,
+            double length,
+            float sourceR,
+            float sourceG,
+            float sourceB,
+            float targetR,
+            float targetG,
+            float targetB,
+            int light,
+            int overlay
+    ) {
+        if (length <= 1.0E-6d) {
+            return;
+        }
+
+        final double visibleLength = Math.max(0.0d, length - PART_BEAM_LENGTH_TRIM);
+        if (visibleLength <= 1.0E-6d) {
+            return;
+        }
+
+        poseStack.pushPose();
+        poseStack.translate(0.5d, 0.5d, 0.5d);
+        poseStack.translate(
+                dir.getStepX() * PART_BEAM_START_SHIFT,
+                dir.getStepY() * PART_BEAM_START_SHIFT,
+                dir.getStepZ() * PART_BEAM_START_SHIFT
+        );
+
+        renderGradientBeamPrism(
+                poseStack,
+                buffers,
+                dir.getStepX() * visibleLength,
+                dir.getStepY() * visibleLength,
+                dir.getStepZ() * visibleLength,
+                sourceR,
+                sourceG,
+                sourceB,
+                targetR,
+                targetG,
+                targetB,
+                light,
+                overlay,
+                DEFAULT_THICKNESS
+        );
+
+        poseStack.popPose();
+    }
+
+    /**
      * 渲染彩色光束（向量版本）
      * 
      * @param poseStack 姿势栈
@@ -338,6 +481,61 @@ public final class LaserBeamRenderHelper {
         );
 
         renderBeamPrism(poseStack, buffers, vx, vy, vz, r, g, b, light, overlay, thickness);
+        poseStack.popPose();
+    }
+
+    /**
+     * 渲染渐变彩色光束（向量版本）
+     * 
+     * 从源端颜色渐变到目标端颜色
+     * 
+     * @param poseStack 姿势栈
+     * @param buffers 缓冲源
+     * @param vx X向量
+     * @param vy Y向量
+     * @param vz Z向量
+     * @param sourceR 源端红色
+     * @param sourceG 源端绿色
+     * @param sourceB 源端蓝色
+     * @param targetR 目标端红色
+     * @param targetG 目标端绿色
+     * @param targetB 目标端蓝色
+     * @param light 光照
+     * @param overlay 覆盖层
+     * @param thickness 粗细
+     */
+    public static void renderGradientBeamVector(
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            float vx,
+            float vy,
+            float vz,
+            float sourceR,
+            float sourceG,
+            float sourceB,
+            float targetR,
+            float targetG,
+            float targetB,
+            int light,
+            int overlay,
+            float thickness
+    ) {
+        final double length = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        if (length <= 1.0E-6d) {
+            return;
+        }
+
+        final double invLength = 1.0d / length;
+
+        poseStack.pushPose();
+        poseStack.translate(0.5d, 0.5d, 0.5d);
+        poseStack.translate(
+                vx * invLength * BLOCK_BEAM_SHIFT,
+                vy * invLength * BLOCK_BEAM_SHIFT,
+                vz * invLength * BLOCK_BEAM_SHIFT
+        );
+
+        renderGradientBeamPrism(poseStack, buffers, vx, vy, vz, sourceR, sourceG, sourceB, targetR, targetG, targetB, light, overlay, thickness);
         poseStack.popPose();
     }
 
@@ -396,6 +594,80 @@ public final class LaserBeamRenderHelper {
                 vz,
                 radius * CORE_SCALE,
                 coreColor,
+                CORE_ALPHA,
+                overlay,
+                v0,
+                v1
+        );
+    }
+
+    /**
+     * 渲染渐变光束棱柱
+     * 
+     * 从源端颜色渐变到目标端颜色
+     */
+    private static void renderGradientBeamPrism(
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            double vx,
+            double vy,
+            double vz,
+            float sourceR,
+            float sourceG,
+            float sourceB,
+            float targetR,
+            float targetG,
+            float targetB,
+            int light,
+            int overlay,
+            float thickness
+    ) {
+        final double length = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        if (length <= 1.0E-6d) {
+            return;
+        }
+
+        // 标准化源端和目标端颜色
+        final float[] sourceDisplayColor = normalizeDisplayColor(sourceR, sourceG, sourceB);
+        final float[] targetDisplayColor = normalizeDisplayColor(targetR, targetG, targetB);
+        final float[] sourceCoreColor = mixWithWhite(sourceDisplayColor, CORE_WHITE_MIX);
+        final float[] targetCoreColor = mixWithWhite(targetDisplayColor, CORE_WHITE_MIX);
+        final float radius = Math.max(0.01f, thickness) * 0.5f;
+
+        PoseStack.Pose last = poseStack.last();
+        Matrix4f pose = last.pose();
+        Matrix3f normal = last.normal();
+        VertexConsumer consumer = buffers.getBuffer(RenderType.beaconBeam(BEAM_TEX, true));
+        float v0 = getTextureScroll();
+        float v1 = v0 + (float) length * 1.6f;
+
+        // 渲染外层（渐变）
+        emitGradientBeamShell(
+                pose,
+                normal,
+                consumer,
+                vx,
+                vy,
+                vz,
+                radius * OUTER_SCALE,
+                sourceDisplayColor,
+                targetDisplayColor,
+                OUTER_ALPHA,
+                overlay,
+                v0,
+                v1
+        );
+        // 渲染内层核心（渐变）
+        emitGradientBeamShell(
+                pose,
+                normal,
+                consumer,
+                vx,
+                vy,
+                vz,
+                radius * CORE_SCALE,
+                sourceCoreColor,
+                targetCoreColor,
                 CORE_ALPHA,
                 overlay,
                 v0,
@@ -496,6 +768,169 @@ public final class LaserBeamRenderHelper {
                 color, alpha, overlay, v0, v1);
         emitFace(pose, normal, consumer, sx3, sy3, sz3, sx0, sy0, sz0, ex0, ey0, ez0, ex3, ey3, ez3,
                 color, alpha, overlay, v0, v1);
+    }
+
+    /**
+     * 发射渐变光束外壳
+     * 
+     * 从源端颜色渐变到目标端颜色
+     */
+    private static void emitGradientBeamShell(
+            Matrix4f pose,
+            Matrix3f normal,
+            VertexConsumer consumer,
+            double vx,
+            double vy,
+            double vz,
+            float radius,
+            float[] sourceColor,
+            float[] targetColor,
+            float alpha,
+            int overlay,
+            float v0,
+            float v1
+    ) {
+        final double length = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        final double nx = vx / length;
+        final double ny = vy / length;
+        final double nz = vz / length;
+
+        final double refX;
+        final double refY;
+        final double refZ;
+        if (Math.abs(ny) < 0.92d) {
+            refX = 0.0d;
+            refY = 1.0d;
+            refZ = 0.0d;
+        } else {
+            refX = 1.0d;
+            refY = 0.0d;
+            refZ = 0.0d;
+        }
+
+        double sideX = refY * nz - refZ * ny;
+        double sideY = refZ * nx - refX * nz;
+        double sideZ = refX * ny - refY * nx;
+        double sideLength = Math.sqrt(sideX * sideX + sideY * sideY + sideZ * sideZ);
+        if (sideLength <= 1.0E-6d) {
+            return;
+        }
+
+        sideX = sideX / sideLength * radius;
+        sideY = sideY / sideLength * radius;
+        sideZ = sideZ / sideLength * radius;
+
+        double upX = ny * sideZ - nz * sideY;
+        double upY = nz * sideX - nx * sideZ;
+        double upZ = nx * sideY - ny * sideX;
+        double upLength = Math.sqrt(upX * upX + upY * upY + upZ * upZ);
+        if (upLength <= 1.0E-6d) {
+            return;
+        }
+
+        upX = upX / upLength * radius;
+        upY = upY / upLength * radius;
+        upZ = upZ / upLength * radius;
+
+        float sx0 = (float) (-sideX - upX);
+        float sy0 = (float) (-sideY - upY);
+        float sz0 = (float) (-sideZ - upZ);
+        float sx1 = (float) (sideX - upX);
+        float sy1 = (float) (sideY - upY);
+        float sz1 = (float) (sideZ - upZ);
+        float sx2 = (float) (sideX + upX);
+        float sy2 = (float) (sideY + upY);
+        float sz2 = (float) (sideZ + upZ);
+        float sx3 = (float) (-sideX + upX);
+        float sy3 = (float) (-sideY + upY);
+        float sz3 = (float) (-sideZ + upZ);
+
+        float ex0 = (float) (vx + sx0);
+        float ey0 = (float) (vy + sy0);
+        float ez0 = (float) (vz + sz0);
+        float ex1 = (float) (vx + sx1);
+        float ey1 = (float) (vy + sy1);
+        float ez1 = (float) (vz + sz1);
+        float ex2 = (float) (vx + sx2);
+        float ey2 = (float) (vy + sy2);
+        float ez2 = (float) (vz + sz2);
+        float ex3 = (float) (vx + sx3);
+        float ey3 = (float) (vy + sy3);
+        float ez3 = (float) (vz + sz3);
+
+        // 渐变面：起点使用源端颜色，终点使用目标端颜色
+        emitGradientFace(pose, normal, consumer, sx0, sy0, sz0, sx1, sy1, sz1, ex1, ey1, ez1, ex0, ey0, ez0,
+                sourceColor, targetColor, alpha, overlay, v0, v1);
+        emitGradientFace(pose, normal, consumer, sx1, sy1, sz1, sx2, sy2, sz2, ex2, ey2, ez2, ex1, ey1, ez1,
+                sourceColor, targetColor, alpha, overlay, v0, v1);
+        emitGradientFace(pose, normal, consumer, sx2, sy2, sz2, sx3, sy3, sz3, ex3, ey3, ez3, ex2, ey2, ez2,
+                sourceColor, targetColor, alpha, overlay, v0, v1);
+        emitGradientFace(pose, normal, consumer, sx3, sy3, sz3, sx0, sy0, sz0, ex0, ey0, ez0, ex3, ey3, ez3,
+                sourceColor, targetColor, alpha, overlay, v0, v1);
+    }
+
+    /**
+     * 发射渐变面
+     * 
+     * 从源端颜色渐变到目标端颜色
+     */
+    private static void emitGradientFace(
+            Matrix4f pose,
+            Matrix3f normal,
+            VertexConsumer consumer,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float x3,
+            float y3,
+            float z3,
+            float x4,
+            float y4,
+            float z4,
+            float[] sourceColor,
+            float[] targetColor,
+            float alpha,
+            int overlay,
+            float v0,
+            float v1
+    ) {
+        float[] faceNormal = computeNormal(x1, y1, z1, x2, y2, z2, x4, y4, z4);
+        // 起点使用源端颜色，终点使用目标端颜色
+        gradientQuadBothSides(
+                pose,
+                normal,
+                consumer,
+                x1,
+                y1,
+                z1,
+                x2,
+                y2,
+                z2,
+                x3,
+                y3,
+                z3,
+                x4,
+                y4,
+                z4,
+                sourceColor[0],
+                sourceColor[1],
+                sourceColor[2],
+                targetColor[0],
+                targetColor[1],
+                targetColor[2],
+                alpha,
+                0.0f,
+                v0,
+                1.0f,
+                v1,
+                overlay,
+                faceNormal[0],
+                faceNormal[1],
+                faceNormal[2]
+        );
     }
 
     /**
@@ -739,6 +1174,115 @@ public final class LaserBeamRenderHelper {
     }
 
     /**
+     * 渐变双面四边形
+     * 
+     * 起点使用源端颜色，终点使用目标端颜色
+     */
+    private static void gradientQuadBothSides(
+            Matrix4f pose,
+            Matrix3f normal,
+            VertexConsumer consumer,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float x3,
+            float y3,
+            float z3,
+            float x4,
+            float y4,
+            float z4,
+            float sourceR,
+            float sourceG,
+            float sourceB,
+            float targetR,
+            float targetG,
+            float targetB,
+            float a,
+            float u0,
+            float v0,
+            float u1,
+            float v1,
+            int overlay,
+            float nx,
+            float ny,
+            float nz
+    ) {
+        gradientQuad(pose, normal, consumer, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4,
+                sourceR, sourceG, sourceB, targetR, targetG, targetB, a, u0, v0, u1, v1, overlay, nx, ny, nz);
+        gradientQuad(pose, normal, consumer, x4, y4, z4, x3, y3, z3, x2, y2, z2, x1, y1, z1,
+                targetR, targetG, targetB, sourceR, sourceG, sourceB, a, u0, v0, u1, v1, overlay, -nx, -ny, -nz);
+    }
+
+    /**
+     * 渐变四边形
+     * 
+     * 起点使用源端颜色，终点使用目标端颜色
+     * 顶点1和2是起点（源端颜色），顶点3和4是终点（目标端颜色）
+     */
+    private static void gradientQuad(
+            Matrix4f pose,
+            Matrix3f normal,
+            VertexConsumer consumer,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float x3,
+            float y3,
+            float z3,
+            float x4,
+            float y4,
+            float z4,
+            float sourceR,
+            float sourceG,
+            float sourceB,
+            float targetR,
+            float targetG,
+            float targetB,
+            float a,
+            float u0,
+            float v0,
+            float u1,
+            float v1,
+            int overlay,
+            float nx,
+            float ny,
+            float nz
+    ) {
+        // 起点使用源端颜色
+        consumer.addVertex(pose, x1, y1, z1)
+                .setColor(sourceR, sourceG, sourceB, a)
+                .setUv(u0, v0)
+                .setOverlay(overlay)
+                .setLight(FULL_BRIGHT)
+                .setNormal(nx, ny, nz);
+        consumer.addVertex(pose, x2, y2, z2)
+                .setColor(sourceR, sourceG, sourceB, a)
+                .setUv(u1, v0)
+                .setOverlay(overlay)
+                .setLight(FULL_BRIGHT)
+                .setNormal(nx, ny, nz);
+        // 终点使用目标端颜色
+        consumer.addVertex(pose, x3, y3, z3)
+                .setColor(targetR, targetG, targetB, a)
+                .setUv(u1, v1)
+                .setOverlay(overlay)
+                .setLight(FULL_BRIGHT)
+                .setNormal(nx, ny, nz);
+        consumer.addVertex(pose, x4, y4, z4)
+                .setColor(targetR, targetG, targetB, a)
+                .setUv(u0, v1)
+                .setOverlay(overlay)
+                .setLight(FULL_BRIGHT)
+                .setNormal(nx, ny, nz);
+    }
+
+    /**
      * 均方根
      */
     private static float rms(float first, float second) {
@@ -756,5 +1300,22 @@ public final class LaserBeamRenderHelper {
             return 1.0f;
         }
         return value;
+    }
+
+    /**
+     * 获取端点后方的方向（用于获取颜色）
+     * 
+     * @param state 方块状态
+     * @return 后方方向，如果不是激光线缆则返回null
+     */
+    @Nullable
+    private static Direction getEndpointBackDirection(BlockState state) {
+        if (state.getBlock() instanceof lu.kolja.expandedae.block.LaserBeamBlock) {
+            return state.getValue(lu.kolja.expandedae.block.LaserBeamBlock.FACING).getOpposite();
+        }
+        if (state.getBlock() instanceof lu.kolja.expandedae.block.OmniLaserBeamBlock) {
+            return state.getValue(lu.kolja.expandedae.block.OmniLaserBeamBlock.FACING).getOpposite();
+        }
+        return null;
     }
 }

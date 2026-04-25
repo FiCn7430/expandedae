@@ -3,7 +3,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"render_type": "cutout",
-	"texture_size": [32, 32],
+	"texture_size": [64, 64],
 	"textures": {
 		"base": "expandedae:block/laser_beam",
 		"particle": "ae2:block/generics/back"

@@ -69,5 +69,21 @@
   "item.expandedae.pattern_refiller_card.tooltip.1": "自动补充空白样板",
   "item.expandedae.upgrade.tooltip": "升级%s",
   "item.expandedae.wireless_exp_encoding_terminal": "无线拓展样板编码终端",
-  "itemGroup.eae": "AE拓展"
+  "itemGroup.eae": "AE拓展",
+
+  "block.expandedae.laser_beam": "ME激光成型器",
+  "block.expandedae.omni_laser_beam": "ME全向激光成型器",
+  "item.expandedae.laser_binding_tool": "激光绑定工具",
+  "item.expandedae.laser_beam_part": "ME激光成型器部件",
+
+  "tooltip.expandedae.binding.set": "源激光成型器已设置：[%d, %d, %d]",
+  "tooltip.expandedae.binding.set_omni": "全向激光成型器已设置：[%d, %d, %d]",
+  "tooltip.expandedae.binding.no_source": "请先使用Shift+右键选择源激光成型器",
+  "tooltip.expandedae.binding.self_link": "不能连接到自身",
+  "tooltip.expandedae.binding.out_of_range": "目标超出范围！限制：水平16格，垂直32格",
+  "tooltip.expandedae.binding.omni_only": "全向激光成型器只能连接到其他全向激光成型器",
+  "tooltip.expandedae.binding.omni_linked": "已连接 [%d, %d, %d] → [%d, %d, %d]",
+  "tooltip.expandedae.binding.omni_unlinked": "已断开 [%d, %d, %d] → [%d, %d, %d]",
+  "tooltip.expandedae.binding.invalid": "源激光成型器无效或已不存在",
+  "tooltip.expandedae.binding.cleared": "已清除源激光成型器"
 }

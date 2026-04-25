@@ -189,16 +189,19 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
         float[] targetColor = scan.target != null && scan.length == beamLength
                 ? LaserBeamRenderHelper.getPartHostColor(scan.target.getHost())
                 : null;
-        float[] beamColor = LaserBeamRenderHelper.blendEndpointColors(sourceColor, targetColor);
 
-        LaserBeamRenderHelper.renderColoredBeamForPart(
+        // 使用渐变渲染，从源端颜色渐变到目标端颜色
+        LaserBeamRenderHelper.renderGradientBeamForPart(
                 poseStack,
                 buffers,
                 side,
                 beamLength,
-                beamColor[0],
-                beamColor[1],
-                beamColor[2],
+                sourceColor != null ? sourceColor[0] : 1.0f,
+                sourceColor != null ? sourceColor[1] : 1.0f,
+                sourceColor != null ? sourceColor[2] : 1.0f,
+                targetColor != null ? targetColor[0] : 1.0f,
+                targetColor != null ? targetColor[1] : 1.0f,
+                targetColor != null ? targetColor[2] : 1.0f,
                 combinedLightIn,
                 combinedOverlayIn);
     }
