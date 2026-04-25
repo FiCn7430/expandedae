@@ -8,7 +8,9 @@ import appeng.items.materials.UpgradeCardItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.item.LaserBindingTool;
 import lu.kolja.expandedae.item.misc.ExpPatternProviderUpgradeItem;
+import lu.kolja.expandedae.part.LaserBeamPart;
 import lu.kolja.expandedae.part.ExpPatternProviderPart;
 import lu.kolja.expandedae.terminal.ExpEncodingTerminalPart;
 import lu.kolja.expandedae.xmod.ae2wtlib.WTLibIntegration;
@@ -93,6 +95,19 @@ public class ExpItems {
     public static final ItemDefinition<Item> WIRELESS_EXP_ENCODING_TERMINAL = item("Wireless Expanded Pattern Encoding Terminal",
             "wireless_exp_encoding_terminal",
             p -> WTLibIntegration.TERMINAL
+    );
+
+    public static final ItemDefinition<LaserBindingTool> LASER_BINDING_TOOL = item(
+            "Laser Binding Tool",
+            "laser_binding_tool",
+            p -> new LaserBindingTool(p.stacksTo(1))
+    );
+
+    public static final ItemDefinition<PartItem<LaserBeamPart>> LASER_BEAM_PART = part(
+            "ME Laser Beam Former Part",
+            "laser_beam_part",
+            LaserBeamPart.class,
+            LaserBeamPart::new
     );
 
     public static List<ItemDefinition<?>> getItems() {

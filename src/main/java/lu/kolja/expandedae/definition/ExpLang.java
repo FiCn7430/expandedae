@@ -45,7 +45,19 @@ public enum ExpLang implements LocalizationEnum {
     GROUP_TAG_STORAGE_BUS("group.tag_storage_bus.name", "ME Tagged Storage Bus"),
     GROUP_MOD_STORAGE_BUS("group.mod_storage_bus.name", "ME Mod Storage Bus"),
     GROUP_PRECISE_STORAGE_BUS("group.precise_storage_bus.name", "ME Precise Storage Bus"),
-    GROUP_WIRELESS_EXP_ENCODING_TERMINAL("group.wireless_exp_pattern_encoding_terminal.name", "Wireless Expanded Pattern Encoding Terminal");
+    GROUP_WIRELESS_EXP_ENCODING_TERMINAL("group.wireless_exp_pattern_encoding_terminal.name", "Wireless Expanded Pattern Encoding Terminal"),
+
+    // 激光线缆相关
+    TOOLTIP_LASER_BINDING_SET("tooltip.expandedae.binding.set", "Source set to [%d, %d, %d]"),
+    TOOLTIP_LASER_BINDING_SET_OMNI("tooltip.expandedae.binding.set_omni", "Omni source set to [%d, %d, %d]"),
+    TOOLTIP_LASER_BINDING_NO_SOURCE("tooltip.expandedae.binding.no_source", "No source selected. Shift+Right click to select source"),
+    TOOLTIP_LASER_BINDING_SELF_LINK("tooltip.expandedae.binding.self_link", "Cannot link to itself"),
+    TOOLTIP_LASER_BINDING_OUT_OF_RANGE("tooltip.expandedae.binding.out_of_range", "Target is out of range (max 16x16x32)"),
+    TOOLTIP_LASER_BINDING_OMNI_ONLY("tooltip.expandedae.binding.omni_only", "Omni Laser Beam can only connect to another Omni Laser Beam"),
+    TOOLTIP_LASER_BINDING_OMNI_LINKED("tooltip.expandedae.binding.omni_linked", "Linked [%d, %d, %d] -> [%d, %d, %d]"),
+    TOOLTIP_LASER_BINDING_OMNI_UNLINKED("tooltip.expandedae.binding.omni_unlinked", "Unlinked [%d, %d, %d] -> [%d, %d, %d]"),
+    TOOLTIP_LASER_BINDING_INVALID("tooltip.expandedae.binding.invalid", "Invalid source, cleared"),
+    TOOLTIP_LASER_BINDING_CLEARED("tooltip.expandedae.binding.cleared", "Source cleared");
 
     private final String key;
     private final String value;

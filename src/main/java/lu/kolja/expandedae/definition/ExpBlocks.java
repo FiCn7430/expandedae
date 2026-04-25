@@ -6,9 +6,14 @@ import appeng.core.definitions.AEItems;
 import appeng.core.definitions.BlockDefinition;
 import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
+import lu.kolja.expandedae.block.LaserBeamBlock;
+import lu.kolja.expandedae.block.OmniLaserBeamBlock;
 import lu.kolja.expandedae.block.block.ExpIOPortBlock;
 import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.block.block.PlushieBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.block.SoundType;
 import lu.kolja.expandedae.enums.ExpTiers;
 import lu.kolja.expandedae.item.misc.ExpCPUItem;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -165,6 +170,33 @@ public class ExpBlocks {
             "1M Crafting Co-Processing Unit",
             "exp_crafting_accelerator_1m",
             ExpTiers.TIER_1M
+    );
+
+    // 激光线缆方块
+    public static final BlockDefinition<LaserBeamBlock> LASER_BEAM = block(
+            "ME Laser Beam Former",
+            "laser_beam",
+            () -> new LaserBeamBlock(BlockBehaviour.Properties
+                    .of()
+                    .mapColor(MapColor.METAL)
+                    .strength(0.3f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+            ),
+            AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<OmniLaserBeamBlock> OMNI_LASER_BEAM = block(
+            "ME Omni Laser Beam Former",
+            "omni_laser_beam",
+            () -> new OmniLaserBeamBlock(BlockBehaviour.Properties
+                    .of()
+                    .mapColor(MapColor.METAL)
+                    .strength(0.3f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+            ),
+            AEBaseBlockItem::new
     );
 
     public static BlockDefinition<CraftingUnitBlock> cpu(

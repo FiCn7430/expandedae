@@ -7,6 +7,8 @@ import appeng.core.definitions.BlockDefinition;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.entity.ExpIOPortBlockEntity;
 import lu.kolja.expandedae.block.entity.ExpPatternProviderBlockEntity;
+import lu.kolja.expandedae.block.entity.LaserBeamBlockEntity;
+import lu.kolja.expandedae.block.entity.OmniLaserBeamBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +39,20 @@ public class ExpBlockEntities {
             ExpIOPortBlockEntity.class,
             ExpIOPortBlockEntity::new,
             ExpBlocks.EXP_IO_PORT
+    );
+
+    public static final Supplier<BlockEntityType<LaserBeamBlockEntity>> LASER_BEAM_BE = create(
+            "laser_beam",
+            LaserBeamBlockEntity.class,
+            LaserBeamBlockEntity::new,
+            ExpBlocks.LASER_BEAM
+    );
+
+    public static final Supplier<BlockEntityType<OmniLaserBeamBlockEntity>> OMNI_LASER_BEAM_BE = create(
+            "omni_laser_beam",
+            OmniLaserBeamBlockEntity.class,
+            OmniLaserBeamBlockEntity::new,
+            ExpBlocks.OMNI_LASER_BEAM
     );
 
     public static final Supplier<BlockEntityType<CraftingBlockEntity>> EXP_CPUS = create(
