@@ -39,8 +39,7 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
 
     @Override
     public boolean shouldRenderOffScreen(OmniLaserBeamBlockEntity be) {
-        var targets = be != null ? be.getClientActiveTargets() : null;
-        return targets != null && !targets.isEmpty();
+        return be != null && be.getClientLinkedTarget() != null;
     }
 
     @Override
@@ -72,53 +71,53 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
         Direction facing = state.getValue(OmniLaserBeamBlock.FACING);
         float[] sourceColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, pos);
 
-        var targets = be.getClientActiveTargets();
-        if (targets == null || targets.isEmpty()) return;
+
+        
+        BlockPos targetPos = be.getClientLinkedTarget();
+        if (targetPos == null) return;
         
         Vec3 sourceAnchor = getOmniBeamAnchor(pos, facing);
         
         float thickness = 0.08f;
-        for (BlockPos t : targets) {
-            BlockState targetState = level.getBlockState(t);
-            Vec3 targetAnchor = getTargetAnchor(t, targetState);
-            Vec3 beamVector = targetAnchor.subtract(sourceAnchor);
+        BlockState targetState = level.getBlockState(targetPos);
+        Vec3 targetAnchor = getTargetAnchor(targetPos, targetState);
+        Vec3 beamVector = targetAnchor.subtract(sourceAnchor);
 
-            double vectorLength = beamVector.length();
-            if (vectorLength <= 0.2) continue;
+        double vectorLength = beamVector.length();
+        if (vectorLength <= 0.2) return;
 
-            Vec3 normalized = beamVector.scale(1.0d / vectorLength);
-            Vec3 renderOrigin = sourceAnchor.add(normalized.scale(VECTOR_RENDER_SHIFT_COMPENSATION));
+        Vec3 normalized = beamVector.scale(1.0d / vectorLength);
+        Vec3 renderOrigin = sourceAnchor.add(normalized.scale(VECTOR_RENDER_SHIFT_COMPENSATION));
 
-            // 获取目标的颜色
-            float[] targetColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, t);
-            
-            poseStack.pushPose();
-            
-            poseStack.translate(
-                renderOrigin.x - (pos.getX() + 0.5d), 
-                renderOrigin.y - (pos.getY() + 0.5d), 
-                renderOrigin.z - (pos.getZ() + 0.5d)
-            );
-            
-            // 使用渐变渲染，从源端颜色渐变到目标端颜色
-            LaserBeamRenderHelper.renderGradientBeamVector(
-                    poseStack,
-                    buffers,
-                    (float) beamVector.x,
-                    (float) beamVector.y,
-                    (float) beamVector.z,
-                    sourceColor != null ? sourceColor[0] : 1.0f,
-                    sourceColor != null ? sourceColor[1] : 1.0f,
-                    sourceColor != null ? sourceColor[2] : 1.0f,
-                    targetColor != null ? targetColor[0] : 1.0f,
-                    targetColor != null ? targetColor[1] : 1.0f,
-                    targetColor != null ? targetColor[2] : 1.0f,
-                    packedLight,
-                    packedOverlay,
-                    thickness);
-            
-            poseStack.popPose();
-        }
+        // 获取目标的颜色
+        float[] targetColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, targetPos);
+        
+        poseStack.pushPose();
+        
+        poseStack.translate(
+            renderOrigin.x - (pos.getX() + 0.5d), 
+            renderOrigin.y - (pos.getY() + 0.5d), 
+            renderOrigin.z - (pos.getZ() + 0.5d)
+        );
+        
+        // 使用渐变渲染，从源端颜色渐变到目标端颜色
+        LaserBeamRenderHelper.renderGradientBeamVector(
+                poseStack,
+                buffers,
+                (float) beamVector.x,
+                (float) beamVector.y,
+                (float) beamVector.z,
+                sourceColor != null ? sourceColor[0] : 1.0f,
+                sourceColor != null ? sourceColor[1] : 1.0f,
+                sourceColor != null ? sourceColor[2] : 1.0f,
+                targetColor != null ? targetColor[0] : 1.0f,
+                targetColor != null ? targetColor[1] : 1.0f,
+                targetColor != null ? targetColor[2] : 1.0f,
+                packedLight,
+                packedOverlay,
+                thickness);
+        
+        poseStack.popPose();
     }
 
     /**

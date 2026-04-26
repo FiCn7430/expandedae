@@ -73,18 +73,23 @@
 
   "block.expandedae.laser_beam": "ME Laser Beam Former",
   "block.expandedae.omni_laser_beam": "ME Omni Laser Beam Former",
+  "block.expandedae.relay_laser_beam": "ME Relay Laser Beam Former",
   "item.expandedae.laser_binding_tool": "Laser Binding Tool",
   "item.expandedae.laser_beam_part": "ME Laser Beam Former Part",
 
-  "tooltip.expandedae.binding.set": "Source beam former selected: [%d, %d, %d]",
-  "tooltip.expandedae.binding.set_omni": "Omni beam former selected: [%d, %d, %d]",
-  "tooltip.expandedae.binding.no_source": "Please use Shift+Right Click to select source beam former first",
+  "tooltip.expandedae.binding.select_omni": "Selected Omni Laser Beam Former: [%d, %d, %d]",
+  "tooltip.expandedae.binding.select_relay": "Selected Relay Laser Beam Former: [%d, %d, %d]",
+  "tooltip.expandedae.binding.no_selection": "Please use Shift+Right Click to select a laser beam former first",
   "tooltip.expandedae.binding.self_link": "Cannot connect to itself",
-  "tooltip.expandedae.binding.out_of_range": "Target out of range! Limit: 16x16 horizontal, 32 vertical",
-  "tooltip.expandedae.binding.omni_only": "Omni Laser Beam Former can only connect to other Omni Laser Beam Formers",
-  "tooltip.expandedae.binding.omni_linked": "Linked [%d, %d, %d] → [%d, %d, %d]",
-  "tooltip.expandedae.binding.omni_unlinked": "Unlinked [%d, %d, %d] → [%d, %d, %d]",
-  "tooltip.expandedae.binding.invalid": "Source beam former is invalid or no longer exists",
-  "tooltip.expandedae.binding.cleared": "Source beam former cleared",
-  "tooltip.expandedae.binding.already_linked_target": "[%d, %d, %d] is already connected by another connector and cannot be used as source"
+  "tooltip.expandedae.binding.out_of_range": "Target out of range! Max distance: 32 blocks",
+  "tooltip.expandedae.binding.selection_invalid": "Selected laser beam former no longer exists",
+  "tooltip.expandedae.binding.selection_cleared": "Selection cleared",
+  "tooltip.expandedae.binding.omni_only_omni": "Omni connector can only connect to another Omni connector",
+  "tooltip.expandedae.binding.source_already_linked": "Selected connector is already linked",
+  "tooltip.expandedae.binding.target_already_linked": "Target connector is already linked",
+  "tooltip.expandedae.binding.omni_connected": "Connected [%d, %d, %d] ↔ [%d, %d, %d]",
+  "tooltip.expandedae.binding.omni_disconnected": "Disconnected [%d, %d, %d] ↔ [%d, %d, %d]",
+  "tooltip.expandedae.binding.invalid_target": "Invalid target",
+  "tooltip.expandedae.binding.relay_connected": "Relay connected [%d, %d, %d] → [%d, %d, %d]",
+  "tooltip.expandedae.binding.relay_disconnected": "Relay disconnected [%d, %d, %d] → [%d, %d, %d]"
 }

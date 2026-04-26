@@ -8,6 +8,7 @@ import appeng.core.definitions.ItemDefinition;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.block.LaserBeamBlock;
 import lu.kolja.expandedae.block.OmniLaserBeamBlock;
+import lu.kolja.expandedae.block.RelayLaserBeamBlock;
 import lu.kolja.expandedae.block.block.ExpIOPortBlock;
 import lu.kolja.expandedae.block.block.ExpPatternProviderBlock;
 import lu.kolja.expandedae.block.block.PlushieBlock;
@@ -190,6 +191,19 @@ public class ExpBlocks {
             "ME Omni Laser Beam Former",
             "omni_laser_beam",
             () -> new OmniLaserBeamBlock(BlockBehaviour.Properties
+                    .of()
+                    .mapColor(MapColor.METAL)
+                    .strength(0.3f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+            ),
+            AEBaseBlockItem::new
+    );
+
+    public static final BlockDefinition<RelayLaserBeamBlock> RELAY_LASER_BEAM = block(
+            "ME Relay Laser Beam Former",
+            "relay_laser_beam",
+            () -> new RelayLaserBeamBlock(BlockBehaviour.Properties
                     .of()
                     .mapColor(MapColor.METAL)
                     .strength(0.3f)

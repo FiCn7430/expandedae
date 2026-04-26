@@ -1,6 +1,7 @@
 package lu.kolja.expandedae.item;
 
 import lu.kolja.expandedae.block.entity.OmniLaserBeamBlockEntity;
+import lu.kolja.expandedae.block.entity.RelayLaserBeamBlockEntity;
 import lu.kolja.expandedae.laserbeam.ILinkable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -18,34 +19,42 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 /**
  * 激光绑定工具
  * 
- * 功能：用于连接两个全向激光线缆
+ * 功能：用于连接激光线缆
  * 
- * 使用方法：
- * 1. Shift+右键点击第一个全向激光线缆（设置为源）
- * 2. 右键点击第二个全向激光线缆（建立连接）
- * 3. 再次右键已连接的线缆可断开连接
- * 4. Shift+左键空气清空已选定的源
+ * 全向连接器使用方法：
+ * 1. Shift+右键点击第一个全向连接器（选中）
+ * 2. 右键点击第二个全向连接器（建立双向连接）
+ * 3. Shift+右键已连接的任意全向连接器（断开连接）
+ * 
+ * 中继连接器使用方法：
+ * 1. Shift+右键点击中继连接器（选中）
+ * 2. 右键点击目标连接器（建立单向连接）
+ * 3. 再次右键已连接的目标（断开连接）
+ * 
+ * Shift+左键空气：清除工具的选中状态
  * 
  * 连接限制：
  * - 水平范围：16格
  * - 垂直范围：32格
+ * - 全向连接器：只能连接一个目标
+ * - 中继连接器：可以连接多个目标
  */
 public class LaserBindingTool extends Item {
     
-    /** NBT标签：源位置 */
-    private static final String TAG_SOURCE = "SourcePos";
+    /** NBT标签：选中位置 */
+    private static final String TAG_SELECTED = "SelectedPos";
     
-    /** NBT标签：源类型 */
-    private static final String TAG_SOURCE_TYPE = "SourceType";
+    /** NBT标签：选中类型 */
+    private static final String TAG_SELECTED_TYPE = "SelectedType";
     
-    /** 源类型：全向激光线缆 */
+    /** 类型：全向连接器 */
     private static final String TYPE_OMNI = "omni";
     
-    /** 全向激光线缆连接范围 - 水平 */
-    private static final int OMNI_RANGE_XZ = 16;
+    /** 类型：中继连接器 */
+    private static final String TYPE_RELAY = "relay";
     
-    /** 全向激光线缆连接范围 - 垂直 */
-    private static final int OMNI_RANGE_Y = 32;
+    /** 最大连接距离（欧几里得距离） */
+    private static final double MAX_RANGE = 32.0;
 
     public LaserBindingTool(Properties props) {
         super(props);
@@ -67,226 +76,374 @@ public class LaserBindingTool extends Item {
             net.minecraft.world.item.component.CustomData.EMPTY
         ).copyTag();
         
-        boolean hasSource = tag.contains(TAG_SOURCE);
-        boolean isLinkable = be instanceof ILinkable;
+        boolean hasSelected = tag.contains(TAG_SELECTED);
+        
+        // 判断点击的方块类型
+        boolean isOmni = be instanceof OmniLaserBeamBlockEntity;
+        boolean isRelay = be instanceof RelayLaserBeamBlockEntity;
+        boolean isLinkable = isOmni || isRelay;
         
         if (player != null && player.isShiftKeyDown()) {
-            // Shift+右键：选择源
-            
-            if (!isLinkable) {
-                return InteractionResult.PASS;
-            }
-            
-            // 检查是否已经是其他连接器的从连接器
-            if (be instanceof OmniLaserBeamBlockEntity targetEntity) {
-                // 检查这个方块是否被其他连接器连接
-                if (isLinkedAsTarget(level, pos)) {
-                    if (player != null) {
-                        player.displayClientMessage(
-                            Component.translatable("tooltip.expandedae.binding.already_linked_target", pos.getX(), pos.getY(), pos.getZ()), 
-                            true
-                        );
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-            }
-            
-            // Shift+右键：选定被连接的激光线缆（源）
-            CompoundTag t = new CompoundTag();
-            t.putInt("x", pos.getX());
-            t.putInt("y", pos.getY());
-            t.putInt("z", pos.getZ());
-            tag.put(TAG_SOURCE, t);
-            
-            // 记录源类型
-            if (be instanceof OmniLaserBeamBlockEntity) {
-                tag.putString(TAG_SOURCE_TYPE, TYPE_OMNI);
-                stack.set(
-                    net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-                    net.minecraft.world.item.component.CustomData.of(tag)
-                );
-                player.displayClientMessage(
-                    Component.translatable("tooltip.expandedae.binding.set_omni", pos.getX(), pos.getY(), pos.getZ()), 
-                    true
-                );
-            } else {
-                tag.putString(TAG_SOURCE_TYPE, TYPE_OMNI);
-                stack.set(
-                    net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-                    net.minecraft.world.item.component.CustomData.of(tag)
-                );
-                player.displayClientMessage(
-                    Component.translatable("tooltip.expandedae.binding.set", pos.getX(), pos.getY(), pos.getZ()), 
-                    true
-                );
-            }
-            return InteractionResult.CONSUME;
-            
+            // Shift+右键逻辑
+            return handleShiftRightClick(level, pos, stack, player, be, isOmni, isRelay, hasSelected, tag);
         } else {
-            // 普通右键：建立连接
-            
-            if (!hasSource) {
-                // 没有选定源
-                if (isLinkable) {
-                    // 如果是ILinkable，提示先选定源
-                    if (player != null) {
-                        player.displayClientMessage(
-                            Component.translatable("tooltip.expandedae.binding.no_source"), 
-                            true
-                        );
-                    }
-                    return InteractionResult.SUCCESS;
-                } else {
-                    // 不是ILinkable，让其他交互继续
-                    return InteractionResult.PASS;
-                }
-            }
-            
-            // 已选定源，执行绑定逻辑
-            // 全向激光线缆只能连接其他全向激光线缆
-            if (!(be instanceof OmniLaserBeamBlockEntity)) {
-                // 目标不是全向激光线缆
-                if (player != null) {
-                    player.displayClientMessage(
-                        Component.translatable("tooltip.expandedae.binding.omni_only"), 
-                        true
-                    );
-                }
-                return InteractionResult.SUCCESS;
-            }
-            
-            CompoundTag t = tag.getCompound(TAG_SOURCE);
-            BlockPos source = new BlockPos(t.getInt("x"), t.getInt("y"), t.getInt("z"));
-            
-            if (source.equals(pos)) {
-                // 点击相同方块：提示不能连接自己
-                if (player != null) {
-                    player.displayClientMessage(
-                        Component.translatable("tooltip.expandedae.binding.self_link"), 
-                        true
-                    );
-                }
-                return InteractionResult.SUCCESS;
-            }
-            
-            BlockEntity beSource = level.getBlockEntity(source);
-            if (beSource instanceof OmniLaserBeamBlockEntity sourceEntity) {
-                // 对于OmniLaserBeamBlockEntity，检查距离限制：水平范围16x16，垂直范围32
-                int dx = Math.abs(pos.getX() - source.getX());
-                int dy = Math.abs(pos.getY() - source.getY());
-                int dz = Math.abs(pos.getZ() - source.getZ());
-                
-                if (dx > OMNI_RANGE_XZ || dz > OMNI_RANGE_XZ || dy > OMNI_RANGE_Y) {
-                    // 超出连接范围
-                    if (player != null) {
-                        player.displayClientMessage(
-                            Component.translatable("tooltip.expandedae.binding.out_of_range"), 
-                            true
-                        );
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-                
-                // 检查是否已经连接
-                if (sourceEntity.getLinks().contains(pos)) {
-                    // 已连接，断开连接
-                    sourceEntity.removeLink(pos);
-                    if (player != null) {
-                        player.displayClientMessage(
-                            Component.translatable(
-                                "tooltip.expandedae.binding.omni_unlinked", 
-                                source.getX(), source.getY(), source.getZ(), 
-                                pos.getX(), pos.getY(), pos.getZ()
-                            ), 
-                            true
-                        );
-                    }
-                } else {
-                    // 未连接，建立链接：从源到目标的单向连接
-                    sourceEntity.addLink(pos);
-                    if (player != null) {
-                        player.displayClientMessage(
-                            Component.translatable(
-                                "tooltip.expandedae.binding.omni_linked", 
-                                source.getX(), source.getY(), source.getZ(), 
-                                pos.getX(), pos.getY(), pos.getZ()
-                            ), 
-                            true
-                        );
-                    }
-                }
-                // 注意：不清空TAG_SOURCE，保持源信息，可以继续连接/断开其他目标
-                return InteractionResult.SUCCESS;
-            } else {
-                // 源位置不再存在有效的激光线缆
-                tag.remove(TAG_SOURCE);
-                tag.remove(TAG_SOURCE_TYPE);
-                stack.set(
-                    net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-                    net.minecraft.world.item.component.CustomData.of(tag)
-                );
-                if (player != null) {
-                    player.displayClientMessage(
-                        Component.translatable("tooltip.expandedae.binding.invalid"), 
-                        true
-                    );
-                }
-                return InteractionResult.SUCCESS;
-            }
+            // 普通右键逻辑
+            return handleRightClick(level, pos, stack, player, be, isOmni, isRelay, hasSelected, tag);
         }
     }
-
+    
     /**
-     * 检查指定位置是否被其他全向激光连接器作为目标连接
-     *
-     * @param level 世界
-     * @param pos 要检查的位置
-     * @return 如果被其他连接器连接则返回true
+     * 处理Shift+右键
+     * 
+     * 逻辑：
+     * - 如果点击的是已连接的全向连接器：断开连接
+     * - 否则：选中该连接器
      */
-    private static boolean isLinkedAsTarget(Level level, BlockPos pos) {
-        // 在指定位置周围的范围内查找全向激光连接器
-        // 最大连接范围是16格水平，32格垂直
-        int searchRange = OMNI_RANGE_XZ + 2; // 稍微扩大搜索范围
-        int searchRangeY = OMNI_RANGE_Y + 2;
-
-        for (int dx = -searchRange; dx <= searchRange; dx++) {
-            for (int dy = -searchRangeY; dy <= searchRangeY; dy++) {
-                for (int dz = -searchRange; dz <= searchRange; dz++) {
-                    BlockPos checkPos = pos.offset(dx, dy, dz);
-                    BlockEntity be = level.getBlockEntity(checkPos);
-                    if (be instanceof OmniLaserBeamBlockEntity omniBe) {
-                        // 检查这个连接器是否连接到了目标位置
-                        if (omniBe.getLinks().contains(pos)) {
-                            return true;
-                        }
+    private InteractionResult handleShiftRightClick(Level level, BlockPos pos, ItemStack stack, Player player, 
+            BlockEntity be, boolean isOmni, boolean isRelay, boolean hasSelected, CompoundTag tag) {
+        
+        // 如果点击的是已连接的全向连接器，断开连接
+        if (isOmni && be instanceof OmniLaserBeamBlockEntity omniBe) {
+            if (omniBe.isLinked()) {
+                BlockPos otherPos = omniBe.getLinkedTarget();
+                if (otherPos != null) {
+                    // 断开双方的连接
+                    omniBe.removeLink(otherPos);
+                    BlockEntity otherBe = level.getBlockEntity(otherPos);
+                    if (otherBe instanceof OmniLaserBeamBlockEntity otherOmni) {
+                        otherOmni.removeLink(pos);
                     }
+                    
+                    // 清除工具的选中状态
+                    clearSelection(stack, player);
+                    
+                    if (player != null) {
+                        player.displayClientMessage(
+                            Component.translatable("tooltip.expandedae.binding.omni_disconnected", 
+                                pos.getX(), pos.getY(), pos.getZ(),
+                                otherPos.getX(), otherPos.getY(), otherPos.getZ()), 
+                            true
+                        );
+                    }
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
-        return false;
+        
+        // 否则，选中该连接器
+        boolean isLinkable = isOmni || isRelay;
+        if (!isLinkable) {
+            return InteractionResult.PASS;
+        }
+        
+        // 选中连接器
+        CompoundTag selectedTag = new CompoundTag();
+        selectedTag.putInt("x", pos.getX());
+        selectedTag.putInt("y", pos.getY());
+        selectedTag.putInt("z", pos.getZ());
+        tag.put(TAG_SELECTED, selectedTag);
+        
+        if (isOmni) {
+            tag.putString(TAG_SELECTED_TYPE, TYPE_OMNI);
+            saveTag(stack, tag);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.select_omni", pos.getX(), pos.getY(), pos.getZ()), 
+                    true
+                );
+            }
+        } else if (isRelay) {
+            tag.putString(TAG_SELECTED_TYPE, TYPE_RELAY);
+            saveTag(stack, tag);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.select_relay", pos.getX(), pos.getY(), pos.getZ()), 
+                    true
+                );
+            }
+        }
+        return InteractionResult.CONSUME;
+    }
+    
+    /**
+     * 处理普通右键
+     * 
+     * 逻辑：
+     * - 如果没有选中：提示先选中
+     * - 如果已选中：尝试建立连接
+     */
+    private InteractionResult handleRightClick(Level level, BlockPos pos, ItemStack stack, Player player,
+            BlockEntity be, boolean isOmni, boolean isRelay, boolean hasSelected, CompoundTag tag) {
+        
+        boolean isLinkable = isOmni || isRelay;
+        
+        if (!hasSelected) {
+            // 没有选中，提示
+            if (isLinkable) {
+                if (player != null) {
+                    player.displayClientMessage(
+                        Component.translatable("tooltip.expandedae.binding.no_selection"), 
+                        true
+                    );
+                }
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
+        }
+        
+        // 已选中，获取选中信息
+        CompoundTag selectedTag = tag.getCompound(TAG_SELECTED);
+        BlockPos selectedPos = new BlockPos(
+            selectedTag.getInt("x"), 
+            selectedTag.getInt("y"), 
+            selectedTag.getInt("z")
+        );
+        String selectedType = tag.getString(TAG_SELECTED_TYPE);
+        
+        // 检查是否是同一个方块
+        if (selectedPos.equals(pos)) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.self_link"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        // 检查选中的是否还存在
+        BlockEntity selectedBe = level.getBlockEntity(selectedPos);
+        if (selectedBe == null) {
+            clearSelection(stack, player);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.selection_invalid"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        // 根据选中类型处理
+        if (TYPE_OMNI.equals(selectedType)) {
+            return handleOmniConnection(level, selectedPos, pos, stack, player, be, isOmni);
+        } else if (TYPE_RELAY.equals(selectedType)) {
+            return handleRelayConnection(level, selectedPos, pos, stack, player, be, isOmni, isRelay);
+        }
+        
+        return InteractionResult.SUCCESS;
+    }
+    
+    /**
+     * 处理全向连接器的连接
+     * 
+     * 规则：
+     * - 只能连接另一个全向连接器
+     * - 双方都必须未连接
+     * - 建立双向连接
+     */
+    private InteractionResult handleOmniConnection(Level level, BlockPos sourcePos, BlockPos targetPos, 
+            ItemStack stack, Player player, BlockEntity targetBe, boolean targetIsOmni) {
+        
+        // 目标必须是全向连接器
+        if (!targetIsOmni || !(targetBe instanceof OmniLaserBeamBlockEntity targetOmni)) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.omni_only_omni"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        BlockEntity sourceBe = level.getBlockEntity(sourcePos);
+        if (!(sourceBe instanceof OmniLaserBeamBlockEntity sourceOmni)) {
+            clearSelection(stack, player);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.selection_invalid"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        // 检查距离
+        if (!checkRange(sourcePos, targetPos)) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.out_of_range"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        // 检查双方是否已连接
+        if (sourceOmni.isLinked()) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.source_already_linked"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        if (targetOmni.isLinked()) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.target_already_linked"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        // 建立双向连接
+        sourceOmni.addLink(targetPos);
+        targetOmni.addLink(sourcePos);
+        
+        // 清除工具的选中状态
+        clearSelection(stack, player);
+        
+        if (player != null) {
+            player.displayClientMessage(
+                Component.translatable("tooltip.expandedae.binding.omni_connected", 
+                    sourcePos.getX(), sourcePos.getY(), sourcePos.getZ(),
+                    targetPos.getX(), targetPos.getY(), targetPos.getZ()), 
+                true
+            );
+        }
+        return InteractionResult.SUCCESS;
+    }
+    
+    /**
+     * 处理中继连接器的连接
+     * 
+     * 规则：
+     * - 可以连接全向连接器或另一个中继
+     * - 建立单向连接（从Relay到目标）
+     */
+    private InteractionResult handleRelayConnection(Level level, BlockPos relayPos, BlockPos targetPos,
+            ItemStack stack, Player player, BlockEntity targetBe, boolean targetIsOmni, boolean targetIsRelay) {
+        
+        // 目标必须是可连接的
+        if (!targetIsOmni && !targetIsRelay) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.invalid_target"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        BlockEntity relayBe = level.getBlockEntity(relayPos);
+        if (!(relayBe instanceof RelayLaserBeamBlockEntity relay)) {
+            clearSelection(stack, player);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.selection_invalid"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        // 检查距离
+        if (!checkRange(relayPos, targetPos)) {
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.out_of_range"), 
+                    true
+                );
+            }
+            return InteractionResult.SUCCESS;
+        }
+        
+        ILinkable targetLinkable = (ILinkable) targetBe;
+        
+        // 检查是否已连接
+        if (relay.getLinks().contains(targetPos)) {
+            // 已连接，断开
+            relay.removeLink(targetPos);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.relay_disconnected", 
+                        relayPos.getX(), relayPos.getY(), relayPos.getZ(),
+                        targetPos.getX(), targetPos.getY(), targetPos.getZ()), 
+                    true
+                );
+            }
+        } else {
+            // 未连接，建立连接
+            relay.addLink(targetPos);
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.relay_connected", 
+                        relayPos.getX(), relayPos.getY(), relayPos.getZ(),
+                        targetPos.getX(), targetPos.getY(), targetPos.getZ()), 
+                    true
+                );
+            }
+        }
+        
+        // 中继连接不清除选中状态，可以继续连接其他目标
+        return InteractionResult.SUCCESS;
+    }
+    
+    /**
+     * 检查距离是否在范围内（使用欧几里得距离）
+     */
+    private boolean checkRange(BlockPos from, BlockPos to) {
+        // 使用欧几里得距离计算
+        double distance = Math.sqrt(from.distSqr(to));
+        return distance <= MAX_RANGE;
+    }
+    
+    /**
+     * 清除工具的选中状态
+     */
+    private void clearSelection(ItemStack stack, Player player) {
+        CompoundTag tag = stack.getOrDefault(
+            net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
+            net.minecraft.world.item.component.CustomData.EMPTY
+        ).copyTag();
+        
+        tag.remove(TAG_SELECTED);
+        tag.remove(TAG_SELECTED_TYPE);
+        saveTag(stack, tag);
+    }
+    
+    /**
+     * 保存NBT标签到物品
+     */
+    private void saveTag(ItemStack stack, CompoundTag tag) {
+        stack.set(
+            net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
+            net.minecraft.world.item.component.CustomData.of(tag)
+        );
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide && player.isShiftKeyDown()) {
-            // Shift+左键：清空已选定的源
+            // Shift+左键空气：清除选中状态
             CompoundTag tag = stack.getOrDefault(
                 net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
                 net.minecraft.world.item.component.CustomData.EMPTY
             ).copyTag();
             
-            if (tag.contains(TAG_SOURCE)) {
-                tag.remove(TAG_SOURCE);
-                tag.remove(TAG_SOURCE_TYPE);
-                stack.set(
-                    net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-                    net.minecraft.world.item.component.CustomData.of(tag)
-                );
-                player.displayClientMessage(
-                    Component.translatable("tooltip.expandedae.binding.cleared"), 
-                    true
-                );
+            if (tag.contains(TAG_SELECTED)) {
+                clearSelection(stack, player);
+                if (player != null) {
+                    player.displayClientMessage(
+                        Component.translatable("tooltip.expandedae.binding.selection_cleared"), 
+                        true
+                    );
+                }
                 return InteractionResultHolder.consume(stack);
             }
         }

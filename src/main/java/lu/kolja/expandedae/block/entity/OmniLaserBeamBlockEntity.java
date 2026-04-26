@@ -13,8 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -24,33 +22,31 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * 全向激光线缆方块实体
  * 
  * 功能实现：
- * 1. 可以通过激光绑定工具手动配置多个连接目标
- * 2. 同时维护多个AE网络连接
- * 3. 管理多个光束的渲染状态
+ * 1. 通过激光绑定工具建立双向对等连接（只能连接一个目标）
+ * 2. 维护单个AE网络连接
+ * 3. 管理光束的渲染状态
  * 4. 实现ILinkable接口，支持激光绑定工具操作
  */
 public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements ILinkable {
     
-    /** 目标排序比较器 */
-    private static final Comparator<BlockPos> TARGET_ORDER = Comparator.comparingLong(BlockPos::asLong);
+    /** 连接目标（全向连接器只能连接一个目标） */
+    @Nullable
+    private BlockPos linkedTarget = null;
     
-    /** 连接目标集合 */
-    private final Set<BlockPos> links = new HashSet<>();
+    /** 当前活跃连接 */
+    @Nullable
+    private IGridConnection activeConnection = null;
     
-    /** 位置到连接的映射 */
-    private final Map<BlockPos, IGridConnection> connections = new HashMap<>();
-    
-    /** 当前活跃的目标列表 */
-    private List<BlockPos> activeTargets = List.of();
-    
-    /** 客户端活跃目标列表（用于渲染） */
-    private List<BlockPos> clientActiveTargets = List.of();
+    /** 客户端活跃目标（用于渲染） */
+    @Nullable
+    private BlockPos clientLinkedTarget = null;
     
     /** 上一次暴露的后方方向 */
     @Nullable
@@ -82,7 +78,7 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
      * 每tick执行：
      * 1. 同步暴露的后方方向
      * 2. 检查自身网络节点状态
-     * 3. 遍历所有连接目标，维护连接
+     * 3. 维护与目标的双向连接
      * 4. 更新方块状态
      */
     public static void serverTick(Level level, BlockPos pos, BlockState state, OmniLaserBeamBlockEntity be) {
@@ -96,46 +92,42 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
         IManagedGridNode myManaged = be.getMainNode();
         IGridNode myNode = myManaged.getNode();
         if (myNode == null) {
-            be.clearRuntimeState();
+            be.clearConnection();
             be.updateOwnStatus(OmniLaserBeamBlock.Status.ON);
             return;
         }
 
-        List<BlockPos> activeNow = new ArrayList<>();
-        for (BlockPos targetPos : be.getSortedLinks()) {
+        BlockPos targetPos = be.linkedTarget;
+        boolean isActive = false;
+
+        if (targetPos != null) {
             if (!level.hasChunkAt(targetPos)) {
-                be.releaseConnection(targetPos, myNode, true);
-                continue;
-            }
-
-            BlockState targetState = level.getBlockState(targetPos);
-            if (!(targetState.getBlock() instanceof OmniLaserBeamBlock)) {
-                be.removeLink(targetPos);
-                continue;
-            }
-
-            var targetEntity = level.getBlockEntity(targetPos);
-            if (!(targetEntity instanceof OmniLaserBeamBlockEntity other) || other == be || other.isRemoved()) {
-                be.releaseConnection(targetPos, myNode, true);
-                continue;
-            }
-
-            IManagedGridNode otherManaged = other.getMainNode();
-            IGridNode otherNode = otherManaged.getNode();
-            if (otherNode == null) {
-                be.releaseConnection(targetPos, myNode, true);
-                continue;
-            }
-
-            if (be.ensureConnection(targetPos, myNode, otherNode) != null
-                    && myManaged.isOnline() && myManaged.isPowered()
-                    && otherManaged.isOnline() && otherManaged.isPowered()) {
-                activeNow.add(targetPos);
+                be.clearConnection();
+            } else {
+                BlockState targetState = level.getBlockState(targetPos);
+                if (!(targetState.getBlock() instanceof OmniLaserBeamBlock)) {
+                    be.clearLink();
+                } else {
+                    var targetEntity = level.getBlockEntity(targetPos);
+                    if (!(targetEntity instanceof OmniLaserBeamBlockEntity other) || other.isRemoved()) {
+                        be.clearConnection();
+                    } else {
+                        IManagedGridNode otherManaged = other.getMainNode();
+                        IGridNode otherNode = otherManaged.getNode();
+                        if (otherNode == null) {
+                            be.clearConnection();
+                        } else if (be.ensureConnection(myNode, otherNode) != null
+                                && myManaged.isOnline() && myManaged.isPowered()
+                                && otherManaged.isOnline() && otherManaged.isPowered()) {
+                            isActive = true;
+                        }
+                    }
+                }
             }
         }
 
-        be.syncActiveTargets(activeNow);
-        be.updateOwnStatus(activeNow.isEmpty() ? OmniLaserBeamBlock.Status.ON : OmniLaserBeamBlock.Status.BEAMING);
+        be.syncActiveTarget(isActive ? targetPos : null);
+        be.updateOwnStatus(isActive ? OmniLaserBeamBlock.Status.BEAMING : OmniLaserBeamBlock.Status.ON);
     }
 
     /**
@@ -147,35 +139,102 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
         // 客户端无需逻辑
     }
 
+    /**
+     * 建立连接（双向对等）
+     * 
+     * @param other 目标位置
+     */
     @Override
     public void addLink(BlockPos other) {
         if (other.equals(this.getBlockPos())) {
             return;
         }
 
-        if (this.links.add(other)) {
-            this.setChanged();
+        // 全向连接器只能连接一个目标
+        if (this.linkedTarget != null && !this.linkedTarget.equals(other)) {
+            // 如果已有连接，先断开
+            this.clearLink();
         }
+
+        this.linkedTarget = other;
+        this.setChanged();
+        this.markForUpdate();
     }
 
+    /**
+     * 断开连接
+     * 
+     * @param other 目标位置
+     */
     @Override
     public void removeLink(BlockPos other) {
-        if (!this.links.remove(other)) {
+        if (this.linkedTarget == null || !this.linkedTarget.equals(other)) {
             return;
         }
 
-        this.releaseConnection(other, this.getMainNode().getNode(), true);
-        this.removeActiveTarget(other);
-        this.setChanged();
+        this.clearLink();
     }
 
+    /**
+     * 获取连接目标
+     * 
+     * @return 连接目标位置，如果没有连接则返回null
+     */
     @Override
     public Set<BlockPos> getLinks() {
-        return Collections.unmodifiableSet(this.links);
+        return this.linkedTarget != null ? Set.of(this.linkedTarget) : Set.of();
     }
 
-    public List<BlockPos> getClientActiveTargets() {
-        return this.clientActiveTargets;
+    /**
+     * 获取单个连接目标（用于简化操作）
+     * 
+     * @return 连接目标位置，如果没有连接则返回null
+     */
+    @Nullable
+    public BlockPos getLinkedTarget() {
+        return this.linkedTarget;
+    }
+
+    /**
+     * 获取客户端连接目标（用于渲染）
+     * 
+     * @return 连接目标位置，如果没有连接则返回null
+     */
+    @Nullable
+    public BlockPos getClientLinkedTarget() {
+        return this.clientLinkedTarget;
+    }
+
+    /**
+     * 是否已连接
+     * 
+     * @return 如果已连接返回true
+     */
+    public boolean isLinked() {
+        return this.linkedTarget != null;
+    }
+
+    /**
+     * 清除连接（内部使用）
+     */
+    private void clearLink() {
+        this.linkedTarget = null;
+        this.clearConnection();
+        this.setChanged();
+        this.markForUpdate();
+    }
+
+    /**
+     * 清除AE网络连接但不清除目标记录
+     */
+    private void clearConnection() {
+        if (this.activeConnection != null) {
+            try {
+                this.activeConnection.destroy();
+            } catch (Exception ignored) {
+            }
+            this.activeConnection = null;
+        }
     }
 
     public boolean isHideBeam() {
@@ -183,7 +242,7 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
     }
 
     public boolean shouldRenderBeam() {
-        return !hideBeam && !clientActiveTargets.isEmpty();
+        return !hideBeam && clientLinkedTarget != null;
     }
 
     public void toggleBeamVisibility() {
@@ -201,9 +260,9 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
     @Override
     protected void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
-        data.writeVarInt(this.activeTargets.size());
-        for (BlockPos p : this.activeTargets) {
-            data.writeBlockPos(p);
+        data.writeBoolean(this.linkedTarget != null);
+        if (this.linkedTarget != null) {
+            data.writeBlockPos(this.linkedTarget);
         }
         data.writeBoolean(this.hideBeam);
     }
@@ -211,15 +270,11 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
     @Override
     protected boolean readFromStream(RegistryFriendlyByteBuf data) {
         boolean changed = super.readFromStream(data);
-        int count = data.readVarInt();
-        List<BlockPos> updatedTargets = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            updatedTargets.add(data.readBlockPos());
-        }
-
-        List<BlockPos> immutableTargets = updatedTargets.isEmpty() ? List.of() : List.copyOf(updatedTargets);
-        boolean targetsChanged = !immutableTargets.equals(this.clientActiveTargets);
-        this.clientActiveTargets = immutableTargets;
+        boolean hasTarget = data.readBoolean();
+        BlockPos newTarget = hasTarget ? data.readBlockPos() : null;
+        boolean targetsChanged = (newTarget == null) != (this.clientLinkedTarget == null) 
+                || (newTarget != null && !newTarget.equals(this.clientLinkedTarget));
+        this.clientLinkedTarget = newTarget;
         
         boolean receivedHideBeam = data.readBoolean();
         boolean hideBeamChanged = this.hideBeam != receivedHideBeam;
@@ -230,78 +285,62 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
 
     @Override
     public void onChunkUnloaded() {
-        this.disconnectAll();
+        this.clearConnection();
         super.onChunkUnloaded();
     }
 
     @Override
     public void setRemoved() {
-        this.disconnectAll();
+        this.clearConnection();
         super.setRemoved();
     }
 
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        ListTag list = new ListTag();
-        for (BlockPos p : this.links) {
+        if (this.linkedTarget != null) {
             CompoundTag targetTag = new CompoundTag();
-            targetTag.putInt("x", p.getX());
-            targetTag.putInt("y", p.getY());
-            targetTag.putInt("z", p.getZ());
-            list.add(targetTag);
+            targetTag.putInt("x", this.linkedTarget.getX());
+            targetTag.putInt("y", this.linkedTarget.getY());
+            targetTag.putInt("z", this.linkedTarget.getZ());
+            tag.put("linkedTarget", targetTag);
         }
-        tag.put("links", list);
         tag.putBoolean("hideBeam", hideBeam);
     }
 
     @Override
     public void loadTag(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadTag(tag, registries);
-        this.links.clear();
-        this.connections.clear();
-        this.activeTargets = List.of();
-        this.clientActiveTargets = List.of();
+        this.linkedTarget = null;
+        this.activeConnection = null;
+        this.clientLinkedTarget = null;
         this.lastExposedBack = null;
         this.hideBeam = tag.getBoolean("hideBeam");
 
-        if (tag.contains("links", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("links", Tag.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++) {
-                CompoundTag targetTag = list.getCompound(i);
-                this.links.add(new BlockPos(
-                        targetTag.getInt("x"),
-                        targetTag.getInt("y"),
-                        targetTag.getInt("z")));
-            }
+        if (tag.contains("linkedTarget")) {
+            CompoundTag targetTag = tag.getCompound("linkedTarget");
+            this.linkedTarget = new BlockPos(
+                    targetTag.getInt("x"),
+                    targetTag.getInt("y"),
+                    targetTag.getInt("z"));
         }
     }
 
     @OnlyIn(Dist.CLIENT)
     public AABB getRenderBoundingBox() {
-        if (this.clientActiveTargets.isEmpty()) {
-            BlockPos pos = this.getBlockPos();
+        BlockPos pos = this.getBlockPos();
+        if (this.clientLinkedTarget == null) {
             return new AABB(
                     pos.getX() - 5, pos.getY() - 5, pos.getZ() - 5,
                     pos.getX() + 6, pos.getY() + 6, pos.getZ() + 6);
         }
 
-        BlockPos pos = this.getBlockPos();
-        double minX = pos.getX();
-        double minY = pos.getY();
-        double minZ = pos.getZ();
-        double maxX = pos.getX() + 1;
-        double maxY = pos.getY() + 1;
-        double maxZ = pos.getZ() + 1;
-
-        for (BlockPos target : this.clientActiveTargets) {
-            minX = Math.min(minX, target.getX());
-            minY = Math.min(minY, target.getY());
-            minZ = Math.min(minZ, target.getZ());
-            maxX = Math.max(maxX, target.getX() + 1);
-            maxY = Math.max(maxY, target.getY() + 1);
-            maxZ = Math.max(maxZ, target.getZ() + 1);
-        }
+        double minX = Math.min(pos.getX(), this.clientLinkedTarget.getX());
+        double minY = Math.min(pos.getY(), this.clientLinkedTarget.getY());
+        double minZ = Math.min(pos.getZ(), this.clientLinkedTarget.getZ());
+        double maxX = Math.max(pos.getX() + 1, this.clientLinkedTarget.getX() + 1);
+        double maxY = Math.max(pos.getY() + 1, this.clientLinkedTarget.getY() + 1);
+        double maxZ = Math.max(pos.getZ() + 1, this.clientLinkedTarget.getZ() + 1);
 
         double expansion = 2.0;
         return new AABB(
@@ -309,106 +348,11 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
                 maxX + expansion, maxY + expansion, maxZ + expansion);
     }
 
-    private void disconnectAll() {
-        IGridNode myNode = this.getMainNode().getNode();
-        if (myNode != null) {
-            for (IGridConnection connection : new HashSet<>(this.connections.values())) {
-                if (this.isLiveConnection(connection, myNode, null)) {
-                    this.destroyConnection(connection);
-                }
-            }
-        }
-
-        this.clearRuntimeState();
-    }
-
-    private void clearRuntimeState() {
-        this.connections.clear();
-        this.syncActiveTargets(List.of());
-    }
-
-    @Nullable
-    private IGridConnection ensureConnection(BlockPos targetPos, IGridNode myNode, IGridNode otherNode) {
-        IGridConnection cachedConnection = this.connections.get(targetPos);
-        if (this.isLiveConnection(cachedConnection, myNode, otherNode)) {
-            return cachedConnection;
-        }
-
-        if (this.isLiveConnection(cachedConnection, myNode, null)) {
-            this.destroyConnection(cachedConnection);
-        }
-        this.connections.remove(targetPos);
-
-        IGridConnection liveConnection = this.findLiveConnection(myNode, otherNode);
-        if (liveConnection == null) {
-            try {
-                liveConnection = GridHelper.createConnection(myNode, otherNode);
-            } catch (IllegalStateException ignored) {
-                liveConnection = this.findLiveConnection(myNode, otherNode);
-            }
-        }
-
-        if (liveConnection != null) {
-            this.connections.put(targetPos, liveConnection);
-        }
-        return liveConnection;
-    }
-
-    private void releaseConnection(BlockPos targetPos, @Nullable IGridNode myNode, boolean destroyLiveConnection) {
-        IGridConnection cachedConnection = this.connections.remove(targetPos);
-        if (!destroyLiveConnection || myNode == null) {
-            return;
-        }
-
-        if (this.isLiveConnection(cachedConnection, myNode, null)) {
-            this.destroyConnection(cachedConnection);
-            return;
-        }
-
-        IGridNode targetNode = this.getTargetNode(targetPos);
-        if (targetNode == null) {
-            return;
-        }
-
-        IGridConnection liveConnection = this.findLiveConnection(myNode, targetNode);
-        if (liveConnection != null) {
-            this.destroyConnection(liveConnection);
-        }
-    }
-
-    @Nullable
-    private IGridNode getTargetNode(BlockPos targetPos) {
-        if (this.level == null || !this.level.hasChunkAt(targetPos)) {
-            return null;
-        }
-
-        var targetEntity = this.level.getBlockEntity(targetPos);
-        if (targetEntity instanceof OmniLaserBeamBlockEntity other && !other.isRemoved()) {
-            return other.getMainNode().getNode();
-        }
-
-        return null;
-    }
-
-    private void syncActiveTargets(List<BlockPos> activeNow) {
-        List<BlockPos> immutableTargets = activeNow.isEmpty() ? List.of() : List.copyOf(activeNow);
-        if (!immutableTargets.equals(this.activeTargets)) {
-            this.activeTargets = immutableTargets;
+    private void syncActiveTarget(@Nullable BlockPos target) {
+        if ((target == null) != (this.linkedTarget == null) 
+                || (target != null && !target.equals(this.linkedTarget))) {
             this.markForUpdate();
         }
-    }
-
-    private void removeActiveTarget(BlockPos targetPos) {
-        if (!this.activeTargets.contains(targetPos)) {
-            return;
-        }
-
-        List<BlockPos> updatedTargets = new ArrayList<>(this.activeTargets);
-        updatedTargets.remove(targetPos);
-        this.syncActiveTargets(updatedTargets);
-        this.updateOwnStatus(updatedTargets.isEmpty()
-                ? OmniLaserBeamBlock.Status.ON
-                : OmniLaserBeamBlock.Status.BEAMING);
     }
 
     private void syncExposedBack(Direction back) {
@@ -430,51 +374,38 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
         }
     }
 
-    private List<BlockPos> getSortedLinks() {
-        List<BlockPos> sortedLinks = new ArrayList<>(this.links);
-        sortedLinks.sort(TARGET_ORDER);
-        return sortedLinks;
-    }
-
     @Nullable
-    private IGridConnection findLiveConnection(IGridNode myNode, IGridNode otherNode) {
-        for (IGridConnection connection : myNode.getConnections()) {
-            if (this.getOtherSide(connection, myNode) == otherNode) {
-                return connection;
+    private IGridConnection ensureConnection(IGridNode myNode, IGridNode otherNode) {
+        // 检查现有连接是否有效
+        if (this.activeConnection != null) {
+            if (myNode.getConnections().contains(this.activeConnection)) {
+                IGridNode otherSide = this.activeConnection.getOtherSide(myNode);
+                if (otherSide == otherNode) {
+                    return this.activeConnection;
+                }
+            }
+            // 连接无效，销毁
+            try {
+                this.activeConnection.destroy();
+            } catch (Exception ignored) {
+            }
+            this.activeConnection = null;
+        }
+
+        // 查找是否已有连接
+        for (IGridConnection conn : myNode.getConnections()) {
+            if (conn.getOtherSide(myNode) == otherNode) {
+                this.activeConnection = conn;
+                return conn;
             }
         }
-        return null;
-    }
 
-    private boolean isLiveConnection(
-            @Nullable IGridConnection connection,
-            IGridNode myNode,
-            @Nullable IGridNode expectedOtherNode) {
-        if (connection == null || !myNode.getConnections().contains(connection)) {
-            return false;
-        }
-
-        IGridNode actualOtherNode = this.getOtherSide(connection, myNode);
-        if (actualOtherNode == null) {
-            return false;
-        }
-
-        return expectedOtherNode == null || actualOtherNode == expectedOtherNode;
-    }
-
-    @Nullable
-    private IGridNode getOtherSide(IGridConnection connection, IGridNode myNode) {
+        // 创建新连接
         try {
-            return connection.getOtherSide(myNode);
-        } catch (IllegalArgumentException | IllegalStateException ignored) {
+            this.activeConnection = GridHelper.createConnection(myNode, otherNode);
+            return this.activeConnection;
+        } catch (Exception ignored) {
             return null;
-        }
-    }
-
-    private void destroyConnection(IGridConnection connection) {
-        try {
-            connection.destroy();
-        } catch (IllegalArgumentException | IllegalStateException ignored) {
         }
     }
 }

@@ -9,6 +9,7 @@ import lu.kolja.expandedae.client.render.ExpCraftingUnitModelProvider;
 import lu.kolja.expandedae.client.render.LaserBeamBER;
 import lu.kolja.expandedae.client.render.LaserBindingToolRenderer;
 import lu.kolja.expandedae.client.render.OmniLaserBeamBER;
+import lu.kolja.expandedae.client.render.RelayLaserBeamBER;
 import lu.kolja.expandedae.definition.ExpBlockEntities;
 import lu.kolja.expandedae.definition.ExpMenus;
 import lu.kolja.expandedae.enums.ExpTiers;
@@ -40,6 +41,7 @@ public class ExpandedaeClient {
         event.enqueueWork(() -> {
             BlockEntityRenderers.register(ExpBlockEntities.LASER_BEAM_BE.get(), ctx -> new LaserBeamBER(ctx));
             BlockEntityRenderers.register(ExpBlockEntities.OMNI_LASER_BEAM_BE.get(), ctx -> new OmniLaserBeamBER(ctx));
+            BlockEntityRenderers.register(ExpBlockEntities.RELAY_LASER_BEAM_BE.get(), ctx -> new RelayLaserBeamBER(ctx));
         });
     }
 

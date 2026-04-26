@@ -84,12 +84,12 @@ public class LaserBindingToolRenderer {
                 net.minecraft.world.item.component.CustomData.EMPTY
         ).copyTag();
 
-        if (!tag.contains("SourcePos")) {
+        if (!tag.contains("SelectedPos")) {
             return;
         }
 
-        BlockPos sourcePos = readBlockPos(tag.getCompound("SourcePos"));
-        if (sourcePos == null) {
+        BlockPos selectedPos = readBlockPos(tag.getCompound("SelectedPos"));
+        if (selectedPos == null) {
             return;
         }
 
@@ -102,15 +102,16 @@ public class LaserBindingToolRenderer {
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
 
-        // 渲染主连接器（源）- 红色
-        drawBlockOutline(poseStack, bufferSource, camera, new AABB(sourcePos), 1f, 0f, 0f, 1f);
+        // 渲染选中的连接器 - 黄色
+        drawBlockOutline(poseStack, bufferSource, camera, new AABB(selectedPos), 1f, 1f, 0f, 1f);
 
-        // 获取主连接器的方块实体，渲染所有已连接的从连接器
-        BlockEntity be = level.getBlockEntity(sourcePos);
+        // 获取选中的方块实体，如果已连接则渲染连接目标
+        BlockEntity be = level.getBlockEntity(selectedPos);
         if (be instanceof OmniLaserBeamBlockEntity omniBe) {
-            // 使用 clientActiveTargets 获取客户端同步的连接目标
-            for (BlockPos targetPos : omniBe.getClientActiveTargets()) {
-                // 渲染从连接器 - 绿色
+            // 使用 getClientLinkedTarget 获取客户端同步的连接目标
+            BlockPos targetPos = omniBe.getClientLinkedTarget();
+            if (targetPos != null) {
+                // 渲染连接目标 - 绿色
                 drawBlockOutline(poseStack, bufferSource, camera, new AABB(targetPos), 0f, 1f, 0f, 1f);
             }
         }
