@@ -138,31 +138,6 @@ public final class LaserBeamRenderHelper {
     }
 
     /**
-     * 混合两个端点颜色
-     * 
-     * @param first 第一个颜色
-     * @param second 第二个颜色
-     * @return 混合后的颜色
-     */
-    public static float[] blendEndpointColors(@Nullable float[] first, @Nullable float[] second) {
-        if (first == null && second == null) {
-            return new float[]{1.0f, 1.0f, 1.0f};
-        }
-        if (first == null) {
-            return second.clone();
-        }
-        if (second == null) {
-            return first.clone();
-        }
-
-        return new float[]{
-                rms(first[0], second[0]),
-                rms(first[1], second[1]),
-                rms(first[2], second[2])
-        };
-    }
-
-    /**
      * 渲染彩色光束（方块版本）
      * 
      * @param poseStack 姿势栈
@@ -1280,13 +1255,6 @@ public final class LaserBeamRenderHelper {
                 .setOverlay(overlay)
                 .setLight(FULL_BRIGHT)
                 .setNormal(nx, ny, nz);
-    }
-
-    /**
-     * 均方根
-     */
-    private static float rms(float first, float second) {
-        return (float) Math.sqrt((first * first + second * second) * 0.5f);
     }
 
     /**

@@ -85,5 +85,6 @@
   "tooltip.expandedae.binding.omni_linked": "Linked [%d, %d, %d] → [%d, %d, %d]",
   "tooltip.expandedae.binding.omni_unlinked": "Unlinked [%d, %d, %d] → [%d, %d, %d]",
   "tooltip.expandedae.binding.invalid": "Source beam former is invalid or no longer exists",
-  "tooltip.expandedae.binding.cleared": "Source beam former cleared"
+  "tooltip.expandedae.binding.cleared": "Source beam former cleared",
+  "tooltip.expandedae.binding.already_linked_target": "[%d, %d, %d] is already connected by another connector and cannot be used as source"
 }

@@ -7,6 +7,7 @@ import appeng.init.client.InitScreens;
 import lu.kolja.expandedae.Expandedae;
 import lu.kolja.expandedae.client.render.ExpCraftingUnitModelProvider;
 import lu.kolja.expandedae.client.render.LaserBeamBER;
+import lu.kolja.expandedae.client.render.LaserBindingToolRenderer;
 import lu.kolja.expandedae.client.render.OmniLaserBeamBER;
 import lu.kolja.expandedae.definition.ExpBlockEntities;
 import lu.kolja.expandedae.definition.ExpMenus;
@@ -22,6 +23,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = Expandedae.MODID, dist = Dist.CLIENT)
 public class ExpandedaeClient {
@@ -29,6 +31,9 @@ public class ExpandedaeClient {
         initCraftingUnitModels();
         modEventBus.addListener(ExpandedaeClient::initScreens);
         modEventBus.addListener(ExpandedaeClient::initRenderers);
+        
+        // 注册到 NeoForge 事件总线（不是 Mod 事件总线）
+        NeoForge.EVENT_BUS.addListener(LaserBindingToolRenderer::onRenderLevel);
     }
 
     private static void initRenderers(FMLClientSetupEvent event) {

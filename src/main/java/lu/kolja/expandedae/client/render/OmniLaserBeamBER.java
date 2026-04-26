@@ -65,6 +65,9 @@ public class OmniLaserBeamBER implements BlockEntityRenderer<OmniLaserBeamBlockE
         Level level = be.getLevel();
         if (level == null) return;
 
+        // 检查是否应该渲染光束
+        if (!be.shouldRenderBeam()) return;
+
         BlockPos pos = be.getBlockPos();
         Direction facing = state.getValue(OmniLaserBeamBlock.FACING);
         float[] sourceColor = LaserBeamRenderHelper.resolveBlockEndpointColor(level, pos);

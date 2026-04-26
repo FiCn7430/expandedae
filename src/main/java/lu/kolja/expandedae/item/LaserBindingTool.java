@@ -77,6 +77,20 @@ public class LaserBindingTool extends Item {
                 return InteractionResult.PASS;
             }
             
+            // 检查是否已经是其他连接器的从连接器
+            if (be instanceof OmniLaserBeamBlockEntity targetEntity) {
+                // 检查这个方块是否被其他连接器连接
+                if (isLinkedAsTarget(level, pos)) {
+                    if (player != null) {
+                        player.displayClientMessage(
+                            Component.translatable("tooltip.expandedae.binding.already_linked_target", pos.getX(), pos.getY(), pos.getZ()), 
+                            true
+                        );
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            
             // Shift+右键：选定被连接的激光线缆（源）
             CompoundTag t = new CompoundTag();
             t.putInt("x", pos.getX());
@@ -220,6 +234,36 @@ public class LaserBindingTool extends Item {
                 return InteractionResult.SUCCESS;
             }
         }
+    }
+
+    /**
+     * 检查指定位置是否被其他全向激光连接器作为目标连接
+     *
+     * @param level 世界
+     * @param pos 要检查的位置
+     * @return 如果被其他连接器连接则返回true
+     */
+    private static boolean isLinkedAsTarget(Level level, BlockPos pos) {
+        // 在指定位置周围的范围内查找全向激光连接器
+        // 最大连接范围是16格水平，32格垂直
+        int searchRange = OMNI_RANGE_XZ + 2; // 稍微扩大搜索范围
+        int searchRangeY = OMNI_RANGE_Y + 2;
+
+        for (int dx = -searchRange; dx <= searchRange; dx++) {
+            for (int dy = -searchRangeY; dy <= searchRangeY; dy++) {
+                for (int dz = -searchRange; dz <= searchRange; dz++) {
+                    BlockPos checkPos = pos.offset(dx, dy, dz);
+                    BlockEntity be = level.getBlockEntity(checkPos);
+                    if (be instanceof OmniLaserBeamBlockEntity omniBe) {
+                        // 检查这个连接器是否连接到了目标位置
+                        if (omniBe.getLinks().contains(pos)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

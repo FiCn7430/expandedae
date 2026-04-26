@@ -85,5 +85,6 @@
   "tooltip.expandedae.binding.omni_linked": "已连接 [%d, %d, %d] → [%d, %d, %d]",
   "tooltip.expandedae.binding.omni_unlinked": "已断开 [%d, %d, %d] → [%d, %d, %d]",
   "tooltip.expandedae.binding.invalid": "源激光成型器无效或已不存在",
-  "tooltip.expandedae.binding.cleared": "已清除源激光成型器"
+  "tooltip.expandedae.binding.cleared": "已清除源激光成型器",
+  "tooltip.expandedae.binding.already_linked_target": "[%d, %d, %d] 已被其他连接器连接，不能作为主连接器"
 }

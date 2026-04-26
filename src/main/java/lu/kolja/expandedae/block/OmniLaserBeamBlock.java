@@ -25,7 +25,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -209,5 +213,31 @@ public class OmniLaserBeamBlock extends AEBaseEntityBlock<OmniLaserBeamBlockEnti
                 level.updateNeighborsAt(pos.relative(dir), this);
             }
         }
+    }
+
+    /**
+     * 处理玩家使用方块（右键点击，无物品）
+     *
+     * Shift+右键切换光束显示/隐藏
+     */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        // 只处理Shift+右键
+        if (!player.isShiftKeyDown()) {
+            return super.useWithoutItem(state, level, pos, player, hitResult);
+        }
+
+        // 获取方块实体
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof OmniLaserBeamBlockEntity laserBe)) {
+            return super.useWithoutItem(state, level, pos, player, hitResult);
+        }
+
+        // 切换光束显示状态
+        if (!level.isClientSide) {
+            laserBe.toggleBeamVisibility();
+        }
+
+        return InteractionResult.SUCCESS;
     }
 }
