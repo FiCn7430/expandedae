@@ -56,9 +56,6 @@ public class RelayLaserBeamBlockEntity extends AENetworkedBlockEntity implements
     @Nullable
     private Direction lastExposedBack;
 
-    /** 是否隐藏光束 */
-    private boolean hideBeam;
-
     public RelayLaserBeamBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.getMainNode().setFlags(GridFlags.DENSE_CAPACITY);
@@ -181,26 +178,6 @@ public class RelayLaserBeamBlockEntity extends AENetworkedBlockEntity implements
         return this.clientActiveTargets;
     }
 
-    public boolean isHideBeam() {
-        return hideBeam;
-    }
-
-    public boolean shouldRenderBeam() {
-        return !hideBeam && !clientActiveTargets.isEmpty();
-    }
-
-    public void toggleBeamVisibility() {
-        setBeamHidden(!hideBeam);
-    }
-
-    public void setBeamHidden(boolean hidden) {
-        if (this.hideBeam != hidden) {
-            this.hideBeam = hidden;
-            this.setChanged();
-            this.markForUpdate();
-        }
-    }
-
     @Override
     protected void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
@@ -208,7 +185,6 @@ public class RelayLaserBeamBlockEntity extends AENetworkedBlockEntity implements
         for (BlockPos p : this.activeTargets) {
             data.writeBlockPos(p);
         }
-        data.writeBoolean(this.hideBeam);
     }
 
     @Override
@@ -224,11 +200,7 @@ public class RelayLaserBeamBlockEntity extends AENetworkedBlockEntity implements
         boolean targetsChanged = !immutableTargets.equals(this.clientActiveTargets);
         this.clientActiveTargets = immutableTargets;
 
-        boolean receivedHideBeam = data.readBoolean();
-        boolean hideBeamChanged = this.hideBeam != receivedHideBeam;
-        this.hideBeam = receivedHideBeam;
-
-        return changed || targetsChanged || hideBeamChanged;
+        return changed || targetsChanged;
     }
 
     @Override
@@ -255,7 +227,6 @@ public class RelayLaserBeamBlockEntity extends AENetworkedBlockEntity implements
             list.add(targetTag);
         }
         tag.put("links", list);
-        tag.putBoolean("hideBeam", hideBeam);
     }
 
     @Override
@@ -266,7 +237,6 @@ public class RelayLaserBeamBlockEntity extends AENetworkedBlockEntity implements
         this.activeTargets = List.of();
         this.clientActiveTargets = List.of();
         this.lastExposedBack = null;
-        this.hideBeam = tag.getBoolean("hideBeam");
 
         if (tag.contains("links", Tag.TAG_LIST)) {
             ListTag list = tag.getList("links", Tag.TAG_LIST);

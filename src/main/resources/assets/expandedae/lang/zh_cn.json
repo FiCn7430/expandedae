@@ -89,7 +89,9 @@
   "tooltip.expandedae.binding.target_already_linked": "目标连接器已有连接",
   "tooltip.expandedae.binding.omni_connected": "已建立连接 [%d, %d, %d] ↔ [%d, %d, %d]",
   "tooltip.expandedae.binding.omni_disconnected": "已断开连接 [%d, %d, %d] ↔ [%d, %d, %d]",
+  "tooltip.expandedae.binding.omni_to_relay_connected": "已建立连接 [%d, %d, %d] ↔ [%d, %d, %d]",
   "tooltip.expandedae.binding.invalid_target": "无效的目标",
   "tooltip.expandedae.binding.relay_connected": "中继已连接 [%d, %d, %d] → [%d, %d, %d]",
-  "tooltip.expandedae.binding.relay_disconnected": "中继已断开 [%d, %d, %d] → [%d, %d, %d]"
+  "tooltip.expandedae.binding.relay_disconnected": "中继已断开 [%d, %d, %d] → [%d, %d, %d]",
+  "tooltip.expandedae.binding.relay_all_disconnected": "中继 [%d, %d, %d] 已断开所有连接"
 }

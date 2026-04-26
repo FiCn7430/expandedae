@@ -89,7 +89,9 @@
   "tooltip.expandedae.binding.target_already_linked": "Target connector is already linked",
   "tooltip.expandedae.binding.omni_connected": "Connected [%d, %d, %d] ↔ [%d, %d, %d]",
   "tooltip.expandedae.binding.omni_disconnected": "Disconnected [%d, %d, %d] ↔ [%d, %d, %d]",
+  "tooltip.expandedae.binding.omni_to_relay_connected": "Connected [%d, %d, %d] ↔ [%d, %d, %d]",
   "tooltip.expandedae.binding.invalid_target": "Invalid target",
   "tooltip.expandedae.binding.relay_connected": "Relay connected [%d, %d, %d] → [%d, %d, %d]",
-  "tooltip.expandedae.binding.relay_disconnected": "Relay disconnected [%d, %d, %d] → [%d, %d, %d]"
+  "tooltip.expandedae.binding.relay_disconnected": "Relay disconnected [%d, %d, %d] → [%d, %d, %d]",
+  "tooltip.expandedae.binding.relay_all_disconnected": "Relay [%d, %d, %d] disconnected all"
 }

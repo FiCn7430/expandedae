@@ -5,7 +5,7 @@
 	"render_type": "cutout",
 	"texture_size": [64, 64],
 	"textures": {
-		"base": "expandedae:block/laser_beam",
+		"base": "expandedae:block/beam_former_block",
 		"particle": "ae2:block/generics/back"
 	},
 	"elements": [

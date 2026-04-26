@@ -63,9 +63,6 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
     /** 当前AE网格连接 */
     @Nullable
     private IGridConnection connection;
-    
-    /** 是否隐藏光束 */
-    private boolean hideBeam;
 
     public LaserBeamPart(IPartItem<?> partItem) {
         super(partItem);
@@ -95,24 +92,6 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
     @Override
     public AECableType getExternalCableConnectionType() {
         return AECableType.SMART;
-    }
-
-    /**
-     * 玩家使用部件（无需物品）
-     * 
-     * Shift+右键切换光束显示/隐藏
-     */
-    @Override
-    public boolean onUseWithoutItem(Player player, Vec3 pos) {
-        if (!player.isShiftKeyDown()) {
-            return false;
-        }
-
-        if (!player.level().isClientSide) {
-            setBeamHidden(!hideBeam);
-        }
-
-        return true;
     }
 
     @Override
@@ -150,7 +129,7 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
     }
 
     public boolean shouldRenderBeam() {
-        return !hideBeam && beamLength > 0 && isPowered();
+        return beamLength > 0 && isPowered();
     }
 
     @Override
@@ -216,48 +195,37 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
     public void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
         data.writeVarInt(beamLength);
-        data.writeBoolean(hideBeam);
     }
 
     @Override
     public boolean readFromStream(RegistryFriendlyByteBuf data) {
         boolean redraw = super.readFromStream(data);
         int oldLength = beamLength;
-        boolean oldHidden = hideBeam;
         beamLength = data.readVarInt();
-        hideBeam = data.readBoolean();
-        return redraw || oldLength != beamLength || oldHidden != hideBeam;
+        return redraw || oldLength != beamLength;
     }
 
     @Override
     public void writeVisualStateToNBT(CompoundTag data) {
         super.writeVisualStateToNBT(data);
         data.putInt("beamLength", beamLength);
-        data.putBoolean("hideBeam", hideBeam);
     }
 
     @Override
     public void readVisualStateFromNBT(CompoundTag data) {
         super.readVisualStateFromNBT(data);
         beamLength = data.getInt("beamLength");
-        hideBeam = data.getBoolean("hideBeam");
     }
 
     @Override
     public void writeToNBT(CompoundTag tag, HolderLookup.Provider registries) {
         super.writeToNBT(tag, registries);
-        var beamFormer = new CompoundTag();
-        beamFormer.putBoolean("hideBeam", hideBeam);
-        tag.put("beamFormer", beamFormer);
     }
 
     @Override
     public void readFromNBT(CompoundTag tag, HolderLookup.Provider registries) {
         super.readFromNBT(tag, registries);
         beamLength = 0;
-        if (tag.contains("beamFormer")) {
-            hideBeam = tag.getCompound("beamFormer").getBoolean("hideBeam");
-        }
     }
 
     /**
@@ -314,29 +282,23 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
      * 绑定连接
      */
     private void bindConnection(LaserBeamPart target, IGridConnection activeConnection, int length) {
-        boolean hidden = hideBeam || target.hideBeam;
-
         boolean thisChanged = connection != activeConnection || other != target || beamLength != length;
         boolean targetChanged = target.connection != activeConnection || target.other != this
                 || target.beamLength != length;
-        boolean thisHiddenChanged = hideBeam != hidden;
-        boolean targetHiddenChanged = target.hideBeam != hidden;
 
         connection = activeConnection;
         other = target;
         beamLength = length;
-        hideBeam = hidden;
 
         target.connection = activeConnection;
         target.other = this;
         target.beamLength = length;
-        target.hideBeam = hidden;
 
-        if (thisChanged || thisHiddenChanged) {
-            markStateChanged(thisHiddenChanged);
+        if (thisChanged) {
+            markStateChanged(false);
         }
-        if (targetChanged || targetHiddenChanged) {
-            target.markStateChanged(targetHiddenChanged);
+        if (targetChanged) {
+            target.markStateChanged(false);
         }
     }
 
@@ -379,19 +341,6 @@ public class LaserBeamPart extends AEBasePart implements IGridTickable {
         other = null;
         beamLength = 0;
         return changed;
-    }
-
-    private void setBeamHidden(boolean hidden) {
-        boolean selfChanged = hideBeam != hidden;
-        hideBeam = hidden;
-        if (selfChanged) {
-            markStateChanged(true);
-        }
-
-        if (other != null && other.hideBeam != hidden) {
-            other.hideBeam = hidden;
-            other.markStateChanged(true);
-        }
     }
 
     private void markStateChanged(boolean persist) {

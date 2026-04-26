@@ -21,23 +21,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * 
  * 功能：用于连接激光线缆
  * 
- * 全向连接器使用方法：
- * 1. Shift+右键点击第一个全向连接器（选中）
- * 2. 右键点击第二个全向连接器（建立双向连接）
- * 3. Shift+右键已连接的任意全向连接器（断开连接）
+ * 连接规则：
+ * 1. 选中Relay → 右键Omni/Relay：建立单向连接，不清除选中（可连续连接多个）
+ * 2. 选中Omni → 右键Omni/Relay：建立双向连接，清除选中（Omni只能连接一个）
  * 
- * 中继连接器使用方法：
- * 1. Shift+右键点击中继连接器（选中）
- * 2. 右键点击目标连接器（建立单向连接）
- * 3. 再次右键已连接的目标（断开连接）
+ * 断开规则：
+ * 1. Shift+右键已连接的Relay：断开与所有目标的连接
+ * 2. Shift+右键已连接的Omni：断开与目标的连接
  * 
  * Shift+左键空气：清除工具的选中状态
  * 
  * 连接限制：
- * - 水平范围：16格
- * - 垂直范围：32格
- * - 全向连接器：只能连接一个目标
- * - 中继连接器：可以连接多个目标
+ * - 最大距离：32格（欧几里得距离）
+ * - Omni只能连接一个目标
+ * - Relay可以连接多个目标
  */
 public class LaserBindingTool extends Item {
     
@@ -96,13 +93,36 @@ public class LaserBindingTool extends Item {
      * 处理Shift+右键
      * 
      * 逻辑：
-     * - 如果点击的是已连接的全向连接器：断开连接
+     * - 如果点击的是已连接的Relay：断开与所有目标的连接
+     * - 如果点击的是已连接的Omni：断开与目标的连接
      * - 否则：选中该连接器
      */
     private InteractionResult handleShiftRightClick(Level level, BlockPos pos, ItemStack stack, Player player, 
             BlockEntity be, boolean isOmni, boolean isRelay, boolean hasSelected, CompoundTag tag) {
         
-        // 如果点击的是已连接的全向连接器，断开连接
+        // 如果点击的是已连接的Relay，断开所有连接
+        if (isRelay && be instanceof RelayLaserBeamBlockEntity relayBe) {
+            if (!relayBe.getLinks().isEmpty()) {
+                // 断开与所有目标的连接
+                for (BlockPos targetPos : new java.util.ArrayList<>(relayBe.getLinks())) {
+                    relayBe.removeLink(targetPos);
+                }
+                
+                // 清除工具的选中状态
+                clearSelection(stack, player);
+                
+                if (player != null) {
+                    player.displayClientMessage(
+                        Component.translatable("tooltip.expandedae.binding.relay_all_disconnected", 
+                            pos.getX(), pos.getY(), pos.getZ()), 
+                        true
+                    );
+                }
+                return InteractionResult.SUCCESS;
+            }
+        }
+        
+        // 如果点击的是已连接的Omni，断开连接
         if (isOmni && be instanceof OmniLaserBeamBlockEntity omniBe) {
             if (omniBe.isLinked()) {
                 BlockPos otherPos = omniBe.getLinkedTarget();
@@ -112,6 +132,8 @@ public class LaserBindingTool extends Item {
                     BlockEntity otherBe = level.getBlockEntity(otherPos);
                     if (otherBe instanceof OmniLaserBeamBlockEntity otherOmni) {
                         otherOmni.removeLink(pos);
+                    } else if (otherBe instanceof RelayLaserBeamBlockEntity otherRelay) {
+                        otherRelay.removeLink(pos);
                     }
                     
                     // 清除工具的选中状态
@@ -225,31 +247,32 @@ public class LaserBindingTool extends Item {
         }
         
         // 根据选中类型处理
-        if (TYPE_OMNI.equals(selectedType)) {
-            return handleOmniConnection(level, selectedPos, pos, stack, player, be, isOmni);
-        } else if (TYPE_RELAY.equals(selectedType)) {
+        if (TYPE_RELAY.equals(selectedType)) {
             return handleRelayConnection(level, selectedPos, pos, stack, player, be, isOmni, isRelay);
+        } else if (TYPE_OMNI.equals(selectedType)) {
+            return handleOmniConnection(level, selectedPos, pos, stack, player, be, isOmni, isRelay);
         }
         
         return InteractionResult.SUCCESS;
     }
     
     /**
-     * 处理全向连接器的连接
+     * 处理Omni连接器的连接
      * 
      * 规则：
-     * - 只能连接另一个全向连接器
-     * - 双方都必须未连接
-     * - 建立双向连接
+     * - 可以连接Omni或Relay
+     * - Omni必须未连接
+     * - 目标如果是Omni也必须未连接
+     * - 建立双向连接，清除选中
      */
     private InteractionResult handleOmniConnection(Level level, BlockPos sourcePos, BlockPos targetPos, 
-            ItemStack stack, Player player, BlockEntity targetBe, boolean targetIsOmni) {
+            ItemStack stack, Player player, BlockEntity targetBe, boolean targetIsOmni, boolean targetIsRelay) {
         
-        // 目标必须是全向连接器
-        if (!targetIsOmni || !(targetBe instanceof OmniLaserBeamBlockEntity targetOmni)) {
+        // 目标必须是Omni或Relay
+        if (!targetIsOmni && !targetIsRelay) {
             if (player != null) {
                 player.displayClientMessage(
-                    Component.translatable("tooltip.expandedae.binding.omni_only_omni"), 
+                    Component.translatable("tooltip.expandedae.binding.invalid_target"), 
                     true
                 );
             }
@@ -279,7 +302,7 @@ public class LaserBindingTool extends Item {
             return InteractionResult.SUCCESS;
         }
         
-        // 检查双方是否已连接
+        // 检查源Omni是否已连接
         if (sourceOmni.isLinked()) {
             if (player != null) {
                 player.displayClientMessage(
@@ -290,45 +313,68 @@ public class LaserBindingTool extends Item {
             return InteractionResult.SUCCESS;
         }
         
-        if (targetOmni.isLinked()) {
+        // 如果目标是Omni，检查是否已连接
+        if (targetIsOmni && targetBe instanceof OmniLaserBeamBlockEntity targetOmni) {
+            if (targetOmni.isLinked()) {
+                if (player != null) {
+                    player.displayClientMessage(
+                        Component.translatable("tooltip.expandedae.binding.target_already_linked"), 
+                        true
+                    );
+                }
+                return InteractionResult.SUCCESS;
+            }
+            
+            // 建立双向连接
+            sourceOmni.addLink(targetPos);
+            targetOmni.addLink(sourcePos);
+            
+            // 清除工具的选中状态
+            clearSelection(stack, player);
+            
             if (player != null) {
                 player.displayClientMessage(
-                    Component.translatable("tooltip.expandedae.binding.target_already_linked"), 
+                    Component.translatable("tooltip.expandedae.binding.omni_connected", 
+                        sourcePos.getX(), sourcePos.getY(), sourcePos.getZ(),
+                        targetPos.getX(), targetPos.getY(), targetPos.getZ()), 
                     true
                 );
             }
-            return InteractionResult.SUCCESS;
+        } 
+        // 如果目标是Relay
+        else if (targetIsRelay && targetBe instanceof RelayLaserBeamBlockEntity targetRelay) {
+            // 建立双向连接（Omni连接到Relay）
+            sourceOmni.addLink(targetPos);
+            targetRelay.addLink(sourcePos);
+            
+            // 清除工具的选中状态
+            clearSelection(stack, player);
+            
+            if (player != null) {
+                player.displayClientMessage(
+                    Component.translatable("tooltip.expandedae.binding.omni_to_relay_connected", 
+                        sourcePos.getX(), sourcePos.getY(), sourcePos.getZ(),
+                        targetPos.getX(), targetPos.getY(), targetPos.getZ()), 
+                    true
+                );
+            }
         }
         
-        // 建立双向连接
-        sourceOmni.addLink(targetPos);
-        targetOmni.addLink(sourcePos);
-        
-        // 清除工具的选中状态
-        clearSelection(stack, player);
-        
-        if (player != null) {
-            player.displayClientMessage(
-                Component.translatable("tooltip.expandedae.binding.omni_connected", 
-                    sourcePos.getX(), sourcePos.getY(), sourcePos.getZ(),
-                    targetPos.getX(), targetPos.getY(), targetPos.getZ()), 
-                true
-            );
-        }
         return InteractionResult.SUCCESS;
     }
     
     /**
-     * 处理中继连接器的连接
+     * 处理Relay连接器的连接
      * 
      * 规则：
-     * - 可以连接全向连接器或另一个中继
+     * - 可以连接Omni或Relay
      * - 建立单向连接（从Relay到目标）
+     * - 不清除选中状态，可连续连接多个
      */
     private InteractionResult handleRelayConnection(Level level, BlockPos relayPos, BlockPos targetPos,
             ItemStack stack, Player player, BlockEntity targetBe, boolean targetIsOmni, boolean targetIsRelay) {
         
-        // 目标必须是可连接的
+        // 目标必须是Omni或Relay
         if (!targetIsOmni && !targetIsRelay) {
             if (player != null) {
                 player.displayClientMessage(
@@ -362,8 +408,6 @@ public class LaserBindingTool extends Item {
             return InteractionResult.SUCCESS;
         }
         
-        ILinkable targetLinkable = (ILinkable) targetBe;
-        
         // 检查是否已连接
         if (relay.getLinks().contains(targetPos)) {
             // 已连接，断开
@@ -389,7 +433,7 @@ public class LaserBindingTool extends Item {
             }
         }
         
-        // 中继连接不清除选中状态，可以继续连接其他目标
+        // Relay连接不清除选中状态，可以继续连接其他目标
         return InteractionResult.SUCCESS;
     }
     

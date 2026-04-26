@@ -36,7 +36,7 @@ public class LaserBeamBER implements BlockEntityRenderer<LaserBeamBlockEntity> {
         BlockState state = te.getBlockState();
         if (!(state.getBlock() instanceof LaserBeamBlock)) return;
         
-        if (!te.shouldRenderBeam()) return;
+        // 光束始终渲染（只要有长度）
         
         Direction dir = state.getValue(LaserBeamBlock.FACING);
         int len = Math.max(0, te.getBeamLength());

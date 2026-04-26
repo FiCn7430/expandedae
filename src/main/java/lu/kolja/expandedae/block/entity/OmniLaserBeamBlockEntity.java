@@ -31,8 +31,7 @@ import java.util.Set;
  * 功能实现：
  * 1. 通过激光绑定工具建立双向对等连接（只能连接一个目标）
  * 2. 维护单个AE网络连接
- * 3. 管理光束的渲染状态
- * 4. 实现ILinkable接口，支持激光绑定工具操作
+ * 3. 实现ILinkable接口，支持激光绑定工具操作
  */
 public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements ILinkable {
     
@@ -51,9 +50,6 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
     /** 上一次暴露的后方方向 */
     @Nullable
     private Direction lastExposedBack;
-
-    /** 是否隐藏光束 */
-    private boolean hideBeam;
 
     public OmniLaserBeamBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -150,10 +146,9 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
             return;
         }
 
-        // 全向连接器只能连接一个目标
-        if (this.linkedTarget != null && !this.linkedTarget.equals(other)) {
-            // 如果已有连接，先断开
-            this.clearLink();
+        // 全向连接器只能连接一个目标，如果已有连接则不允许添加
+        if (this.linkedTarget != null) {
+            return;
         }
 
         this.linkedTarget = other;
@@ -237,26 +232,6 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
         }
     }
 
-    public boolean isHideBeam() {
-        return hideBeam;
-    }
-
-    public boolean shouldRenderBeam() {
-        return !hideBeam && clientLinkedTarget != null;
-    }
-
-    public void toggleBeamVisibility() {
-        setBeamHidden(!hideBeam);
-    }
-
-    public void setBeamHidden(boolean hidden) {
-        if (this.hideBeam != hidden) {
-            this.hideBeam = hidden;
-            this.setChanged();
-            this.markForUpdate();
-        }
-    }
-
     @Override
     protected void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
@@ -264,7 +239,6 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
         if (this.linkedTarget != null) {
             data.writeBlockPos(this.linkedTarget);
         }
-        data.writeBoolean(this.hideBeam);
     }
 
     @Override
@@ -276,11 +250,7 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
                 || (newTarget != null && !newTarget.equals(this.clientLinkedTarget));
         this.clientLinkedTarget = newTarget;
         
-        boolean receivedHideBeam = data.readBoolean();
-        boolean hideBeamChanged = this.hideBeam != receivedHideBeam;
-        this.hideBeam = receivedHideBeam;
-        
-        return changed || targetsChanged || hideBeamChanged;
+        return changed || targetsChanged;
     }
 
     @Override
@@ -305,7 +275,6 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
             targetTag.putInt("z", this.linkedTarget.getZ());
             tag.put("linkedTarget", targetTag);
         }
-        tag.putBoolean("hideBeam", hideBeam);
     }
 
     @Override
@@ -315,7 +284,6 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
         this.activeConnection = null;
         this.clientLinkedTarget = null;
         this.lastExposedBack = null;
-        this.hideBeam = tag.getBoolean("hideBeam");
 
         if (tag.contains("linkedTarget")) {
             CompoundTag targetTag = tag.getCompound("linkedTarget");
@@ -349,8 +317,10 @@ public class OmniLaserBeamBlockEntity extends AENetworkedBlockEntity implements 
     }
 
     private void syncActiveTarget(@Nullable BlockPos target) {
-        if ((target == null) != (this.linkedTarget == null) 
-                || (target != null && !target.equals(this.linkedTarget))) {
+        // 检查是否需要同步
+        boolean changed = (target == null) != (this.linkedTarget == null) 
+                || (target != null && !target.equals(this.linkedTarget));
+        if (changed) {
             this.markForUpdate();
         }
     }

@@ -66,8 +66,7 @@ public class RelayLaserBeamBER implements BlockEntityRenderer<RelayLaserBeamBloc
         Level level = be.getLevel();
         if (level == null) return;
 
-        // 检查是否应该渲染光束
-        if (!be.shouldRenderBeam()) return;
+        // 光束始终渲染（只要有连接目标）
 
         BlockPos pos = be.getBlockPos();
         Direction facing = state.getValue(RelayLaserBeamBlock.FACING);

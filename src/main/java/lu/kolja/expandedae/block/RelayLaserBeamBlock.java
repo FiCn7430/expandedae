@@ -214,29 +214,4 @@ public class RelayLaserBeamBlock extends AEBaseEntityBlock<RelayLaserBeamBlockEn
         }
     }
 
-    /**
-     * 处理玩家使用方块（右键点击，无物品）
-     *
-     * Shift+右键切换光束显示/隐藏
-     */
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        // 只处理Shift+右键
-        if (!player.isShiftKeyDown()) {
-            return super.useWithoutItem(state, level, pos, player, hitResult);
-        }
-
-        // 获取方块实体
-        BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof RelayLaserBeamBlockEntity relayBe)) {
-            return super.useWithoutItem(state, level, pos, player, hitResult);
-        }
-
-        // 切换光束显示状态
-        if (!level.isClientSide) {
-            relayBe.toggleBeamVisibility();
-        }
-
-        return InteractionResult.SUCCESS;
-    }
 }

@@ -32,7 +32,6 @@ import java.util.Set;
  * 1. 在指定方向上扫描另一个定向激光线缆
  * 2. 当找到目标时建立AE网络连接
  * 3. 管理光束的渲染状态
- * 4. 支持光束显示/隐藏切换
  */
 public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
     
@@ -49,9 +48,6 @@ public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
     /** 连接的另一个激光线缆 */
     @Nullable
     private LaserBeamBlockEntity other;
-    
-    /** 是否隐藏光束 */
-    private boolean hideBeam;
     
     /** 上一次暴露的后方方向 */
     @Nullable
@@ -74,18 +70,6 @@ public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
 
     public int getBeamLength() {
         return beamLength;
-    }
-
-    public boolean isHideBeam() {
-        return hideBeam;
-    }
-
-    public boolean shouldRenderBeam() {
-        return !hideBeam && beamLength > 0;
-    }
-
-    public void toggleBeamVisibility() {
-        setBeamHidden(!hideBeam);
     }
 
     /**
@@ -184,17 +168,14 @@ public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
     protected void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
         data.writeVarInt(beamLength);
-        data.writeBoolean(hideBeam);
     }
 
     @Override
     protected boolean readFromStream(RegistryFriendlyByteBuf data) {
         boolean changed = super.readFromStream(data);
         int oldLength = beamLength;
-        boolean oldHide = hideBeam;
         beamLength = data.readVarInt();
-        hideBeam = data.readBoolean();
-        return changed || oldLength != beamLength || oldHide != hideBeam;
+        return changed || oldLength != beamLength;
     }
 
     @Override
@@ -212,7 +193,6 @@ public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putBoolean("hideBeam", hideBeam);
     }
 
     @Override
@@ -221,7 +201,6 @@ public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
         beamLength = 0;
         connection = null;
         other = null;
-        hideBeam = tag.getBoolean("hideBeam");
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -343,27 +322,6 @@ public class LaserBeamBlockEntity extends AENetworkedBlockEntity {
             if (targetChanged) {
                 target.markVisualChanged();
             }
-        }
-    }
-
-    /**
-     * 设置光束隐藏状态
-     * 
-     * @param hidden 是否隐藏
-     */
-    private void setBeamHidden(boolean hidden) {
-        boolean selfChanged = hideBeam != hidden;
-        hideBeam = hidden;
-        if (selfChanged) {
-            markVisualChanged();
-            setChanged();
-        }
-
-        LaserBeamBlockEntity partner = other != null ? other : findConnectedPeer();
-        if (partner != null && partner.hideBeam != hidden) {
-            partner.hideBeam = hidden;
-            partner.markVisualChanged();
-            partner.setChanged();
         }
     }
 
